@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
+    "module": "commonjs",
     "outDir": "./dist/",
     "sourceMap": true,
-    "strict": true,
-    "module": "commonjs",
     "target": "es5",
-    "typeRoots" : ["./typings"]
+    "typeRoots" : ["./typings"],
+    // Linting
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true
   }
 }

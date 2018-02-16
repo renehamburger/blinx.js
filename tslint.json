@@ -1,3 +1,8 @@
 {
-  "extends": "tslint-config-standard"
+  "extends": "tslint-config-standard",
+  "rules": {
+    "no-empty": false,
+    "semicolon": [true, "always"],
+    "space-before-function-paren": [true, {"anonymous": "always", "named": "never", "asyncArrow": "always"}]
+  }
 }

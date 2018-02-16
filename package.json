@@ -38,5 +38,6 @@
     "webpack-dev-server": "2.2.1"
   },
   "dependencies": {
+    "umbrellajs": "^2.10.1"
   }
 }
