@@ -1,8 +1,8 @@
 {
-  "name": "webpack-typescript-starter",
+  "name": "blinx.js",
   "version": "0.0.1",
-  "description": "A simple Webpack 2 starter with TypeScript transpilation",
-  "main": "index.js",
+  "description": "A multi-language client-side script to automatically convert Bible references to Bible links with a passage pop-up",
+  "main": "dist/blinx.js",
   "scripts": {
     "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --watch --content-base src/",
     "build": "webpack --config webpack.config.js",
@@ -10,12 +10,16 @@
     "test": "karma start karma.config.js"
   },
   "keywords": [
-    "webpack",
-    "webpack2",
-    "typescript"
+    "bible",
+    "reference",
+    "tagger"
   ],
-  "author": "Juri Strumpflohner",
-  "license": "ISC",
+  "author": "Rene Hamburger",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/renehamburger/blinx.js.git"
+  },
   "devDependencies": {
     "@types/jasmine": "2.5.40",
     "@types/node": "7.0.0",
@@ -27,10 +31,12 @@
     "karma-webpack": "2.0.1",
     "source-map-loader": "0.1.6",
     "tslint": "4.3.1",
+    "tslint-config-standard": "^7.0.0",
     "tslint-loader": "3.3.0",
     "typescript": "2.1.5",
     "webpack": "2.2.1",
     "webpack-dev-server": "2.2.1"
+  },
+  "dependencies": {
   }
 }
-

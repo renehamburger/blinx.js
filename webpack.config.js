@@ -12,7 +12,7 @@ module.exports = {
     },
     
     output: {
-        filename: '[name].bundle.js',
+        filename: 'blinx.js',
         path: DESTINATION
     },
 

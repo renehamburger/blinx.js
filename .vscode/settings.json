@@ -1,0 +1,63 @@
+{
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "files.exclude": {
+    "dist": true
+  },
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true
+  },
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true
+  },
+  "typescript.format.enable": true,
+  "typescript.format.insertSpaceAfterCommaDelimiter": true,
+  "typescript.format.insertSpaceAfterConstructor": false,
+  "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": true,
+  "typescript.format.insertSpaceAfterKeywordsInControlFlowStatements": true,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
+  "typescript.format.insertSpaceAfterSemicolonInForStatements": true,
+  "typescript.format.insertSpaceAfterTypeAssertion": false,
+  "typescript.format.insertSpaceBeforeAndAfterBinaryOperators": true,
+  "typescript.format.insertSpaceBeforeFunctionParenthesis": false,
+  "typescript.format.placeOpenBraceOnNewLineForControlBlocks": false,
+  "typescript.format.placeOpenBraceOnNewLineForFunctions": false,
+  "json.format.enable": true,
+  //-- Extensions
+  // Settings for wayou.vscode-todo-highlight (region & TODO highlighting)
+  "todohighlight.keywords": [
+    // See https://code.visualstudio.com/docs/extensionAPI/vscode-api#_a-namedecorationrenderoptionsaspan-classcodeitem-id280decorationrenderoptionsspan
+    "TEMP:",
+    "NOTE:",
+    "NB:",
+    {
+      "text": "//#region",
+      "color": "#55c",
+      "backgroundColor": "editor.background",
+      "overviewRulerColor": "#55c",
+      "isWholeLine": true,
+      "borderColor": "#55c",
+      "borderWidth": "1px 0 0 0",
+      "borderStyle": "solid"
+    },
+    {
+      "text": "//#endregion",
+      "color": "#33a",
+      "backgroundColor": "editor.background",
+      "overviewRulerColor": "#33a",
+      "isWholeLine": true,
+      "borderColor": "#33a",
+      "borderWidth": "0 0 1px 0",
+      "borderStyle": "solid"
+    }
+  ]
+}
