@@ -5,6 +5,7 @@
     "sourceMap": true,
     "target": "es5",
     "typeRoots" : ["./typings"],
+    "types" : ["bible-passage-reference-parser"],
     // Linting
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
