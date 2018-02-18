@@ -24,7 +24,7 @@ declare namespace Umbrella {
 
     ajax(a: any, b: any): void;
 
-    append(a: any, b: any): Instance;
+    append(a: any, b?: any): Instance;
 
     args(a: any, b: any, c: any): Instance;
 

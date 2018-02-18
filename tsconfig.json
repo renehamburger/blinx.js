@@ -4,8 +4,8 @@
     "outDir": "./dist/",
     "sourceMap": true,
     "target": "es5",
-    "typeRoots" : ["./typings"],
-    "types" : ["bible-passage-reference-parser"],
+    "typeRoots" : ["./typings", "./node_modules/@types"],
+    "types" : ["bible-passage-reference-parser", "jasmine"],
     // Linting
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
