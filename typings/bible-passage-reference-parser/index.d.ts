@@ -17,7 +17,7 @@ declare namespace BCV {
     osis_and_translations(): [string, string][];
 
     /** This function returns an array. Each element in the array is an object with `osis` (a string), `translations` (an array of translation identifiers—an empty string unless a translation is specified), and `indices` (the start and end position in the string). The `indices` key is designed to be consistent with Twitter's implementation (the first character in a string has indices `[0, 1]`). */
-    osis_and_indices(): { osis: string, translations: string[], indices: Indices }[];
+    osis_and_indices(): OsisAndIndices[];
 
     /** If you want to know a lot about how the BCV parser handled the input string, use this function. It can include messages if it adjusted the input or had trouble parsing it(e.g., if given an invalid reference). This function returns an array with a fairly complicated structure.The `entities` key can contain nested entities if you're parsing a sequence of references. */
     parsed_entities(): ParsedEntity[];
@@ -33,31 +33,37 @@ declare namespace BCV {
   }
 
   class Options {
-    book_alone_strategy: 'ignore' | 'full' | 'first_chapter' /*= 'ignore'*/;
-    book_range_strategy: 'ignore' | 'include' /*= 'ignore'*/;
-    book_sequence_strategy: 'ignore' | 'include' /*= 'ignore'*/;
-    captive_end_digits_strategy: 'delete' | 'include' /*= 'delete'*/;
-    case_sensitive: 'none' | 'books' /*= 'none'*/;
-    consecutive_combination_strategy: 'combine' | 'separate' /*= 'combine'*/;
-    end_range_digits_strategy: 'verse' | 'sequence' /*= 'verse'*/;
-    include_apocrypha: boolean /* = false */;
-    invalid_passage_strategy: 'ignore' | 'include' /*= 'ignore'*/;
-    invalid_sequence_strategy: 'ignore' | 'include' /*= 'ignore'*/;
-    non_latin_digits_strategy: 'ignore' | 'replace' /*= 'ignore'*/;
-    osis_compaction_strategy: ReferenceType /*= 'b'*/;
-    passage_existence_strategy: string /*= 'bcv'*/;
-    ps151_strategy: 'c' | 'b' /*= 'c'*/;
-    punctuation_strategy: 'us' | 'eu' /*= 'us'*/;
-    sequence_combination_strategy: 'combine' | 'separate' /*= 'combine'*/;
-    single_chapter_1_strategy: 'chapter' | 'verse' /*= 'chapter'*/;
-    versification_system: Versification;
-    zero_chapter_strategy: 'error' | 'upgrade' /*= 'error'*/;
-    zero_verse_strategy: 'error' | 'upgrade' | 'allow' /*= 'error'*/;
+    book_alone_strategy?: 'ignore' | 'full' | 'first_chapter' /*= 'ignore'*/;
+    book_range_strategy?: 'ignore' | 'include' /*= 'ignore'*/;
+    book_sequence_strategy?: 'ignore' | 'include' /*= 'ignore'*/;
+    captive_end_digits_strategy?: 'delete' | 'include' /*= 'delete'*/;
+    case_sensitive?: 'none' | 'books' /*= 'none'*/;
+    consecutive_combination_strategy?: 'combine' | 'separate' /*= 'combine'*/;
+    end_range_digits_strategy?: 'verse' | 'sequence' /*= 'verse'*/;
+    include_apocrypha?: boolean /* = false */;
+    invalid_passage_strategy?: 'ignore' | 'include' /*= 'ignore'*/;
+    invalid_sequence_strategy?: 'ignore' | 'include' /*= 'ignore'*/;
+    non_latin_digits_strategy?: 'ignore' | 'replace' /*= 'ignore'*/;
+    osis_compaction_strategy?: ReferenceType /*= 'b'*/;
+    passage_existence_strategy?: string /*= 'bcv'*/;
+    ps151_strategy?: 'c' | 'b' /*= 'c'*/;
+    punctuation_strategy?: 'us' | 'eu' /* Default usually 'us', but for German parser 'eu' due to https://github.com/openbibleinfo/Bible-Passage-Reference-Parser/issues/10#issuecomment-365587223. */;
+    sequence_combination_strategy?: 'combine' | 'separate' /*= 'combine'*/;
+    single_chapter_1_strategy?: 'chapter' | 'verse' /*= 'chapter'*/;
+    versification_system?: Versification;
+    zero_chapter_strategy?: 'error' | 'upgrade' /*= 'error'*/;
+    zero_verse_strategy?: 'error' | 'upgrade' | 'allow' /*= 'error'*/;
   }
 
   type ReferenceType = 'b' | 'bc' | 'bcv';
 
   type Versification = 'default' | 'ceb' | 'kjv' | 'nab' | 'nlt' | 'nrsv' | 'vulgate';
+
+  interface OsisAndIndices {
+    osis: string;
+    translations: string[];
+    indices: Indices;
+  }
 
   interface ParsedEntity {
     "osis": string;

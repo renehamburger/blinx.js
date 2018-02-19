@@ -11,7 +11,7 @@ export class Options {
    * Futher options for the parser.
    * @see https://github.com/openbibleinfo/Bible-Passage-Reference-Parser#options
    */
-  parserOptions: BCV.Options | undefined;
+  parserOptions?: BCV.Options;
   /** By default, the parse will start automatically once the page is loaded. If false, it needs to be triggered manually. */
   parseAutomatically: boolean = true;
   /** Automatic parsing will happen within the elements with the following whitelisted selectors. */

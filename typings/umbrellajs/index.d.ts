@@ -46,7 +46,7 @@ declare namespace Umbrella {
     data(attributes: { [name: string]: string }): Instance;
     data(name: string, value: string): Instance;
 
-    each(a: any): Instance;
+    each(iterator: (node: Node, index: number) => void): Instance;
 
     eacharg(a: any, b: any): Instance;
 
@@ -75,7 +75,7 @@ declare namespace Umbrella {
 
     last(): Node | false;
 
-    map(a: any): Instance;
+    map(iterator: (node: Node, index: number) => false | Node | string | Node[] | string[] | Instance): Instance;
 
     not(a: any): Instance;
 

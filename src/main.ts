@@ -1,4 +1,4 @@
-import { Blinx } from './blinx';
+import { Blinx } from './blinx.class';
 
 const blinx = new Blinx();
 blinx.init();
