@@ -1,9 +1,23 @@
-import { Languages, LanguageCode } from './languages';
+import { Languages } from './languages';
 import { u } from 'umbrellajs';
+import { Parser } from '../parser/parser.class';
 
 export class Options {
   [key: string]: any;
+
+  /** Language code of the language to be used for the parser. */
   language: keyof Languages = 'en';
+  /**
+   * Futher options for the parser.
+   * @see https://github.com/openbibleinfo/Bible-Passage-Reference-Parser#options
+   */
+  parserOptions: BCV.Options | undefined;
+  /** By default, the parse will start automatically once the page is loaded. If false, it needs to be triggered manually. */
+  parseAutomatically: boolean = true;
+  /** Automatic parsing will happen within the elements with the following whitelisted selectors. */
+  whitelist: string[] = ['body'];
+  /** Automatic parsing can be disabled with the following whitelisted selectors. */
+  blacklist: string[] = ['a'];
 }
 
 export function applyScriptTagOptions(options: Options): void {
@@ -23,11 +37,9 @@ export function applyScriptTagOptions(options: Options): void {
   }
   // If user does not specify language in script tag, check whether he has inlcude a bcv_parser with a single language already
   if (!(opts.language)) {
-    if (window.bcv_parser) {
-      const parser: BCV.Parser = new window.bcv_parser();
-      if (parser['languages'] && parser['languages'].length === 1) {
-        opts.language = parser['languages'][0] as LanguageCode;
-      }
+    const language = Parser.getCurrentParserLanguage();
+    if (language) {
+      opts.language = language;
     }
   }
   for (const key in opts) {

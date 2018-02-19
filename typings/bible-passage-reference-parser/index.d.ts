@@ -22,7 +22,7 @@ declare namespace BCV {
     /** If you want to know a lot about how the BCV parser handled the input string, use this function. It can include messages if it adjusted the input or had trouble parsing it(e.g., if given an invalid reference). This function returns an array with a fairly complicated structure.The `entities` key can contain nested entities if you're parsing a sequence of references. */
     parsed_entities(): ParsedEntity[];
 
-    /** If you set the value to`false`(the default behavior), it ignores books in the Apocrypha. */
+    /** If you set the value to`false` (the default behavior), it ignores books in the Apocrypha. */
     include_apocrypha(include: boolean): void;
 
     /** This function takes an object that sets parsing and output options. */
@@ -40,7 +40,7 @@ declare namespace BCV {
     case_sensitive: 'none' | 'books' /*= 'none'*/;
     consecutive_combination_strategy: 'combine' | 'separate' /*= 'combine'*/;
     end_range_digits_strategy: 'verse' | 'sequence' /*= 'verse'*/;
-    private include_apocrypha: false;
+    include_apocrypha: boolean /* = false */;
     invalid_passage_strategy: 'ignore' | 'include' /*= 'ignore'*/;
     invalid_sequence_strategy: 'ignore' | 'include' /*= 'ignore'*/;
     non_latin_digits_strategy: 'ignore' | 'replace' /*= 'ignore'*/;
@@ -50,7 +50,7 @@ declare namespace BCV {
     punctuation_strategy: 'us' | 'eu' /*= 'us'*/;
     sequence_combination_strategy: 'combine' | 'separate' /*= 'combine'*/;
     single_chapter_1_strategy: 'chapter' | 'verse' /*= 'chapter'*/;
-    private versification_system: Versification;
+    versification_system: Versification;
     zero_chapter_strategy: 'error' | 'upgrade' /*= 'error'*/;
     zero_verse_strategy: 'error' | 'upgrade' | 'allow' /*= 'error'*/;
   }

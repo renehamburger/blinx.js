@@ -52,7 +52,7 @@ declare namespace Umbrella {
 
     empty(): Instance;
 
-    filter(a: any): Instance;
+    filter(criteria: string | Instance | ((node: Node, index: number) => boolean)): Instance;
 
     find(a: any): Instance;
 
@@ -79,7 +79,7 @@ declare namespace Umbrella {
 
     not(a: any): Instance;
 
-    off(a: any): void;
+    off(events: string | string[], handler?: Function): void;
 
     on(a?: any, b?: any, c?: any, ...args: any[]): Instance;
 

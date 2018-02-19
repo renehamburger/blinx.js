@@ -1,3 +1,6 @@
 import { Blinx } from './blinx';
 
-new Blinx().init();
+const blinx = new Blinx();
+blinx.init();
+
+window.blinx = blinx;
