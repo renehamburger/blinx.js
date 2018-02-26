@@ -2,15 +2,20 @@ import { Options, applyScriptTagOptions } from './options/options';
 import { loadPolyfills } from './helpers/polyfills';
 import { Parser } from './parser/parser.class';
 import { u } from 'umbrellajs';
+import { OnlineBible } from './online-bible/online-bible.class';
+import isString = require('lodash/isString');
+import { getOnlineBible } from './online-bible/online-bible-overview';
 
 export class Blinx {
 
   private options = new Options();
   private parser = new Parser();
+  private onlineBible: OnlineBible;
 
   /** Initialise blinx. */
-  public init(): void {
+  constructor() {
     applyScriptTagOptions(this.options);
+    this.onlineBible = getOnlineBible(this.options.onlineBible);
     let pending = 2;
     const callback = (successful: boolean) => {
       if (successful) {
@@ -132,9 +137,10 @@ export class Blinx {
   }
 
   private addLink(node: Node, ref: BCV.OsisAndIndices): void {
+    const versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion : this.options.bibleVersion.bibleText;
     u(node)
       .wrap(`<a></a>`)
-      .attr('href', '#')
+      .attr('href', this.onlineBible.getPassageLink(ref.osis, versionCode))
       .data('osis', ref.osis);
   }
 }

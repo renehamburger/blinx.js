@@ -43,9 +43,10 @@ export class Parser {
   private initBcvParser(options: Options) {
     this._bcv = this._bcv || new window.bcv_parser();
     if (Parser.getCurrentParserLanguage() === 'de') {
-      options.parserOptions = options.parserOptions || {
-        punctuation_strategy: 'eu'
-      };
+      options.parserOptions = options.parserOptions || {};
+      if (!('punctuation_strategy' in options.parserOptions)) {
+        options.parserOptions.punctuation_strategy = 'eu';
+      }
     }
     if (options.parserOptions) {
       this._bcv.set_options(options.parserOptions);

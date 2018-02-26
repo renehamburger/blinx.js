@@ -1,12 +1,18 @@
 import { Languages } from './languages';
 import { u } from 'umbrellajs';
 import { Parser } from '../parser/parser.class';
+import { BibleVersionCode } from '../bible-versions/bible-versions.const';
+import { OnlineBibleName } from '../online-bible/online-bible-overview';
 
 export class Options {
   [key: string]: any;
 
   /** Language code of the language to be used for the parser. */
   language: keyof Languages = 'en';
+  /** Code of the bible version to be used, for the displayed Bible text and the online Bible being linked to. */
+  bibleVersion: BibleVersionCode | { bibleText: BibleVersionCode, onlineBible: BibleVersionCode } = 'en.ESV';
+  /** Online Bible to be linked to. */
+  onlineBible: OnlineBibleName = 'BibleServer';
   /**
    * Futher options for the parser.
    * @see https://github.com/openbibleinfo/Bible-Passage-Reference-Parser#options
