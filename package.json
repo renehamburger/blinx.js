@@ -25,6 +25,7 @@
     "@types/lodash": "^4.14.104",
     "@types/node": "9.4.6",
     "awesome-typescript-loader": "3.4.1",
+    "circular-dependency-plugin": "^4.4.0",
     "jasmine-core": "2.99.1",
     "karma": "2.0.0",
     "karma-jasmine": "1.1.1",

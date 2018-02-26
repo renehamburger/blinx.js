@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 const ROOT = path.resolve( __dirname, 'src' );
 const DESTINATION = path.resolve( __dirname, 'dist' );
@@ -34,6 +35,17 @@ module.exports = {
     },
 
     devtool: 'cheap-module-source-map',
-    devServer: {}
+    devServer: {},
+
+    plugins: [
+        new CircularDependencyPlugin({
+          // exclude detection of files based on a RegExp
+          //   exclude: /a\.js|node_modules/,
+          // add errors to webpack instead of warnings
+          failOnError: true,
+          // set the current working directory for displaying module paths
+          cwd: process.cwd(),
+        })
+      ]
 };
 
