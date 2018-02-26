@@ -19,10 +19,10 @@ declare namespace BCV {
     /** This function returns an array. Each element in the array is an object with `osis` (a string), `translations` (an array of translation identifiers—an empty string unless a translation is specified), and `indices` (the start and end position in the string). The `indices` key is designed to be consistent with Twitter's implementation (the first character in a string has indices `[0, 1]`). */
     osis_and_indices(): OsisAndIndices[];
 
-    /** If you want to know a lot about how the BCV parser handled the input string, use this function. It can include messages if it adjusted the input or had trouble parsing it(e.g., if given an invalid reference). This function returns an array with a fairly complicated structure.The `entities` key can contain nested entities if you're parsing a sequence of references. */
+    /** If you want to know a lot about how the BCV parser handled the input string, use this function. It can include messages if it adjusted the input or had trouble parsing it (e.g., if given an invalid reference). This function returns an array with a fairly complicated structure.The `entities` key can contain nested entities if you're parsing a sequence of references. */
     parsed_entities(): ParsedEntity[];
 
-    /** If you set the value to`false` (the default behavior), it ignores books in the Apocrypha. */
+    /** If you set the value to `false` (the default behavior), it ignores books in the Apocrypha. */
     include_apocrypha(include: boolean): void;
 
     /** This function takes an object that sets parsing and output options. */
