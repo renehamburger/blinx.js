@@ -42,11 +42,14 @@ export class Parser {
 
   private initBcvParser(options: Options) {
     this._bcv = this._bcv || new window.bcv_parser();
+    options.parserOptions = options.parserOptions || {};
     if (Parser.getCurrentParserLanguage() === 'de') {
-      options.parserOptions = options.parserOptions || {};
       if (!('punctuation_strategy' in options.parserOptions)) {
         options.parserOptions.punctuation_strategy = 'eu';
       }
+    }
+    if (!('sequence_combination_strategy' in options.parserOptions)) {
+      options.parserOptions.sequence_combination_strategy = 'separate';
     }
     if (options.parserOptions) {
       this._bcv.set_options(options.parserOptions);

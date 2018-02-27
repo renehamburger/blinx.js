@@ -64,9 +64,7 @@ export class Blinx {
         // Look for all complete Bible references
         this.parser.bcv.parse(childNode.textContent || '');
         const refs = this.parser.bcv.osis_and_indices();
-        for (let i = refs.length - 1; i >= 0; i--) {
-          this.handleReferenceFoundInText(childNode, refs[i]);
-        }
+        this.handleReferencesFoundInText(childNode, refs);
       }
     }
   }
@@ -76,13 +74,21 @@ export class Blinx {
    * @param node Text node the given reference was found in
    * @param ref bcv_parser reference object
    */
-  private handleReferenceFoundInText(node: Text, ref: BCV.OsisAndIndices): void {
-    const remainder = node.splitText(ref.indices[1]);
-    const passage = node.splitText(ref.indices[0]);
-    if (passage) { // Always true in this case
-      this.addLink(passage, ref);
+  private handleReferencesFoundInText(node: Text, refs: BCV.OsisAndIndices[]): void {
+    for (let i = refs.length - 1; i >= 0; i--) {
+      const ref = refs[i];
+      const remainder = node.splitText(ref.indices[1]);
+      const passage = node.splitText(ref.indices[0]);
+      if (passage) { // Always true in this case
+        this.addLink(passage, ref);
+      }
+      this.parsePartialReferencesInText(remainder, this.convertOsisToContext(ref.osis));
     }
-    this.parsePartialReferencesInText(remainder, ref.osis);
+  }
+
+  private convertOsisToContext(osis: string): string {
+    const separator = this.options.parserOptions && this.options.parserOptions.punctuation_strategy === 'eu' ? ',' : ':';
+    return osis.replace(/(\d)\.(\d)/, `$1${separator}$2`).replace('.', ' ');
   }
 
   /**
@@ -91,7 +97,7 @@ export class Blinx {
    * *starts* with the partial passage, so the beginning needs to be
    * determined by searching for chapter/verse numbers.
    * @param node Text node
-   * @param previousPassage Previous recognized passage as parser context, e.g. an osis reference
+   * @param previousPassage Previous recognized passage as parser context
    */
   private parsePartialReferencesInText(node: Text, previousPassage: string): void {
     const text = node.textContent || '';
@@ -109,8 +115,6 @@ export class Blinx {
         if (matchPrefix) {
           possibleReferenceWithPrefix = matchPrefix[0] + possibleReferenceWithoutPrefix;
           offset = match.index - matchPrefix[0].length;
-        } else {
-          offset = match.index;
         }
       }
       // Check for possible reference with prefix first
@@ -120,14 +124,16 @@ export class Blinx {
       // If none available or unsuccessful, check for possible reference starting with number(s)
       if (!possibleReferenceWithPrefix || !this.parser.bcv.osis()) {
         this.parser.bcv.parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
+        offset = match.index;
       }
       // If either successful, adjust the indices due to the slice above and handle the reference
       const refs = this.parser.bcv.osis_and_indices();
       if (refs.length) {
-        const ref = refs[0];
-        ref.indices[0] += offset;
-        ref.indices[1] += offset;
-        this.handleReferenceFoundInText(node, refs[0]);
+        for (const ref of refs) {
+          ref.indices[0] += offset;
+          ref.indices[1] += offset;
+        }
+        this.handleReferencesFoundInText(node, refs);
       }
     }
   }
