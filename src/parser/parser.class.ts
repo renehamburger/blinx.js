@@ -29,7 +29,7 @@ export class Parser {
         callback(true);
       }
     } else {
-      loadScript(`https://rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/master/js/${options.language}_bcv_parser.js`, successful => {
+      loadScript(`https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/${options.language}_bcv_parser.js`, successful => {
         if (successful) {
           this.initBcvParser(options);
         }

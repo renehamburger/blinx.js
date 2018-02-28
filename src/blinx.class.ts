@@ -5,6 +5,7 @@ import { u } from 'umbrellajs';
 import { OnlineBible } from './online-bible/online-bible.class';
 import isString = require('lodash/isString');
 import { getOnlineBible } from './online-bible/online-bible-overview';
+import { BibleVersionCode } from './bible-versions/bible-versions.const';
 
 export class Blinx {
 
@@ -45,11 +46,17 @@ export class Blinx {
   /** Second step of initialisation after parser & polyfills loaded. */
   private initComplete(): void {
     if (this.options.parseAutomatically) {
-      const handler = () => {
-        u(document).off('DOMContentLoaded', handler);
+      if (/^complete|interactive|loaded$/.test(document.readyState)) {
+        // DOM already parsed
         this.execute();
-      };
-      u(document).on('DOMContentLoaded', handler);
+      } else {
+        // DOM content not yet loaded
+        const handler = () => {
+          u(document).off('DOMContentLoaded', handler);
+          this.execute();
+        };
+        u(document).on('DOMContentLoaded', handler);
+      }
     }
   }
 
@@ -143,7 +150,14 @@ export class Blinx {
   }
 
   private addLink(node: Node, ref: BCV.OsisAndIndices): void {
-    const versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion : this.options.bibleVersion.bibleText;
+    let versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion : this.options.bibleVersion.bibleText;
+    // If the versionCode does not match the given language, find the first version available for the given online Bible for this language
+    if (versionCode.indexOf(this.options.language) !== 0) {
+      const availableVersions = Object.keys(this.onlineBible.getAvailableVersions(this.options.language)) as BibleVersionCode[];
+      if (availableVersions.length) {
+        versionCode = availableVersions[0];
+      }
+    }
     u(node)
       .wrap(`<a></a>`)
       .attr('href', this.onlineBible.getPassageLink(ref.osis, versionCode))

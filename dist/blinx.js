@@ -111,7 +111,7 @@ var Parser = /** @class */ (function () {
             }
         }
         else {
-            dom_1.loadScript("https://rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/master/js/" + options.language + "_bcv_parser.js", function (successful) {
+            dom_1.loadScript("https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/" + options.language + "_bcv_parser.js", function (successful) {
                 if (successful) {
                     _this.initBcvParser(options);
                 }
@@ -231,11 +231,18 @@ var Blinx = /** @class */ (function () {
     Blinx.prototype.initComplete = function () {
         var _this = this;
         if (this.options.parseAutomatically) {
-            var handler_1 = function () {
-                umbrellajs_1.u(document).off('DOMContentLoaded', handler_1);
-                _this.execute();
-            };
-            umbrellajs_1.u(document).on('DOMContentLoaded', handler_1);
+            if (/^complete|interactive|loaded$/.test(document.readyState)) {
+                // DOM already parsed
+                this.execute();
+            }
+            else {
+                // DOM content not yet loaded
+                var handler_1 = function () {
+                    umbrellajs_1.u(document).off('DOMContentLoaded', handler_1);
+                    _this.execute();
+                };
+                umbrellajs_1.u(document).on('DOMContentLoaded', handler_1);
+            }
         }
     };
     /**
@@ -326,6 +333,13 @@ var Blinx = /** @class */ (function () {
     };
     Blinx.prototype.addLink = function (node, ref) {
         var versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion : this.options.bibleVersion.bibleText;
+        // If the versionCode does not match the given language, find the first version available for the given online Bible for this language
+        if (versionCode.indexOf(this.options.language) !== 0) {
+            var availableVersions = Object.keys(this.onlineBible.getAvailableVersions(this.options.language));
+            if (availableVersions.length) {
+                versionCode = availableVersions[0];
+            }
+        }
         umbrellajs_1.u(node)
             .wrap("<a></a>")
             .attr('href', this.onlineBible.getPassageLink(ref.osis, versionCode))
@@ -388,7 +402,9 @@ function applyScriptTagOptions(options) {
         }
     }
     for (var key in opts) {
-        options[key] = opts[key];
+        if (opts.hasOwnProperty(key)) {
+            options[key] = opts[key];
+        }
     }
 }
 exports.applyScriptTagOptions = applyScriptTagOptions;
@@ -767,9 +783,20 @@ var bible_versions_const_1 = __webpack_require__(20);
 var OnlineBible = /** @class */ (function () {
     function OnlineBible() {
     }
-    OnlineBible.prototype.getAvailableVersions = function () {
+    /** Return all available versions for this bible and (if provided) for the given language. */
+    OnlineBible.prototype.getAvailableVersions = function (language) {
         var allVersions = new bible_versions_const_1.BibleVersions();
-        return this.availableVersionCodes.map(function (code) { return allVersions[code]; });
+        var availableVersions = {};
+        for (var version in allVersions) {
+            if (allVersions.hasOwnProperty(version)) {
+                if (this.availableVersionCodes.indexOf(version) > -1) {
+                    if (!language || language === allVersions[version].languageCode) {
+                        availableVersions[version] = allVersions[version];
+                    }
+                }
+            }
+        }
+        return availableVersions;
     };
     return OnlineBible;
 }());
@@ -783,6 +810,10 @@ exports.OnlineBible = OnlineBible;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * All Bible versions supported by one of the online Bibles or Bible APIs.
+ * If the user has not specified a Bible version, the first one available for that language in the order given below will be chosen.
+ */
 var BibleVersions = /** @class */ (function () {
     function BibleVersions() {
         this['ar.ALAB'] = { title: 'التفسير التطبيقي للكتاب المقدس', languageCode: 'ar', availableSections: ['OT', 'NT'] };
@@ -794,20 +825,20 @@ var BibleVersions = /** @class */ (function () {
         this['cs.SNC'] = { title: 'Slovo na cestu', languageCode: 'cs', availableSections: ['OT', 'NT'] };
         this['da.DK'] = { title: 'Bibelen på hverdagsdansk', languageCode: 'da', availableSections: ['OT', 'NT'] };
         this['de.ELB'] = { title: 'Elberfelder Bibel', languageCode: 'de', availableSections: ['OT', 'NT'] };
+        this['de.ZB'] = { title: 'Zürcher Bibel', languageCode: 'de', availableSections: ['OT', 'NT'] };
+        this['de.LUT'] = { title: 'Lutherbibel 2017', languageCode: 'de', availableSections: ['OT', 'NT', 'Apocrypha'] };
+        this['de.NeÜ'] = { title: 'Neue evangelistische Übersetzung', languageCode: 'de', availableSections: ['OT', 'NT'] };
+        this['de.SLT'] = { title: 'Schlachter 2000', languageCode: 'de', availableSections: ['OT', 'NT'] };
         this['de.EU'] = { title: 'Einheitsübersetzung 2016', languageCode: 'de', availableSections: ['OT', 'NT', 'Apocrypha'] };
+        this['de.MENG'] = { title: 'Menge Bibel', languageCode: 'de', availableSections: ['OT', 'NT', 'Apocrypha'] };
+        this['de.NLB'] = { title: 'Neues Leben. Die Bibel', languageCode: 'de', availableSections: ['OT', 'NT'] };
         this['de.GNB'] = { title: 'Gute Nachricht Bibel', languageCode: 'de', availableSections: ['OT', 'NT', 'Apocrypha'] };
         this['de.HFA'] = { title: 'Hoffnung für Alle', languageCode: 'de', availableSections: ['OT', 'NT'] };
-        this['de.LUT'] = { title: 'Lutherbibel 2017', languageCode: 'de', availableSections: ['OT', 'NT', 'Apocrypha'] };
-        this['de.MENG'] = { title: 'Menge Bibel', languageCode: 'de', availableSections: ['OT', 'NT', 'Apocrypha'] };
-        this['de.NeÜ'] = { title: 'Neue evangelistische Übersetzung', languageCode: 'de', availableSections: ['OT', 'NT'] };
-        this['de.NGÜ'] = { title: 'Neue Genfer Übersetzung', languageCode: 'de', availableSections: ['Psalms', 'NT'] };
-        this['de.NLB'] = { title: 'Neues Leben. Die Bibel', languageCode: 'de', availableSections: ['OT', 'NT'] };
-        this['de.SLT'] = { title: 'Schlachter 2000', languageCode: 'de', availableSections: ['OT', 'NT'] };
-        this['de.ZB'] = { title: 'Zürcher Bibel', languageCode: 'de', availableSections: ['OT', 'NT'] };
+        this['de.NGÜ'] = { title: 'Neue Genfer Übersetzung', languageCode: 'de', availableSections: ['Psalms', 'NT'] }; // Very good but unfortunatly not complete
         this['en.ESV'] = { title: 'English Standard Version', languageCode: 'en', availableSections: ['OT', 'NT'] };
+        this['en.NIV'] = { title: 'New International Version', languageCode: 'en', availableSections: ['OT', 'NT'] };
         this['en.KJV'] = { title: 'King James Version', languageCode: 'en', availableSections: ['OT', 'NT'] };
         this['en.NIRV'] = { title: 'New Int. Readers Version', languageCode: 'en', availableSections: ['OT', 'NT'] };
-        this['en.NIV'] = { title: 'New International Version', languageCode: 'en', availableSections: ['OT', 'NT'] };
         this['es.BTX'] = { title: 'La Biblia Textual', languageCode: 'es', availableSections: ['OT', 'NT'] };
         this['es.CST'] = { title: 'Nueva Versión Internacional (Castilian)', languageCode: 'es', availableSections: ['OT', 'NT'] };
         this['es.NVI'] = { title: 'Nueva Versión Internacional', languageCode: 'es', availableSections: ['OT', 'NT'] };

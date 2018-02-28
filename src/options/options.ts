@@ -49,6 +49,8 @@ export function applyScriptTagOptions(options: Options): void {
     }
   }
   for (const key in opts) {
-    options[key] = opts[key];
+    if (opts.hasOwnProperty(key)) {
+      options[key] = opts[key];
+    }
   }
 }

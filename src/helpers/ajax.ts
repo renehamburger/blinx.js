@@ -74,8 +74,10 @@ export function ajax(action: string, options?: Umbrella.AjaxOptions, doneCallbac
   request.withCredentials = true;
 
   // Set the corresponding headers
-  for (let name in opt.headers) {
-    request.setRequestHeader(name, opt.headers[name]);
+  for (const name in opt.headers) {
+    if (opt.headers.hasOwnProperty(name)) {
+      request.setRequestHeader(name, opt.headers[name]);
+    }
   }
 
   // Load the before callback before sending the data

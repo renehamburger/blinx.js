@@ -1,7 +1,7 @@
 {
   "name": "blinx.js",
   "version": "0.0.1",
-  "description": "A multi-language client-side script to automatically convert Bible references to Bible links with a passage pop-up",
+  "description": "A multi-language client-side library to automatically convert Bible references to Bible links with passage pop-ups",
   "main": "dist/blinx.js",
   "scripts": {
     "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --watch --content-base src/",
