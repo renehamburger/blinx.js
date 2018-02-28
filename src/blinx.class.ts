@@ -28,7 +28,6 @@ export class Blinx {
     };
     this.parser.load(this.options, callback);
     loadPolyfills(callback);
-    this.initComplete();
   }
 
   /** Execute a parse for the given options. */

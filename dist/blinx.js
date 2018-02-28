@@ -216,7 +216,6 @@ var Blinx = /** @class */ (function () {
         };
         this.parser.load(this.options, callback);
         polyfills_1.loadPolyfills(callback);
-        this.initComplete();
     }
     /** Execute a parse for the given options. */
     Blinx.prototype.execute = function () {

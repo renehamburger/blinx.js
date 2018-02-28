@@ -23,7 +23,7 @@ For now, the script can be included directly from GitHub via RawGit, either thro
 }"></script>
 ```
 
-Here and below, `<RELEASE>` should be replaced by the [most recent release](https://github.com/renehamburger/blinx.js/releases), e.g. 'v0.0.1'.
+Here and below, `<RELEASE>` should be replaced by the [most recent release](https://github.com/renehamburger/blinx.js/releases), e.g. 'v0.0.3'.
 
 The `data-blinx` attribute contains the options for blinx.js. For now, look at the definitions of the [blinx.js Options](src/options/options.ts#L7) and the related classes & types such as the [available Languages](src/options/languages.ts) or [the Bible Passage Reference Parser's Options](typings/bible-passage-reference-parser/index.d.ts#L35).
 
@@ -43,8 +43,8 @@ The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determin
 var blinxScript = document.createElement("script");
 blinxScript.type = 'text/javascript';
 blinxScript.src = 'https://cdn.rawgit.com/renehamburger/blinx.js/<RELEASE>/dist/blinx.js';
-document.documentElement.firstChild.appendChild(blinxScript);
-blinxScript.setAttribute('data-blinx', '{ language: "de", bibleVersion: "de.EU" }');
+document.documentElement.appendChild(blinxScript);
+blinxScript.setAttribute('data-blinx', '{ language: "de" }');
 ```
 
 You can add the dynamic version as a bookmarklet to load and start the script on any page with Bible references.
