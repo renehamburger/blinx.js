@@ -18,31 +18,28 @@ For now, the script can be included directly from GitHub via RawGit, either thro
 ### Script tag
 
 ```html
-<script src="https://cdn.rawgit.com/renehamburger/blinx.js/<RELEASE>/dist/blinx.js" defer data-blinx="{
+<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.0.4/dist/blinx.js" defer data-blinx="{
   language: 'de'
 }"></script>
 ```
 
-Here and below, `<RELEASE>` should be replaced by the [most recent release](https://github.com/renehamburger/blinx.js/releases), e.g. 'v0.0.3'.
-
 The `data-blinx` attribute contains the options for blinx.js. For now, look at the definitions of the [blinx.js Options](src/options/options.ts#L7) and the related classes & types such as the [available Languages](src/options/languages.ts) or [the Bible Passage Reference Parser's Options](typings/bible-passage-reference-parser/index.d.ts#L35).
 
-2 further scripts will be loaded by blinx.js. To speed up load times, these two can already be loaded in parallel to blinx.js:
+1 further script will be loaded by blinx.js. To speed up load times, it can already be loaded in parallel to blinx.js:
 
 ```html
-<script src="https://cdn.polyfill.io/v2/polyfill.js?features=Element.prototype.classList|gated,Promise|gated" defer></script>
 <script src="https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/<LANGUAGE_CODE>_bcv_parser.js" defer></script>
-<script src="https://cdn.rawgit.com/renehamburger/blinx.js/<RELEASE>/dist/blinx.js" defer></script>
+<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.0.4/dist/blinx.js" defer></script>
 ```
 
-The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determine the language for blinx.js. ('537560a7' is the current [latest commit of the Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser/commits/master) and may need to be updated at a later stage, similar to the blinx.js' `<RELEASE>` placeholder above.
+The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determine the language for blinx.js. ('537560a7' is the current [latest commit of the Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser/commits/master) and may need to be updated at a later stage.
 
 ### Dynamically
 
 ```js
 var blinxScript = document.createElement("script");
 blinxScript.type = 'text/javascript';
-blinxScript.src = 'https://cdn.rawgit.com/renehamburger/blinx.js/<RELEASE>/dist/blinx.js';
+blinxScript.src = 'https://cdn.rawgit.com/renehamburger/blinx.js/v0.0.4/dist/blinx.js';
 document.documentElement.appendChild(blinxScript);
 blinxScript.setAttribute('data-blinx', '{ language: "de" }');
 ```

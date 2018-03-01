@@ -1,5 +1,4 @@
 import { Options, applyScriptTagOptions } from './options/options';
-import { loadPolyfills } from './helpers/polyfills';
 import { Parser } from './parser/parser.class';
 import { u } from 'umbrellajs';
 import { OnlineBible } from './online-bible/online-bible.class';
@@ -17,17 +16,11 @@ export class Blinx {
   constructor() {
     applyScriptTagOptions(this.options);
     this.onlineBible = getOnlineBible(this.options.onlineBible);
-    let pending = 2;
-    const callback = (successful: boolean) => {
+    this.parser.load(this.options, (successful: boolean) => {
       if (successful) {
-        pending--;
-        if (pending === 0) {
-          this.initComplete();
-        }
+        this.initComplete();
       }
-    };
-    this.parser.load(this.options, callback);
-    loadPolyfills(callback);
+    });
   }
 
   /** Execute a parse for the given options. */
@@ -42,7 +35,7 @@ export class Blinx {
       .each(node => this.parseReferencesInNode(node));
   }
 
-  /** Second step of initialisation after parser & polyfills loaded. */
+  /** Second step of initialisation after parser loaded. */
   private initComplete(): void {
     if (this.options.parseAutomatically) {
       if (/^complete|interactive|loaded$/.test(document.readyState)) {

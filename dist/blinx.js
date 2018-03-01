@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,7 +77,7 @@ function ajax(a,b,c,d){c=c||function(){},b=b||{},b.body=b.body||{},b.method=(b.m
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var dom_1 = __webpack_require__(2);
+var dom_1 = __webpack_require__(6);
 var Parser = /** @class */ (function () {
     function Parser() {
     }
@@ -145,32 +145,23 @@ exports.Parser = Parser;
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+var root = __webpack_require__(9);
 
-Object.defineProperty(exports, "__esModule", { value: true });
-/** Load script for the given src dynamicaly & asynchronously */
-function loadScript(src, callback) {
-    var script = document.createElement('script');
-    script.src = src;
-    if (callback) {
-        script.onload = function () { return callback(true); };
-        script.onerror = function () { return callback(false); };
-    }
-    document.body.appendChild(script);
-}
-exports.loadScript = loadScript;
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+module.exports = Symbol;
 
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(10);
+"use strict";
 
-/** Built-in value references. */
-var Symbol = root.Symbol;
-
-module.exports = Symbol;
+Object.defineProperty(exports, "__esModule", { value: true });
+var blinx_class_1 = __webpack_require__(4);
+window.blinx = new blinx_class_1.Blinx();
 
 
 /***/ }),
@@ -180,23 +171,11 @@ module.exports = Symbol;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var blinx_class_1 = __webpack_require__(5);
-window.blinx = new blinx_class_1.Blinx();
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var options_1 = __webpack_require__(6);
-var polyfills_1 = __webpack_require__(7);
+var options_1 = __webpack_require__(5);
 var parser_class_1 = __webpack_require__(1);
 var umbrellajs_1 = __webpack_require__(0);
-var isString = __webpack_require__(8);
-var online_bible_overview_1 = __webpack_require__(17);
+var isString = __webpack_require__(7);
+var online_bible_overview_1 = __webpack_require__(16);
 var Blinx = /** @class */ (function () {
     /** Initialise blinx. */
     function Blinx() {
@@ -205,17 +184,11 @@ var Blinx = /** @class */ (function () {
         this.parser = new parser_class_1.Parser();
         options_1.applyScriptTagOptions(this.options);
         this.onlineBible = online_bible_overview_1.getOnlineBible(this.options.onlineBible);
-        var pending = 2;
-        var callback = function (successful) {
+        this.parser.load(this.options, function (successful) {
             if (successful) {
-                pending--;
-                if (pending === 0) {
-                    _this.initComplete();
-                }
+                _this.initComplete();
             }
-        };
-        this.parser.load(this.options, callback);
-        polyfills_1.loadPolyfills(callback);
+        });
     }
     /** Execute a parse for the given options. */
     Blinx.prototype.execute = function () {
@@ -226,7 +199,7 @@ var Blinx = /** @class */ (function () {
             .not(this.options.blacklist.length ? this.options.blacklist.join(' *, ') + " *" : '')
             .each(function (node) { return _this.parseReferencesInNode(node); });
     };
-    /** Second step of initialisation after parser & polyfills loaded. */
+    /** Second step of initialisation after parser loaded. */
     Blinx.prototype.initComplete = function () {
         var _this = this;
         if (this.options.parseAutomatically) {
@@ -342,6 +315,7 @@ var Blinx = /** @class */ (function () {
         umbrellajs_1.u(node)
             .wrap("<a></a>")
             .attr('href', this.onlineBible.getPassageLink(ref.osis, versionCode))
+            .attr('target', '_blank')
             .data('osis', ref.osis);
     };
     return Blinx;
@@ -350,7 +324,7 @@ exports.Blinx = Blinx;
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -410,48 +384,32 @@ exports.applyScriptTagOptions = applyScriptTagOptions;
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var dom_1 = __webpack_require__(2);
-/** Load polyfills if required */
-function loadPolyfills(callback) {
-    if ('Promise' in window && classListSupported()) {
-        if (callback) {
-            callback(true);
-        }
+/** Load script for the given src dynamicaly & asynchronously */
+function loadScript(src, callback) {
+    var script = document.createElement('script');
+    script.src = src;
+    if (callback) {
+        script.onload = function () { return callback(true); };
+        script.onerror = function () { return callback(false); };
     }
-    else {
-        dom_1.loadScript("https://cdn.polyfill.io/v2/polyfill.js?features=Element.prototype.classList|gated,Promise|gated", callback);
-    }
+    document.body.appendChild(script);
 }
-exports.loadPolyfills = loadPolyfills;
-// Taken from polyfill.io guards
-function classListSupported() {
-    return 'DOMTokenList' in window &&
-        (function (x) { return 'classList' in x ? !x.classList.toggle('x', false) && !x.className : true; })(document.createElement('x')) &&
-        'document' in window &&
-        'classList' in document.documentElement &&
-        'Element' in window &&
-        'classList' in Element.prototype &&
-        (function () {
-            var e = document.createElement('span');
-            e.classList.add('a', 'b');
-            return e.classList.contains('b');
-        })();
-}
+exports.loadScript = loadScript;
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(9),
-    isArray = __webpack_require__(15),
-    isObjectLike = __webpack_require__(16);
+var baseGetTag = __webpack_require__(8),
+    isArray = __webpack_require__(14),
+    isObjectLike = __webpack_require__(15);
 
 /** `Object#toString` result references. */
 var stringTag = '[object String]';
@@ -482,12 +440,12 @@ module.exports = isString;
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(3),
-    getRawTag = __webpack_require__(13),
-    objectToString = __webpack_require__(14);
+var Symbol = __webpack_require__(2),
+    getRawTag = __webpack_require__(12),
+    objectToString = __webpack_require__(13);
 
 /** `Object#toString` result references. */
 var nullTag = '[object Null]',
@@ -516,10 +474,10 @@ module.exports = baseGetTag;
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var freeGlobal = __webpack_require__(11);
+var freeGlobal = __webpack_require__(10);
 
 /** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -531,7 +489,7 @@ module.exports = root;
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -539,10 +497,10 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 module.exports = freeGlobal;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports) {
 
 var g;
@@ -569,10 +527,10 @@ module.exports = g;
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(3);
+var Symbol = __webpack_require__(2);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -621,7 +579,7 @@ module.exports = getRawTag;
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -649,7 +607,7 @@ module.exports = objectToString;
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports) {
 
 /**
@@ -681,7 +639,7 @@ module.exports = isArray;
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports) {
 
 /**
@@ -716,13 +674,13 @@ module.exports = isObjectLike;
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var bible_server_online_bible_class_1 = __webpack_require__(18);
+var bible_server_online_bible_class_1 = __webpack_require__(17);
 function getOnlineBible(name) {
     return name === 'BibleServer' ? new bible_server_online_bible_class_1.BibleServerOnlineBible() : new bible_server_online_bible_class_1.BibleServerOnlineBible();
 }
@@ -730,7 +688,7 @@ exports.getOnlineBible = getOnlineBible;
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -746,7 +704,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var online_bible_class_1 = __webpack_require__(19);
+var online_bible_class_1 = __webpack_require__(18);
 var BibleServerOnlineBible = /** @class */ (function (_super) {
     __extends(BibleServerOnlineBible, _super);
     function BibleServerOnlineBible() {
@@ -772,13 +730,13 @@ exports.BibleServerOnlineBible = BibleServerOnlineBible;
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var bible_versions_const_1 = __webpack_require__(20);
+var bible_versions_const_1 = __webpack_require__(19);
 var OnlineBible = /** @class */ (function () {
     function OnlineBible() {
     }
@@ -803,7 +761,7 @@ exports.OnlineBible = OnlineBible;
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
