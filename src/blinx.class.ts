@@ -160,6 +160,7 @@ export class Blinx {
     u(node)
       .wrap(`<a></a>`)
       .attr('href', this.onlineBible.getPassageLink(ref.osis, versionCode))
+      .attr('target', '_blank')
       .data('osis', ref.osis);
   }
 }
