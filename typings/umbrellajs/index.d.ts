@@ -15,6 +15,7 @@ declare namespace Umbrella {
 
   interface Instance {
     length: number;
+    nodes: HTMLElement[];
 
     addClass(...names: any[]): Instance;
 

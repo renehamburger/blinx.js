@@ -5,12 +5,16 @@ import { OnlineBible } from './online-bible/online-bible.class';
 import isString = require('lodash/isString');
 import { getOnlineBible } from './online-bible/online-bible-overview';
 import { BibleVersionCode } from './bible-versions/bible-versions.const';
+import { loadScript, loadCSS } from './helpers/dom';
+import { Deferred } from './helpers/deferred.class';
 
 export class Blinx {
 
   private options = new Options();
   private parser = new Parser();
   private onlineBible: OnlineBible;
+  private tippyObjects: Tippy.Object[] = [];
+  private tippyLoaded = new Deferred<void>();
 
   /** Initialise blinx. */
   constructor() {
@@ -21,6 +25,7 @@ export class Blinx {
         this.initComplete();
       }
     });
+    this.loadTippy();
   }
 
   /** Execute a parse for the given options. */
@@ -33,6 +38,41 @@ export class Blinx {
       // Go one level deeper to get text nodes; NB: This does not keep the order or nodes
       // .map(node => node.hasChildNodes() && Array.prototype.slice.call(node.childNodes))
       .each(node => this.parseReferencesInNode(node));
+    // Once tippy.js is loaded, add tooltips
+    this.tippyLoaded.promise
+      .then(() => this.addTooltips());
+  }
+
+  private addTooltips() {
+    const versionCode = this.getVersionCode(this.onlineBible);
+    // Loop through all nodes in order to create a unique template for each
+    u('[data-osis]')
+      .each((node, index) => {
+        const osis = u(node).data('osis');
+        const template = u('<div />')
+          .html(`
+<a class="bxPassageLink" href="${this.onlineBible.getPassageLink(osis, versionCode)}" target="_blank">
+  ${this.convertOsisToContext(osis)}
+<a>
+<div class="bxPassageText">
+  ...
+</div>
+          `).attr('id', `bxTippyTemplate${index}`);
+        this.tippyObjects.push(
+          tippy(node as Element, {
+            placement: 'bottom',
+            theme: 'light',
+            interactive: true,
+            html: template.nodes[0],
+            onShow: (tippyInstance) => {
+              const osis = u(tippyInstance.reference).data('osis');
+              this.getTooltipContent(osis, (text: string) => {
+                u(template).find('.bxPassageText').html(text);
+              });
+            }
+          })
+        );
+      });
   }
 
   /** Second step of initialisation after parser loaded. */
@@ -142,18 +182,42 @@ export class Blinx {
   }
 
   private addLink(node: Node, ref: BCV.OsisAndIndices): void {
-    let versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion : this.options.bibleVersion.bibleText;
-    // If the versionCode does not match the given language, find the first version available for the given online Bible for this language
-    if (versionCode.indexOf(this.options.language) !== 0) {
-      const availableVersions = Object.keys(this.onlineBible.getAvailableVersions(this.options.language)) as BibleVersionCode[];
-      if (availableVersions.length) {
-        versionCode = availableVersions[0];
-      }
-    }
+    const versionCode = this.getVersionCode(this.onlineBible);
     u(node)
       .wrap(`<a></a>`)
       .attr('href', this.onlineBible.getPassageLink(ref.osis, versionCode))
       .attr('target', '_blank')
       .data('osis', ref.osis);
+  }
+
+  private getVersionCode(bible: OnlineBible): BibleVersionCode {
+    let versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion : this.options.bibleVersion.bibleText;
+    // If the versionCode does not match the given language, find the first version available for the given online Bible for this language
+    if (versionCode.indexOf(this.options.language) !== 0) {
+      const availableVersions = Object.keys(bible.getAvailableVersions(this.options.language)) as BibleVersionCode[];
+      if (availableVersions.length) {
+        versionCode = availableVersions[0];
+      }
+    }
+    return versionCode;
+  }
+
+  private getTooltipContent(osis: string, callback: (text: string) => void): void {
+    const versionCode = this.getVersionCode(this.onlineBible);
+    setTimeout(() => callback('Some text for ' + osis + ' ' + versionCode), 500);
+  }
+
+  private loadTippy() {
+    let counter = 2;
+    const callback = (successful: boolean) => {
+      if (successful) {
+        counter--;
+        if (counter === 0) {
+          this.tippyLoaded.resolve();
+        }
+      }
+    };
+    loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`, callback);
+    loadCSS('https://unpkg.com/tippy.js@2.2.3/dist/themes/light.css', callback);
   }
 }
