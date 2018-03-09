@@ -3,5 +3,3 @@
 interface Window {
   blinx: any;
 }
-
-declare const Promise: PromiseConstructorLike;

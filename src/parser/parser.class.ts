@@ -1,6 +1,6 @@
-import { LanguageCode } from '../options/languages';
-import { loadScript } from '../helpers/dom';
-import { Options } from '../options/options';
+import { LanguageCode } from 'src/options/languages';
+import { loadScript } from 'src/helpers/dom';
+import { Options } from 'src/options/options';
 
 export class Parser {
   private _bcv?: BCV.Parser;
@@ -29,14 +29,16 @@ export class Parser {
         callback(true);
       }
     } else {
-      loadScript(`https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/${options.language}_bcv_parser.js`, successful => {
-        if (successful) {
-          this.initBcvParser(options);
-        }
-        if (callback) {
-          callback(successful);
-        }
-      });
+      loadScript('https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/' +
+        `${options.language}_bcv_parser.js`,
+        successful => {
+          if (successful) {
+            this.initBcvParser(options);
+          }
+          if (callback) {
+            callback(successful);
+          }
+        });
     }
   }
 

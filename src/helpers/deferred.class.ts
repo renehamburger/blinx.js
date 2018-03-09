@@ -6,7 +6,7 @@ export type Resolver<T> = (value?: T | PromiseLike<T>) => void;
 export type Rejecter = (reason?: any) => void;
 
 export class Deferred<T> {
-  private _promise: PromiseLike<T>;
+  private _promise: Promise<T>;
   private _resolve?: Resolver<T>;
   private _reject?: Rejecter;
 
@@ -17,7 +17,7 @@ export class Deferred<T> {
     });
   }
 
-  get promise(): PromiseLike<T> {
+  get promise(): Promise<T> {
     return this._promise;
   }
 

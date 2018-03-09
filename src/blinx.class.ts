@@ -1,18 +1,23 @@
-import { Options, applyScriptTagOptions } from './options/options';
-import { Parser } from './parser/parser.class';
+import { Options, applyScriptTagOptions } from 'src/options/options';
+import { Parser } from 'src/parser/parser.class';
 import { u } from 'umbrellajs';
-import { OnlineBible } from './online-bible/online-bible.class';
+import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
 import isString = require('lodash/isString');
-import { getOnlineBible } from './online-bible/online-bible-overview';
-import { BibleVersionCode } from './bible-versions/bible-versions.const';
-import { loadScript, loadCSS } from './helpers/dom';
-import { Deferred } from './helpers/deferred.class';
+import { getOnlineBible } from 'src/bible/online-bible/online-bible-overview';
+import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
+import { loadScript, loadCSS } from 'src/helpers/dom';
+import { Deferred } from 'src/helpers/deferred.class';
+import { BibleApi } from 'src/bible/bible-api/bible-api.class';
+import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
+import { Bible } from 'src/bible/bible.class';
+import { transformOsis } from 'src/helpers/osis';
 
 export class Blinx {
 
   private options = new Options();
   private parser = new Parser();
   private onlineBible: OnlineBible;
+  private bibleApi: BibleApi;
   private tippyObjects: Tippy.Object[] = [];
   private tippyLoaded = new Deferred<void>();
 
@@ -20,6 +25,8 @@ export class Blinx {
   constructor() {
     applyScriptTagOptions(this.options);
     this.onlineBible = getOnlineBible(this.options.onlineBible);
+    // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
+    this.bibleApi = getBibleApi(this.options.bibleApi);
     this.parser.load(this.options, (successful: boolean) => {
       if (successful) {
         this.initComplete();
@@ -51,7 +58,7 @@ export class Blinx {
         const osis = u(node).data('osis');
         const template = u('<div />')
           .html(`
-<a class="bxPassageLink" href="${this.onlineBible.getPassageLink(osis, versionCode)}" target="_blank">
+<a class="bxPassageLink" href="${this.onlineBible.buildPassageLink(osis, versionCode)}" target="_blank">
   ${this.convertOsisToContext(osis)}
 <a>
 <div class="bxPassageText">
@@ -66,9 +73,10 @@ export class Blinx {
             html: template.nodes[0],
             onShow: (tippyInstance) => {
               const osis = u(tippyInstance.reference).data('osis');
-              this.getTooltipContent(osis, (text: string) => {
-                u(template).find('.bxPassageText').html(text);
-              });
+              this.getTooltipContent(osis)
+                .then((text: string) => {
+                  u(template).find('.bxPassageText').html(text);
+                });
             }
           })
         );
@@ -126,8 +134,9 @@ export class Blinx {
   }
 
   private convertOsisToContext(osis: string): string {
-    const separator = this.options.parserOptions && this.options.parserOptions.punctuation_strategy === 'eu' ? ',' : ':';
-    return osis.replace(/(\d)\.(\d)/, `$1${separator}$2`).replace('.', ' ');
+    const chapterVerse = this.options.parserOptions && this.options.parserOptions.punctuation_strategy === 'eu' ?
+      ',' : ':';
+    return transformOsis(osis, { bookChapter: ' ', chapterVerse });
   }
 
   /**
@@ -185,16 +194,18 @@ export class Blinx {
     const versionCode = this.getVersionCode(this.onlineBible);
     u(node)
       .wrap(`<a></a>`)
-      .attr('href', this.onlineBible.getPassageLink(ref.osis, versionCode))
+      .attr('href', this.onlineBible.buildPassageLink(ref.osis, versionCode))
       .attr('target', '_blank')
       .data('osis', ref.osis);
   }
 
-  private getVersionCode(bible: OnlineBible): BibleVersionCode {
-    let versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion : this.options.bibleVersion.bibleText;
-    // If the versionCode does not match the given language, find the first version available for the given online Bible for this language
-    if (versionCode.indexOf(this.options.language) !== 0) {
-      const availableVersions = Object.keys(bible.getAvailableVersions(this.options.language)) as BibleVersionCode[];
+  private getVersionCode(bible: Bible): BibleVersionCode {
+    let versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion :
+      this.options.bibleVersion.bibleText;
+    const availableVersions = Object.keys(bible.getAvailableVersions(this.options.language)) as BibleVersionCode[];
+    // If the versionCode does not match the given language or is not supported by the given Bible,
+    // find the first version available for the given online Bible for this language
+    if (versionCode.indexOf(this.options.language) !== 0 || availableVersions.indexOf(versionCode) === -1) {
       if (availableVersions.length) {
         versionCode = availableVersions[0];
       }
@@ -202,9 +213,9 @@ export class Blinx {
     return versionCode;
   }
 
-  private getTooltipContent(osis: string, callback: (text: string) => void): void {
-    const versionCode = this.getVersionCode(this.onlineBible);
-    setTimeout(() => callback('Some text for ' + osis + ' ' + versionCode), 500);
+  private getTooltipContent(osis: string): Promise<string> {
+    const versionCode = this.getVersionCode(this.bibleApi);
+    return this.bibleApi.getPassage(osis, versionCode);
   }
 
   private loadTippy() {
@@ -220,4 +231,5 @@ export class Blinx {
     loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`, callback);
     loadCSS('https://unpkg.com/tippy.js@2.2.3/dist/themes/light.css', callback);
   }
+
 }

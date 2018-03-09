@@ -1,8 +1,9 @@
-import { Languages } from './languages';
 import { u } from 'umbrellajs';
-import { Parser } from '../parser/parser.class';
-import { BibleVersionCode } from '../bible-versions/bible-versions.const';
-import { OnlineBibleName } from '../online-bible/online-bible-overview';
+import { Languages } from 'src/options/languages';
+import { Parser } from 'src/parser/parser.class';
+import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
+import { OnlineBibleName } from 'src/bible/online-bible/online-bible-overview';
+import { BibleApiName } from '../bible/bible-api/bible-api-overview';
 
 export class Options {
   [key: string]: any;
@@ -13,12 +14,16 @@ export class Options {
   bibleVersion: BibleVersionCode | { bibleText: BibleVersionCode, onlineBible: BibleVersionCode } = 'en.ESV';
   /** Online Bible to be linked to. */
   onlineBible: OnlineBibleName = 'BibleServer';
+  /** Online Bible to be linked to. */
+  bibleApi: BibleApiName = 'getBible';
   /**
    * Futher options for the parser.
    * @see https://github.com/openbibleinfo/Bible-Passage-Reference-Parser#options
    */
   parserOptions?: BCV.Options;
-  /** By default, the parse will start automatically once the page is loaded. If false, it needs to be triggered manually. */
+  /** By default, the parse will start automatically once the page is loaded. If false,
+   *  it needs to be triggered manually.
+   */
   parseAutomatically: boolean = true;
   /** Automatic parsing will happen within the elements with the following whitelisted selectors. */
   whitelist: string[] = ['body'];
@@ -41,7 +46,8 @@ export function applyScriptTagOptions(options: Options): void {
   } catch (e) {
     console.error(`Blinx: Invalid options: '${tagOptionsString}'`);
   }
-  // If user does not specify language in script tag, check whether he has inlcude a bcv_parser with a single language already
+  // If user does not specify language in script tag, check whether he has inlcude a bcv_parser with a
+  // single language already
   if (!(opts.language)) {
     const language = Parser.getCurrentParserLanguage();
     if (language) {

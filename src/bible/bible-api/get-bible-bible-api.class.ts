@@ -1,0 +1,201 @@
+import { BibleApi } from 'src/bible/bible-api/bible-api.class';
+import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
+import { executeJsonp } from 'src/helpers/jsonp';
+import { BibleVersionMap } from 'src/bible/bible.class';
+import { transformOsis, BookNameMap } from 'src/helpers/osis';
+
+interface VerseResponse {
+  type: 'verse';
+  version: string;
+  direction: 'LTR' | 'RTL';
+  book: [{
+    book_ref: string;
+    book_name: string;
+    book_nr: number | string;
+    chapter_nr: number | string;
+    chapter: {
+      [key: string]: {
+        verse_nr: number | string;
+        verse: string;
+      }
+    };
+  }];
+}
+
+interface ChapterResponse {
+  type: 'chapter';
+  version: string;
+  book_name: string;
+  book_nr: number | string;
+  chapter_nr: number | string;
+  direction: 'LTR' | 'RTL';
+  chapter: {
+    [key: string]: {
+      verse_nr: number | string;
+      verse: string;
+    }
+  };
+}
+
+type Response = VerseResponse | ChapterResponse;
+
+export class GetBibleBibleApi extends BibleApi {
+
+  protected readonly bibleVersionMap: BibleVersionMap = {
+    'af.AOV': 'aov',
+    'sq.Albanian': 'albanian',
+    'am.HSAB': 'hsab',
+    'am.Amharic': 'amharic',
+    'ar.ArabicSV': 'arabicsv',
+    'arc.Peshitta': 'peshitta',
+    'hy.EasternArmenian': 'easternarmenian',
+    'hy.WesternArmenian': 'westernarmenian',
+    'eu.Basque': 'basque',
+    'br.Breton': 'breton',
+    'bg.Bulgarian1940': 'bulgarian1940',
+    'ch.Chamorro': 'chamorro',
+    'za.CNT': 'cnt',
+    'za.CUS': 'cus',
+    'za.CNS': 'cns',
+    'za.CUT': 'cut',
+    'cop.Bohairic': 'bohairic',
+    'cop.Coptic': 'coptic',
+    'cop.Sahidic': 'sahidic',
+    'hr.Croatian': 'croatia',
+    'cs.BKR': 'bkr',
+    'cs.CEP': 'cep',
+    'cs.KMS': 'kms',
+    'cs.NKB': 'nkb',
+    'da.Danish': 'danish',
+    'nl.StatenVertaling': 'statenvertaling',
+    'en.KJV': 'kjv',
+    'en.AKJV': 'akjv',
+    'en.ASV': 'asv',
+    'en.BasicEnglish': 'basicenglish',
+    'en.Darby': 'darby',
+    'en.YLT': 'ylt',
+    'en.WEB': 'web',
+    'en.WB': 'wb',
+    'en.DouayRheims': 'douayrheims',
+    'en.Weymouth': 'weymouth',
+    'eo.Esperanto': 'esperanto',
+    'et.Estonian': 'estonian',
+    'fi.Finnish1776': 'finnish1776',
+    'fi.PyhaRaamattu1933': 'pyharaamattu1933',
+    'fi.PyhaRaamattu1992': 'pyharaamattu1992',
+    'fr.Martin': 'martin',
+    'fr.LS1910': 'ls1910',
+    'fr.Ostervald1996': 'ostervald',
+    'ka.Georgian': 'georgian',
+    'de.LUT1912': 'luther1912',
+    'de.ELB1871': 'elberfelder',
+    'de.ELB1905': 'elberfelder1905',
+    'de.LUT1545': 'luther1545',
+    'de.SLT1951': 'schlachter',
+    'got.Gothic': 'gothic',
+    'el.ModernGreek': 'moderngreek',
+    'grc.TextusReceptus': 'text',
+    'grc.MajorityTextParsed': 'majoritytext',
+    'grc.MajorityText': 'byzantine',
+    'grc.TextusReceptusParsed': 'textusreceptus',
+    'grc.Tischendorf': 'tischendorf',
+    'grc.WestcottHortParsed': 'westcotthort',
+    'grc.WestcottHort': 'westcott',
+    'grc.LXXParsed': 'lxxpar',
+    'grc.LXX': 'lxx',
+    'grc.LXXUnaccentedParsed': 'lxxunaccentspar',
+    'grc.LXXUnaccented': 'lxxunaccents',
+    'he.ModernHebrew': 'modernhebrew',
+    'hbo.Aleppo': 'aleppo',
+    'hbo.BHSUnpointed': 'bhsnovowels',
+    'hbo.BHS': 'bhs',
+    'hbo.WLCUnpointed': 'wlcnovowels',
+    'hbo.WLC': 'wlc',
+    'hbo.WLC2': 'codex',
+    'hu.Karoli': 'karoli',
+    'it.Giovanni': 'giovanni',
+    'it.Riveduta': 'riveduta',
+    'kab.Kabyle': 'kabyle',
+    'ko.Korean': 'korean',
+    'la.NewVulgate': 'newvulgate',
+    'la.Vulgate': 'vulgate',
+    'lv.Latvian': 'latvian',
+    'lt.Lithuanian': 'lithuanian',
+    'gv.ManxGaelic': 'manxgaelic',
+    'mi.Maori': 'maori',
+    'my.Judson': 'judson',
+    'no.Bibelselskap': 'bibelselskap',
+    'pt.Almeida': 'almeida',
+    'pot.Potawatomi': 'potawatomi',
+    'rom.ROM': 'rom',
+    'ro.Cornilescu': 'cornilescu',
+    'ru.Synodal': 'synodal',
+    'ru.Makarij': 'makarij',
+    'ru.Zhuromsky': 'zhuromsky',
+    'gd.Gaelic': 'gaelic',
+    'es.Valera': 'valera',
+    'es.RV1858': 'rv1858',
+    'es.SSE': 'sse',
+    'sw.Swahili': 'swahili',
+    'sv.Swedish': 'swedish',
+    'tl.Tagalog': 'tagalog',
+    'ttq.Tamajaq': 'tamajaq',
+    'th.Thai': 'thai',
+    'tr.Turkish': 'turkish',
+    'tr.TNT': 'tnt',
+    'uk.Ukranian': 'ukranian',
+    'ppk.Uma': 'uma',
+    'vi.Vietnamese': 'vietnamese',
+    'wo.Wolof': 'wolof',
+    'xh.Xhosa': 'xhosa'
+  };
+
+  private bookNameMap: BookNameMap = {
+    Exod: 'Exo',
+    Deut: 'Deu',
+    Josh: 'Jos',
+    Judg: 'Jud',
+    '1Kgs': '1Kg',
+    '2Kgs': '2Kg',
+    Ezra: 'Ezr',
+    Esth: 'Est',
+    Prov: 'Pro',
+    Eccl: 'Ecc',
+    Ezek: 'Eze',
+    Matt: 'Mat',
+    Jas: 'Jam'
+  };
+
+  public getPassage(osis: string, bibleVersion: BibleVersionCode): Promise<string> {
+    osis = transformOsis(osis, { bookNameMap: this.bookNameMap });
+    return executeJsonp<Response>(
+      `http://getbible.net/json?p=${osis}&v=${this.bibleVersionMap[bibleVersion]}`, 'getbible'
+    ).then(result => {
+      let output = '';
+      let chapterObject: ChapterResponse['chapter'] | undefined = undefined;
+      if (result.type === 'verse') {
+        if (result.book.length !== 1) {
+          throw new Error('GetBibleBibleApi::getPassage() - Multiple books not supported');
+        }
+        chapterObject = result.book[0].chapter;
+      } else if (result.type === 'chapter') {
+        chapterObject = result.chapter;
+      }
+      if (chapterObject) {
+        for (const chapterIndex in chapterObject) {
+          if (chapterObject.hasOwnProperty(chapterIndex)) {
+            const chapter = chapterObject[chapterIndex];
+            output += `
+<span class="bxVerse">
+  <span class="bxVerseNumber">
+    ${chapter.verse_nr}
+  </span>
+  ${chapter.verse.trim()}
+</span>`;
+          }
+        }
+      }
+      return output;
+    });
+  }
+}
