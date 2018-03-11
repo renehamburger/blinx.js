@@ -11,6 +11,7 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis } from 'src/helpers/osis';
+import { loadPolyfills } from 'src/helpers/polyfills';
 
 export class Blinx {
 
@@ -27,11 +28,19 @@ export class Blinx {
     this.onlineBible = getOnlineBible(this.options.onlineBible);
     // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
     this.bibleApi = getBibleApi(this.options.bibleApi);
-    this.parser.load(this.options, (successful: boolean) => {
+    // Load dependencies required for link creation
+    let pending = 2;
+    const callback = (successful: boolean) => {
       if (successful) {
-        this.initComplete();
+        pending--;
+        if (pending === 0) {
+          this.initComplete();
+        }
       }
-    });
+    };
+    this.parser.load(this.options, callback);
+    loadPolyfills(callback);
+    // Load dependencies required for tooltip display
     this.loadTippy();
   }
 
@@ -83,7 +92,7 @@ export class Blinx {
       });
   }
 
-  /** Second step of initialisation after parser loaded. */
+  /** Second step of initialisation after parser & polyfills are loaded. */
   private initComplete(): void {
     if (this.options.parseAutomatically) {
       if (/^complete|interactive|loaded$/.test(document.readyState)) {

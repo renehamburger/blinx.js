@@ -1,4 +1,4 @@
-import { BibleBook } from '../bible/versions/bible-version.interface';
+import { BibleBook } from 'src/bible/versions/bible-version.interface';
 
 export interface BibleReferencePoint {
   book: BibleBook;

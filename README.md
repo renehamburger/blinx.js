@@ -18,18 +18,19 @@ For now, the script can be included directly from GitHub via RawGit, either thro
 ### Script tag
 
 ```html
-<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.0.4/dist/blinx.js" defer data-blinx="{
+<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.0.5/dist/blinx.js" defer data-blinx="{
   language: 'de'
 }"></script>
 ```
 
 The `data-blinx` attribute contains the options for blinx.js. For now, look at the definitions of the [blinx.js Options](src/options/options.ts#L7) and the related classes & types such as the [available Languages](src/options/languages.ts) or [the Bible Passage Reference Parser's Options](typings/bible-passage-reference-parser/index.d.ts#L35).
 
-1 further script will be loaded by blinx.js. To speed up load times, it can already be loaded in parallel to blinx.js:
+blinx.js loads several resources it requires dnamically and asynchronously. To speed up the identification and linking of Bible references on the page, the following two scripts can already be loaded in parallel to blinx.js:
 
 ```html
+<script src="https://cdn.polyfill.io/v2/polyfill.js?features=Promise|gated" defer></script>
 <script src="https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/<LANGUAGE_CODE>_bcv_parser.js" defer></script>
-<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.0.4/dist/blinx.js" defer></script>
+<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.0.5/dist/blinx.js" defer></script>
 ```
 
 The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determine the language for blinx.js. ('537560a7' is the current [latest commit of the Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser/commits/master) and may need to be updated at a later stage.
@@ -39,7 +40,7 @@ The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determin
 ```js
 var blinxScript = document.createElement("script");
 blinxScript.type = 'text/javascript';
-blinxScript.src = 'https://cdn.rawgit.com/renehamburger/blinx.js/v0.0.4/dist/blinx.js';
+blinxScript.src = 'https://cdn.rawgit.com/renehamburger/blinx.js/v0.0.5/dist/blinx.js';
 document.documentElement.appendChild(blinxScript);
 blinxScript.setAttribute('data-blinx', '{ language: "de" }');
 ```

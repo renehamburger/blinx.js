@@ -1,4 +1,4 @@
-import { parseOsis, transformOsis } from './osis';
+import { parseOsis, transformOsis } from 'src/helpers/osis';
 
 describe('Osis helpers - ', () => {
 
