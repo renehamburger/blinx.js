@@ -4,7 +4,7 @@ import { u } from 'umbrellajs';
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
 import isString = require('lodash/isString');
 import { getOnlineBible } from 'src/bible/online-bible/online-bible-overview';
-import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
+import { BibleVersionCode, BibleVersions } from 'src/bible/versions/bible-versions.const';
 import { loadScript, loadCSS } from 'src/helpers/dom';
 import { Deferred } from 'src/helpers/deferred.class';
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';
@@ -12,6 +12,9 @@ import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis } from 'src/helpers/osis';
 import { loadPolyfills } from 'src/helpers/polyfills';
+import 'src/css/blinx.css';
+
+const bibleVersions = new BibleVersions();
 
 export class Blinx {
 
@@ -67,16 +70,30 @@ export class Blinx {
         const osis = u(node).data('osis');
         const template = u('<div />')
           .html(`
-<a class="bxPassageLink" href="${this.onlineBible.buildPassageLink(osis, versionCode)}" target="_blank">
-  ${this.convertOsisToContext(osis)}
-<a>
-<div class="bxPassageText">
-  ...
+<div class="bxTippy">
+  <div class="bxTippyBody">
+    <span class="bxPassageText">
+      <div class="bxLoader"></div>
+    </span>
+  </div>
+  <div class="bxTippyFooter">
+    <a class="bxPassageLink" href="${this.onlineBible.buildPassageLink(osis, versionCode)}" target="_blank">
+      ${this.convertOsisToContext(osis)}</a>
+    <span class="bxCredits">
+      retrieved from
+      <a href="${this.bibleApi.url}">${this.bibleApi.title}</a>
+      by
+      <a href="https://github.com/renehamburger/blinx.js">blinx.js</a>.
+    </span>
+  </div>
 </div>
           `).attr('id', `bxTippyTemplate${index}`);
         this.tippyObjects.push(
           tippy(node as Element, {
-            placement: 'bottom',
+            placement: 'top',
+            arrow: true,
+            arrowType: 'round',
+            maxWidth: '800px',
             theme: 'light',
             interactive: true,
             html: template.nodes[0],
@@ -224,21 +241,20 @@ export class Blinx {
 
   private getTooltipContent(osis: string): Promise<string> {
     const versionCode = this.getVersionCode(this.bibleApi);
-    return this.bibleApi.getPassage(osis, versionCode);
+    return this.bibleApi.getPassage(osis, versionCode)
+      .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`);
   }
 
   private loadTippy() {
     let counter = 2;
-    const callback = (successful: boolean) => {
-      if (successful) {
-        counter--;
-        if (counter === 0) {
-          this.tippyLoaded.resolve();
-        }
+    const callback = () => {
+      counter--;
+      if (counter === 0) {
+        this.tippyLoaded.resolve();
       }
     };
-    loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`, callback);
-    loadCSS('https://unpkg.com/tippy.js@2.2.3/dist/themes/light.css', callback);
+    loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`).then(callback);
+    loadCSS('https://unpkg.com/tippy.js/dist/themes/light.css').then(callback);
   }
 
 }

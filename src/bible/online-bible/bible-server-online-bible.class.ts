@@ -4,6 +4,9 @@ import { transformOsis } from 'src/helpers/osis';
 
 export class BibleServerOnlineBible extends OnlineBible {
 
+  public readonly title = 'BibleServer';
+  public readonly url = 'https://www.bibleserver.com';
+
   protected readonly bibleVersionMap = {
     'ar.ALAB': 'ALAB',
     'bg.BGV': 'BGV',

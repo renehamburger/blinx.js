@@ -53,7 +53,14 @@ module.exports = {
                 test: /\.ts$/,
                 exclude: [ /node_modules/ ],
                 use: 'awesome-typescript-loader'
-            }
+            },
+            {
+                test: /\.css$/,
+                use: [
+                  { loader: 'style-loader' },
+                  { loader: 'css-loader' }
+                ]
+              }
         ]
     },
 

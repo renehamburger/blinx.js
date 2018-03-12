@@ -1,6 +1,6 @@
 {
   "name": "blinx.js",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A multi-language client-side library to automatically convert Bible references to Bible links with passage pop-ups",
   "main": "dist/blinx.js",
   "scripts": {
@@ -26,12 +26,14 @@
     "@types/node": "9.4.6",
     "awesome-typescript-loader": "3.4.1",
     "circular-dependency-plugin": "^4.4.0",
+    "css-loader": "^0.28.10",
     "jasmine-core": "2.99.1",
     "karma": "2.0.0",
     "karma-jasmine": "1.1.1",
     "karma-phantomjs-launcher": "1.0.4",
     "karma-webpack": "2.0.9",
     "source-map-loader": "0.2.3",
+    "style-loader": "^0.20.3",
     "tsconfig-paths-webpack-plugin": "^2.0.0",
     "tslint": "5.9.1",
     "tslint-config-standard": "7.0.0",

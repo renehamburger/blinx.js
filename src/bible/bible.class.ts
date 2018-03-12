@@ -6,6 +6,8 @@ export type BibleVersionMap = {
 };
 
 export abstract class Bible {
+  public readonly abstract title: string;
+  public readonly abstract url: string;
   protected readonly abstract bibleVersionMap: BibleVersionMap;
 
   /** Return all available versions for this bible and (if provided) for the given language. */

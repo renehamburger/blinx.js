@@ -67,11 +67,11 @@ export class BibleVersions implements BibleVersionsInterface {
   'de.GNB' = { title: 'Gute Nachricht Bibel', languageCode: 'de', availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[] };
   'de.HFA' = { title: 'Hoffnung für Alle', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
   'de.NGÜ' = { title: 'Neue Genfer Übersetzung', languageCode: 'de', availableSections: ['Psalms', 'NT'] as BibleSection[] }; // Very good but unfortunatly not complete
-  'de.SLT1951' = { title: 'Schlachter (1951)', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
-  'de.ELB1905' = { title: 'Elberfelder (1905)', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
-  'de.ELB1871' = { title: 'Elberfelder (1871)', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
-  'de.LUT1912' = { title: 'Luther (1912)', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
-  'de.LUT1545' = { title: 'Luther (1545)', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
+  'de.SLT1951' = { title: 'Schlachter 1951', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
+  'de.ELB1905' = { title: 'Elberfelder 1905', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
+  'de.ELB1871' = { title: 'Elberfelder 1871', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
+  'de.LUT1912' = { title: 'Luther 1912', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
+  'de.LUT1545' = { title: 'Luther 1545', languageCode: 'de', availableSections: ['OT', 'NT'] as BibleSection[] };
 
   // Modern Greek
   'el.ModernGreek' = { title: 'Modern Greek', languageCode: 'el', availableSections: ['OT', 'NT'] as BibleSection[] };

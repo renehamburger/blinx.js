@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,28 +70,41 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/** Load script for the given src dynamicaly & asynchronously */
-function loadScript(src, callback) {
+function loadScript(url, callback) {
     var script = document.createElement('script');
-    script.src = src;
+    script.src = url;
+    document.body.appendChild(script);
     if (callback) {
         script.onload = function () { return callback(true); };
         script.onerror = function () { return callback(false); };
     }
-    document.body.appendChild(script);
+    else if ('Promise' in window) {
+        return new Promise(function (resolve, reject) {
+            script.onload = function () { return resolve(); };
+            script.onerror = function () { return reject(); };
+        });
+    }
 }
 exports.loadScript = loadScript;
-function loadCSS(src, callback) {
-    var link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = src;
-    if (callback) {
-        link.onload = function () { return callback(true); };
-        link.onerror = function () { return callback(false); };
-    }
-    document.head.appendChild(link);
+/** Load script for the given url dynamically & asynchronously */
+function loadCSS(url) {
+    return new Promise(function (resolve, reject) {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        link.onload = function () { return resolve(); };
+        link.onerror = function () { return reject(); };
+        document.head.appendChild(link);
+    });
 }
 exports.loadCSS = loadCSS;
+function injectCSS(content) {
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = content;
+    document.head.appendChild(style);
+}
+exports.injectCSS = injectCSS;
 
 
 /***/ }),
@@ -263,7 +276,7 @@ exports.Parser = Parser;
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(11);
+var root = __webpack_require__(12);
 
 /** Built-in value references. */
 var Symbol = root.Symbol;
@@ -278,7 +291,7 @@ module.exports = Symbol;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var bible_versions_const_1 = __webpack_require__(21);
+var bible_versions_const_1 = __webpack_require__(6);
 var Bible = /** @class */ (function () {
     function Bible() {
     }
@@ -304,709 +317,6 @@ exports.Bible = Bible;
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var blinx_class_1 = __webpack_require__(7);
-window.blinx = new blinx_class_1.Blinx();
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var options_1 = __webpack_require__(8);
-var parser_class_1 = __webpack_require__(3);
-var umbrellajs_1 = __webpack_require__(2);
-var isString = __webpack_require__(9);
-var online_bible_overview_1 = __webpack_require__(18);
-var dom_1 = __webpack_require__(0);
-var deferred_class_1 = __webpack_require__(22);
-var bible_api_overview_1 = __webpack_require__(23);
-var osis_1 = __webpack_require__(1);
-var polyfills_1 = __webpack_require__(27);
-var Blinx = /** @class */ (function () {
-    /** Initialise blinx. */
-    function Blinx() {
-        var _this = this;
-        this.options = new options_1.Options();
-        this.parser = new parser_class_1.Parser();
-        this.tippyObjects = [];
-        this.tippyLoaded = new deferred_class_1.Deferred();
-        options_1.applyScriptTagOptions(this.options);
-        this.onlineBible = online_bible_overview_1.getOnlineBible(this.options.onlineBible);
-        // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
-        this.bibleApi = bible_api_overview_1.getBibleApi(this.options.bibleApi);
-        // Load dependencies required for link creation
-        var pending = 2;
-        var callback = function (successful) {
-            if (successful) {
-                pending--;
-                if (pending === 0) {
-                    _this.initComplete();
-                }
-            }
-        };
-        this.parser.load(this.options, callback);
-        polyfills_1.loadPolyfills(callback);
-        // Load dependencies required for tooltip display
-        this.loadTippy();
-    }
-    /** Execute a parse for the given options. */
-    Blinx.prototype.execute = function () {
-        var _this = this;
-        // Search within all whitelisted selectors
-        umbrellajs_1.u(this.options.whitelist.length ? this.options.whitelist.join(' *, ') + " *" : 'body')
-            .not(this.options.blacklist.join(', '))
-            .not(this.options.blacklist.length ? this.options.blacklist.join(' *, ') + " *" : '')
-            .each(function (node) { return _this.parseReferencesInNode(node); });
-        // Once tippy.js is loaded, add tooltips
-        this.tippyLoaded.promise
-            .then(function () { return _this.addTooltips(); });
-    };
-    Blinx.prototype.addTooltips = function () {
-        var _this = this;
-        var versionCode = this.getVersionCode(this.onlineBible);
-        // Loop through all nodes in order to create a unique template for each
-        umbrellajs_1.u('[data-osis]')
-            .each(function (node, index) {
-            var osis = umbrellajs_1.u(node).data('osis');
-            var template = umbrellajs_1.u('<div />')
-                .html("\n<a class=\"bxPassageLink\" href=\"" + _this.onlineBible.buildPassageLink(osis, versionCode) + "\" target=\"_blank\">\n  " + _this.convertOsisToContext(osis) + "\n<a>\n<div class=\"bxPassageText\">\n  ...\n</div>\n          ").attr('id', "bxTippyTemplate" + index);
-            _this.tippyObjects.push(tippy(node, {
-                placement: 'bottom',
-                theme: 'light',
-                interactive: true,
-                html: template.nodes[0],
-                onShow: function (tippyInstance) {
-                    var osis = umbrellajs_1.u(tippyInstance.reference).data('osis');
-                    _this.getTooltipContent(osis)
-                        .then(function (text) {
-                        umbrellajs_1.u(template).find('.bxPassageText').html(text);
-                    });
-                }
-            }));
-        });
-    };
-    /** Second step of initialisation after parser & polyfills are loaded. */
-    Blinx.prototype.initComplete = function () {
-        var _this = this;
-        if (this.options.parseAutomatically) {
-            if (/^complete|interactive|loaded$/.test(document.readyState)) {
-                // DOM already parsed
-                this.execute();
-            }
-            else {
-                // DOM content not yet loaded
-                var handler_1 = function () {
-                    umbrellajs_1.u(document).off('DOMContentLoaded', handler_1);
-                    _this.execute();
-                };
-                umbrellajs_1.u(document).on('DOMContentLoaded', handler_1);
-            }
-        }
-    };
-    /**
-     * Look for and link all references found in the text node children of the given node.
-     * @param node Any
-     */
-    Blinx.prototype.parseReferencesInNode = function (node) {
-        var childNodes = Array.prototype.slice.call(node.childNodes);
-        for (var _i = 0, childNodes_1 = childNodes; _i < childNodes_1.length; _i++) {
-            var childNode = childNodes_1[_i];
-            if (this.isTextNode(childNode)) {
-                // Look for all complete Bible references
-                this.parser.bcv.parse(childNode.textContent || '');
-                var refs = this.parser.bcv.osis_and_indices();
-                this.handleReferencesFoundInText(childNode, refs);
-            }
-        }
-    };
-    /**
-     * Link the given reference and continue looking for further (partial) references in the remaining text.
-     * @param node Text node the given reference was found in
-     * @param ref bcv_parser reference object
-     */
-    Blinx.prototype.handleReferencesFoundInText = function (node, refs) {
-        for (var i = refs.length - 1; i >= 0; i--) {
-            var ref = refs[i];
-            var remainder = node.splitText(ref.indices[1]);
-            var passage = node.splitText(ref.indices[0]);
-            if (passage) {
-                this.addLink(passage, ref);
-            }
-            this.parsePartialReferencesInText(remainder, this.convertOsisToContext(ref.osis));
-        }
-    };
-    Blinx.prototype.convertOsisToContext = function (osis) {
-        var chapterVerse = this.options.parserOptions && this.options.parserOptions.punctuation_strategy === 'eu' ?
-            ',' : ':';
-        return osis_1.transformOsis(osis, { bookChapter: ' ', chapterVerse: chapterVerse });
-    };
-    /**
-     * Look for and link partial references in the given text node.
-     * Unfortunately, bcv.parse_with_context() only works, if the string
-     * *starts* with the partial passage, so the beginning needs to be
-     * determined by searching for chapter/verse numbers.
-     * @param node Text node
-     * @param previousPassage Previous recognized passage as parser context
-     */
-    Blinx.prototype.parsePartialReferencesInText = function (node, previousPassage) {
-        var text = node.textContent || '';
-        // Search for first number
-        var match = text.match(/\d/);
-        // TODO: Check support of match.index
-        if (match && typeof match.index !== 'undefined') {
-            var possibleReferenceWithPrefix = '';
-            var possibleReferenceWithoutPrefix = text.slice(match.index);
-            var offset = 0;
-            if (match.index > 0) {
-                // Check if it is preceded by a prefix (which could be 'chapter ' or 'vs.' etc.)
-                var preceding = text.slice(0, match.index);
-                var matchPrefix = preceding.match(/\w+\.?\s*$/);
-                if (matchPrefix) {
-                    possibleReferenceWithPrefix = matchPrefix[0] + possibleReferenceWithoutPrefix;
-                    offset = match.index - matchPrefix[0].length;
-                }
-            }
-            // Check for possible reference with prefix first
-            if (possibleReferenceWithPrefix) {
-                this.parser.bcv.parse_with_context(possibleReferenceWithPrefix, previousPassage);
-            }
-            // If none available or unsuccessful, check for possible reference starting with number(s)
-            if (!possibleReferenceWithPrefix || !this.parser.bcv.osis()) {
-                this.parser.bcv.parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
-                offset = match.index;
-            }
-            // If either successful, adjust the indices due to the slice above and handle the reference
-            var refs = this.parser.bcv.osis_and_indices();
-            if (refs.length) {
-                for (var _i = 0, refs_1 = refs; _i < refs_1.length; _i++) {
-                    var ref = refs_1[_i];
-                    ref.indices[0] += offset;
-                    ref.indices[1] += offset;
-                }
-                this.handleReferencesFoundInText(node, refs);
-            }
-        }
-    };
-    Blinx.prototype.isTextNode = function (node) {
-        return node.nodeType === node.TEXT_NODE;
-    };
-    Blinx.prototype.addLink = function (node, ref) {
-        var versionCode = this.getVersionCode(this.onlineBible);
-        umbrellajs_1.u(node)
-            .wrap("<a></a>")
-            .attr('href', this.onlineBible.buildPassageLink(ref.osis, versionCode))
-            .attr('target', '_blank')
-            .data('osis', ref.osis);
-    };
-    Blinx.prototype.getVersionCode = function (bible) {
-        var versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion :
-            this.options.bibleVersion.bibleText;
-        var availableVersions = Object.keys(bible.getAvailableVersions(this.options.language));
-        // If the versionCode does not match the given language or is not supported by the given Bible,
-        // find the first version available for the given online Bible for this language
-        if (versionCode.indexOf(this.options.language) !== 0 || availableVersions.indexOf(versionCode) === -1) {
-            if (availableVersions.length) {
-                versionCode = availableVersions[0];
-            }
-        }
-        return versionCode;
-    };
-    Blinx.prototype.getTooltipContent = function (osis) {
-        var versionCode = this.getVersionCode(this.bibleApi);
-        return this.bibleApi.getPassage(osis, versionCode);
-    };
-    Blinx.prototype.loadTippy = function () {
-        var _this = this;
-        var counter = 2;
-        var callback = function (successful) {
-            if (successful) {
-                counter--;
-                if (counter === 0) {
-                    _this.tippyLoaded.resolve();
-                }
-            }
-        };
-        dom_1.loadScript("https://unpkg.com/tippy.js/dist/tippy.all.js", callback);
-        dom_1.loadCSS('https://unpkg.com/tippy.js@2.2.3/dist/themes/light.css', callback);
-    };
-    return Blinx;
-}());
-exports.Blinx = Blinx;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var umbrellajs_1 = __webpack_require__(2);
-var parser_class_1 = __webpack_require__(3);
-var Options = /** @class */ (function () {
-    function Options() {
-        /** Language code of the language to be used for the parser. */
-        this.language = 'en';
-        /** Code of the bible version to be used, for the displayed Bible text and the online Bible being linked to. */
-        this.bibleVersion = 'en.ESV';
-        /** Online Bible to be linked to. */
-        this.onlineBible = 'BibleServer';
-        /** Online Bible to be linked to. */
-        this.bibleApi = 'getBible';
-        /** By default, the parse will start automatically once the page is loaded. If false,
-         *  it needs to be triggered manually.
-         */
-        this.parseAutomatically = true;
-        /** Automatic parsing will happen within the elements with the following whitelisted selectors. */
-        this.whitelist = ['body'];
-        /** Automatic parsing can be disabled with the following whitelisted selectors. */
-        this.blacklist = ['a'];
-    }
-    return Options;
-}());
-exports.Options = Options;
-function applyScriptTagOptions(options) {
-    // Parse options object from data-blinx attribute on script tag
-    var tagOptionsString = umbrellajs_1.u('script[data-blinx]').data('blinx');
-    var opts = {};
-    try {
-        // tslint:disable-next-line:no-eval
-        var evalOpts = eval("(" + tagOptionsString + ")");
-        if (evalOpts instanceof Object) {
-            opts = evalOpts;
-        }
-        else {
-            throw new Error();
-        }
-    }
-    catch (e) {
-        console.error("Blinx: Invalid options: '" + tagOptionsString + "'");
-    }
-    // If user does not specify language in script tag, check whether he has inlcude a bcv_parser with a
-    // single language already
-    if (!(opts.language)) {
-        var language = parser_class_1.Parser.getCurrentParserLanguage();
-        if (language) {
-            opts.language = language;
-        }
-    }
-    for (var key in opts) {
-        if (opts.hasOwnProperty(key)) {
-            options[key] = opts[key];
-        }
-    }
-}
-exports.applyScriptTagOptions = applyScriptTagOptions;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseGetTag = __webpack_require__(10),
-    isArray = __webpack_require__(16),
-    isObjectLike = __webpack_require__(17);
-
-/** `Object#toString` result references. */
-var stringTag = '[object String]';
-
-/**
- * Checks if `value` is classified as a `String` primitive or object.
- *
- * @static
- * @since 0.1.0
- * @memberOf _
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a string, else `false`.
- * @example
- *
- * _.isString('abc');
- * // => true
- *
- * _.isString(1);
- * // => false
- */
-function isString(value) {
-  return typeof value == 'string' ||
-    (!isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag);
-}
-
-module.exports = isString;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Symbol = __webpack_require__(4),
-    getRawTag = __webpack_require__(14),
-    objectToString = __webpack_require__(15);
-
-/** `Object#toString` result references. */
-var nullTag = '[object Null]',
-    undefinedTag = '[object Undefined]';
-
-/** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-/**
- * The base implementation of `getTag` without fallbacks for buggy environments.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the `toStringTag`.
- */
-function baseGetTag(value) {
-  if (value == null) {
-    return value === undefined ? undefinedTag : nullTag;
-  }
-  return (symToStringTag && symToStringTag in Object(value))
-    ? getRawTag(value)
-    : objectToString(value);
-}
-
-module.exports = baseGetTag;
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var freeGlobal = __webpack_require__(12);
-
-/** Detect free variable `self`. */
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-/** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
-
-module.exports = root;
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
-var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
-
-module.exports = freeGlobal;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Symbol = __webpack_require__(4);
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var nativeObjectToString = objectProto.toString;
-
-/** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-/**
- * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the raw `toStringTag`.
- */
-function getRawTag(value) {
-  var isOwn = hasOwnProperty.call(value, symToStringTag),
-      tag = value[symToStringTag];
-
-  try {
-    value[symToStringTag] = undefined;
-    var unmasked = true;
-  } catch (e) {}
-
-  var result = nativeObjectToString.call(value);
-  if (unmasked) {
-    if (isOwn) {
-      value[symToStringTag] = tag;
-    } else {
-      delete value[symToStringTag];
-    }
-  }
-  return result;
-}
-
-module.exports = getRawTag;
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var nativeObjectToString = objectProto.toString;
-
-/**
- * Converts `value` to a string using `Object.prototype.toString`.
- *
- * @private
- * @param {*} value The value to convert.
- * @returns {string} Returns the converted string.
- */
-function objectToString(value) {
-  return nativeObjectToString.call(value);
-}
-
-module.exports = objectToString;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is classified as an `Array` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an array, else `false`.
- * @example
- *
- * _.isArray([1, 2, 3]);
- * // => true
- *
- * _.isArray(document.body.children);
- * // => false
- *
- * _.isArray('abc');
- * // => false
- *
- * _.isArray(_.noop);
- * // => false
- */
-var isArray = Array.isArray;
-
-module.exports = isArray;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return value != null && typeof value == 'object';
-}
-
-module.exports = isObjectLike;
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var bible_server_online_bible_class_1 = __webpack_require__(19);
-function getOnlineBible(name) {
-    return name === 'BibleServer' ? new bible_server_online_bible_class_1.BibleServerOnlineBible() : new bible_server_online_bible_class_1.BibleServerOnlineBible();
-}
-exports.getOnlineBible = getOnlineBible;
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var online_bible_class_1 = __webpack_require__(20);
-var osis_1 = __webpack_require__(1);
-var BibleServerOnlineBible = /** @class */ (function (_super) {
-    __extends(BibleServerOnlineBible, _super);
-    function BibleServerOnlineBible() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.bibleVersionMap = {
-            'ar.ALAB': 'ALAB',
-            'bg.BGV': 'BGV',
-            'bg.CBT': 'CBT',
-            'cs.B21': 'B21',
-            'cs.BKR': 'BKR',
-            'cs.CEP': 'CEP',
-            'cs.SNC': 'SNC',
-            'da.DK': 'DK',
-            'de.ELB': 'ELB',
-            'de.EU': 'EU',
-            'de.GNB': 'GNB',
-            'de.HFA': 'HFA',
-            'de.LUT': 'LUT',
-            'de.MENG': 'MENG',
-            'de.NeÜ': 'NeÜ',
-            'de.NGÜ': 'NGÜ',
-            'de.NLB': 'NLB',
-            'de.SLT': 'SLT',
-            'de.ZB': 'ZB',
-            'en.ESV': 'ESV',
-            'en.KJV': 'KJV',
-            'en.NIRV': 'NIRV',
-            'en.NIV': 'NIV',
-            'es.BTX': 'BTX',
-            'es.CST': 'CST',
-            'es.NVI': 'NVI',
-            'fa.FCB': 'FCB',
-            'fr.BDS': 'BDS',
-            'fr.LSG': 'LSG',
-            'fr.S21': 'S21',
-            'he.OT': 'OT',
-            'hr.CKK': 'CKK',
-            'hu.HUN': 'HUN',
-            'hu.KAR': 'KAR',
-            'it.ITA': 'ITA',
-            'it.NRS': 'NRS',
-            'grc.LXX': 'LXX',
-            'la.VUL': 'VUL',
-            'nl.HTB': 'HTB',
-            'no.NOR': 'NOR',
-            'pl.PSZ': 'PSZ',
-            'pt.PRT': 'PRT',
-            'ro.NTR': 'NTR',
-            'ru.CARS': 'CARS',
-            'ru.RSZ': 'RSZ',
-            'sk.NPK': 'NPK',
-            'sv.BSV': 'BSV',
-            'tr.TR': 'TR',
-            'za.CCBT': 'CCBT',
-            'za.CUVS': 'CUVS'
-        };
-        return _this;
-    }
-    BibleServerOnlineBible.prototype.buildPassageLink = function (osis, bibleVersion) {
-        osis = osis_1.transformOsis(osis);
-        return "https://www.bibleserver.com/text/" + bibleVersion.split('.')[1] + "/" + osis;
-    };
-    return BibleServerOnlineBible;
-}(online_bible_class_1.OnlineBible));
-exports.BibleServerOnlineBible = BibleServerOnlineBible;
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var bible_class_1 = __webpack_require__(5);
-var OnlineBible = /** @class */ (function (_super) {
-    __extends(OnlineBible, _super);
-    function OnlineBible() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return OnlineBible;
-}(bible_class_1.Bible));
-exports.OnlineBible = OnlineBible;
-
-
-/***/ }),
-/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1062,11 +372,11 @@ var BibleVersions = /** @class */ (function () {
         this['de.GNB'] = { title: 'Gute Nachricht Bibel', languageCode: 'de', availableSections: ['OT', 'NT', 'Apocrypha'] };
         this['de.HFA'] = { title: 'Hoffnung für Alle', languageCode: 'de', availableSections: ['OT', 'NT'] };
         this['de.NGÜ'] = { title: 'Neue Genfer Übersetzung', languageCode: 'de', availableSections: ['Psalms', 'NT'] }; // Very good but unfortunatly not complete
-        this['de.SLT1951'] = { title: 'Schlachter (1951)', languageCode: 'de', availableSections: ['OT', 'NT'] };
-        this['de.ELB1905'] = { title: 'Elberfelder (1905)', languageCode: 'de', availableSections: ['OT', 'NT'] };
-        this['de.ELB1871'] = { title: 'Elberfelder (1871)', languageCode: 'de', availableSections: ['OT', 'NT'] };
-        this['de.LUT1912'] = { title: 'Luther (1912)', languageCode: 'de', availableSections: ['OT', 'NT'] };
-        this['de.LUT1545'] = { title: 'Luther (1545)', languageCode: 'de', availableSections: ['OT', 'NT'] };
+        this['de.SLT1951'] = { title: 'Schlachter 1951', languageCode: 'de', availableSections: ['OT', 'NT'] };
+        this['de.ELB1905'] = { title: 'Elberfelder 1905', languageCode: 'de', availableSections: ['OT', 'NT'] };
+        this['de.ELB1871'] = { title: 'Elberfelder 1871', languageCode: 'de', availableSections: ['OT', 'NT'] };
+        this['de.LUT1912'] = { title: 'Luther 1912', languageCode: 'de', availableSections: ['OT', 'NT'] };
+        this['de.LUT1545'] = { title: 'Luther 1545', languageCode: 'de', availableSections: ['OT', 'NT'] };
         // Modern Greek
         this['el.ModernGreek'] = { title: 'Modern Greek', languageCode: 'el', availableSections: ['OT', 'NT'] };
         // English
@@ -1238,6 +548,716 @@ exports.BibleVersions = BibleVersions;
 
 
 /***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var blinx_class_1 = __webpack_require__(8);
+window.blinx = new blinx_class_1.Blinx();
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var options_1 = __webpack_require__(9);
+var parser_class_1 = __webpack_require__(3);
+var umbrellajs_1 = __webpack_require__(2);
+var isString = __webpack_require__(10);
+var online_bible_overview_1 = __webpack_require__(19);
+var bible_versions_const_1 = __webpack_require__(6);
+var dom_1 = __webpack_require__(0);
+var deferred_class_1 = __webpack_require__(22);
+var bible_api_overview_1 = __webpack_require__(23);
+var osis_1 = __webpack_require__(1);
+var polyfills_1 = __webpack_require__(27);
+__webpack_require__(28);
+var bibleVersions = new bible_versions_const_1.BibleVersions();
+var Blinx = /** @class */ (function () {
+    /** Initialise blinx. */
+    function Blinx() {
+        var _this = this;
+        this.options = new options_1.Options();
+        this.parser = new parser_class_1.Parser();
+        this.tippyObjects = [];
+        this.tippyLoaded = new deferred_class_1.Deferred();
+        options_1.applyScriptTagOptions(this.options);
+        this.onlineBible = online_bible_overview_1.getOnlineBible(this.options.onlineBible);
+        // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
+        this.bibleApi = bible_api_overview_1.getBibleApi(this.options.bibleApi);
+        // Load dependencies required for link creation
+        var pending = 2;
+        var callback = function (successful) {
+            if (successful) {
+                pending--;
+                if (pending === 0) {
+                    _this.initComplete();
+                }
+            }
+        };
+        this.parser.load(this.options, callback);
+        polyfills_1.loadPolyfills(callback);
+        // Load dependencies required for tooltip display
+        this.loadTippy();
+    }
+    /** Execute a parse for the given options. */
+    Blinx.prototype.execute = function () {
+        var _this = this;
+        // Search within all whitelisted selectors
+        umbrellajs_1.u(this.options.whitelist.length ? this.options.whitelist.join(' *, ') + " *" : 'body')
+            .not(this.options.blacklist.join(', '))
+            .not(this.options.blacklist.length ? this.options.blacklist.join(' *, ') + " *" : '')
+            .each(function (node) { return _this.parseReferencesInNode(node); });
+        // Once tippy.js is loaded, add tooltips
+        this.tippyLoaded.promise
+            .then(function () { return _this.addTooltips(); });
+    };
+    Blinx.prototype.addTooltips = function () {
+        var _this = this;
+        var versionCode = this.getVersionCode(this.onlineBible);
+        // Loop through all nodes in order to create a unique template for each
+        umbrellajs_1.u('[data-osis]')
+            .each(function (node, index) {
+            var osis = umbrellajs_1.u(node).data('osis');
+            var template = umbrellajs_1.u('<div />')
+                .html("\n<div class=\"bxTippy\">\n  <div class=\"bxTippyBody\">\n    <span class=\"bxPassageText\">\n      <div class=\"bxLoader\"></div>\n    </span>\n  </div>\n  <div class=\"bxTippyFooter\">\n    <a class=\"bxPassageLink\" href=\"" + _this.onlineBible.buildPassageLink(osis, versionCode) + "\" target=\"_blank\">\n      " + _this.convertOsisToContext(osis) + "</a>\n    <span class=\"bxCredits\">\n      retrieved from\n      <a href=\"" + _this.bibleApi.url + "\">" + _this.bibleApi.title + "</a>\n      by\n      <a href=\"https://github.com/renehamburger/blinx.js\">blinx.js</a>.\n    </span>\n  </div>\n</div>\n          ").attr('id', "bxTippyTemplate" + index);
+            _this.tippyObjects.push(tippy(node, {
+                placement: 'top',
+                arrow: true,
+                arrowType: 'round',
+                maxWidth: '800px',
+                theme: 'light',
+                interactive: true,
+                html: template.nodes[0],
+                onShow: function (tippyInstance) {
+                    var osis = umbrellajs_1.u(tippyInstance.reference).data('osis');
+                    _this.getTooltipContent(osis)
+                        .then(function (text) {
+                        umbrellajs_1.u(template).find('.bxPassageText').html(text);
+                    });
+                }
+            }));
+        });
+    };
+    /** Second step of initialisation after parser & polyfills are loaded. */
+    Blinx.prototype.initComplete = function () {
+        var _this = this;
+        if (this.options.parseAutomatically) {
+            if (/^complete|interactive|loaded$/.test(document.readyState)) {
+                // DOM already parsed
+                this.execute();
+            }
+            else {
+                // DOM content not yet loaded
+                var handler_1 = function () {
+                    umbrellajs_1.u(document).off('DOMContentLoaded', handler_1);
+                    _this.execute();
+                };
+                umbrellajs_1.u(document).on('DOMContentLoaded', handler_1);
+            }
+        }
+    };
+    /**
+     * Look for and link all references found in the text node children of the given node.
+     * @param node Any
+     */
+    Blinx.prototype.parseReferencesInNode = function (node) {
+        var childNodes = Array.prototype.slice.call(node.childNodes);
+        for (var _i = 0, childNodes_1 = childNodes; _i < childNodes_1.length; _i++) {
+            var childNode = childNodes_1[_i];
+            if (this.isTextNode(childNode)) {
+                // Look for all complete Bible references
+                this.parser.bcv.parse(childNode.textContent || '');
+                var refs = this.parser.bcv.osis_and_indices();
+                this.handleReferencesFoundInText(childNode, refs);
+            }
+        }
+    };
+    /**
+     * Link the given reference and continue looking for further (partial) references in the remaining text.
+     * @param node Text node the given reference was found in
+     * @param ref bcv_parser reference object
+     */
+    Blinx.prototype.handleReferencesFoundInText = function (node, refs) {
+        for (var i = refs.length - 1; i >= 0; i--) {
+            var ref = refs[i];
+            var remainder = node.splitText(ref.indices[1]);
+            var passage = node.splitText(ref.indices[0]);
+            if (passage) {
+                this.addLink(passage, ref);
+            }
+            this.parsePartialReferencesInText(remainder, this.convertOsisToContext(ref.osis));
+        }
+    };
+    Blinx.prototype.convertOsisToContext = function (osis) {
+        var chapterVerse = this.options.parserOptions && this.options.parserOptions.punctuation_strategy === 'eu' ?
+            ',' : ':';
+        return osis_1.transformOsis(osis, { bookChapter: ' ', chapterVerse: chapterVerse });
+    };
+    /**
+     * Look for and link partial references in the given text node.
+     * Unfortunately, bcv.parse_with_context() only works, if the string
+     * *starts* with the partial passage, so the beginning needs to be
+     * determined by searching for chapter/verse numbers.
+     * @param node Text node
+     * @param previousPassage Previous recognized passage as parser context
+     */
+    Blinx.prototype.parsePartialReferencesInText = function (node, previousPassage) {
+        var text = node.textContent || '';
+        // Search for first number
+        var match = text.match(/\d/);
+        // TODO: Check support of match.index
+        if (match && typeof match.index !== 'undefined') {
+            var possibleReferenceWithPrefix = '';
+            var possibleReferenceWithoutPrefix = text.slice(match.index);
+            var offset = 0;
+            if (match.index > 0) {
+                // Check if it is preceded by a prefix (which could be 'chapter ' or 'vs.' etc.)
+                var preceding = text.slice(0, match.index);
+                var matchPrefix = preceding.match(/\w+\.?\s*$/);
+                if (matchPrefix) {
+                    possibleReferenceWithPrefix = matchPrefix[0] + possibleReferenceWithoutPrefix;
+                    offset = match.index - matchPrefix[0].length;
+                }
+            }
+            // Check for possible reference with prefix first
+            if (possibleReferenceWithPrefix) {
+                this.parser.bcv.parse_with_context(possibleReferenceWithPrefix, previousPassage);
+            }
+            // If none available or unsuccessful, check for possible reference starting with number(s)
+            if (!possibleReferenceWithPrefix || !this.parser.bcv.osis()) {
+                this.parser.bcv.parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
+                offset = match.index;
+            }
+            // If either successful, adjust the indices due to the slice above and handle the reference
+            var refs = this.parser.bcv.osis_and_indices();
+            if (refs.length) {
+                for (var _i = 0, refs_1 = refs; _i < refs_1.length; _i++) {
+                    var ref = refs_1[_i];
+                    ref.indices[0] += offset;
+                    ref.indices[1] += offset;
+                }
+                this.handleReferencesFoundInText(node, refs);
+            }
+        }
+    };
+    Blinx.prototype.isTextNode = function (node) {
+        return node.nodeType === node.TEXT_NODE;
+    };
+    Blinx.prototype.addLink = function (node, ref) {
+        var versionCode = this.getVersionCode(this.onlineBible);
+        umbrellajs_1.u(node)
+            .wrap("<a></a>")
+            .attr('href', this.onlineBible.buildPassageLink(ref.osis, versionCode))
+            .attr('target', '_blank')
+            .data('osis', ref.osis);
+    };
+    Blinx.prototype.getVersionCode = function (bible) {
+        var versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion :
+            this.options.bibleVersion.bibleText;
+        var availableVersions = Object.keys(bible.getAvailableVersions(this.options.language));
+        // If the versionCode does not match the given language or is not supported by the given Bible,
+        // find the first version available for the given online Bible for this language
+        if (versionCode.indexOf(this.options.language) !== 0 || availableVersions.indexOf(versionCode) === -1) {
+            if (availableVersions.length) {
+                versionCode = availableVersions[0];
+            }
+        }
+        return versionCode;
+    };
+    Blinx.prototype.getTooltipContent = function (osis) {
+        var versionCode = this.getVersionCode(this.bibleApi);
+        return this.bibleApi.getPassage(osis, versionCode)
+            .then(function (text) { return text + " <span class=\"bxPassageVersion\">" + bibleVersions[versionCode].title + "</span>"; });
+    };
+    Blinx.prototype.loadTippy = function () {
+        var _this = this;
+        var counter = 2;
+        var callback = function () {
+            counter--;
+            if (counter === 0) {
+                _this.tippyLoaded.resolve();
+            }
+        };
+        dom_1.loadScript("https://unpkg.com/tippy.js/dist/tippy.all.js").then(callback);
+        dom_1.loadCSS('https://unpkg.com/tippy.js/dist/themes/light.css').then(callback);
+    };
+    return Blinx;
+}());
+exports.Blinx = Blinx;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var umbrellajs_1 = __webpack_require__(2);
+var parser_class_1 = __webpack_require__(3);
+var Options = /** @class */ (function () {
+    function Options() {
+        /** Language code of the language to be used for the parser. */
+        this.language = 'en';
+        /** Code of the bible version to be used, for the displayed Bible text and the online Bible being linked to. */
+        this.bibleVersion = 'en.ESV';
+        /** Online Bible to be linked to. */
+        this.onlineBible = 'BibleServer';
+        /** Online Bible to be linked to. */
+        this.bibleApi = 'getBible';
+        /** By default, the parse will start automatically once the page is loaded. If false,
+         *  it needs to be triggered manually.
+         */
+        this.parseAutomatically = true;
+        /** Automatic parsing will happen within the elements with the following whitelisted selectors. */
+        this.whitelist = ['body'];
+        /** Automatic parsing can be disabled with the following whitelisted selectors. */
+        this.blacklist = ['a'];
+    }
+    return Options;
+}());
+exports.Options = Options;
+function applyScriptTagOptions(options) {
+    // Parse options object from data-blinx attribute on script tag
+    var tagOptionsString = umbrellajs_1.u('script[data-blinx]').data('blinx');
+    var opts = {};
+    try {
+        // tslint:disable-next-line:no-eval
+        var evalOpts = eval("(" + tagOptionsString + ")");
+        if (evalOpts instanceof Object) {
+            opts = evalOpts;
+        }
+        else {
+            throw new Error();
+        }
+    }
+    catch (e) {
+        console.error("Blinx: Invalid options: '" + tagOptionsString + "'");
+    }
+    // If user does not specify language in script tag, check whether he has inlcude a bcv_parser with a
+    // single language already
+    if (!(opts.language)) {
+        var language = parser_class_1.Parser.getCurrentParserLanguage();
+        if (language) {
+            opts.language = language;
+        }
+    }
+    for (var key in opts) {
+        if (opts.hasOwnProperty(key)) {
+            options[key] = opts[key];
+        }
+    }
+}
+exports.applyScriptTagOptions = applyScriptTagOptions;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseGetTag = __webpack_require__(11),
+    isArray = __webpack_require__(17),
+    isObjectLike = __webpack_require__(18);
+
+/** `Object#toString` result references. */
+var stringTag = '[object String]';
+
+/**
+ * Checks if `value` is classified as a `String` primitive or object.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a string, else `false`.
+ * @example
+ *
+ * _.isString('abc');
+ * // => true
+ *
+ * _.isString(1);
+ * // => false
+ */
+function isString(value) {
+  return typeof value == 'string' ||
+    (!isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag);
+}
+
+module.exports = isString;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Symbol = __webpack_require__(4),
+    getRawTag = __webpack_require__(15),
+    objectToString = __webpack_require__(16);
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var freeGlobal = __webpack_require__(13);
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+module.exports = freeGlobal;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Symbol = __webpack_require__(4);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
+  }
+  return result;
+}
+
+module.exports = getRawTag;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+module.exports = objectToString;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+module.exports = isArray;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var bible_server_online_bible_class_1 = __webpack_require__(20);
+function getOnlineBible(name) {
+    return name === 'BibleServer' ? new bible_server_online_bible_class_1.BibleServerOnlineBible() : new bible_server_online_bible_class_1.BibleServerOnlineBible();
+}
+exports.getOnlineBible = getOnlineBible;
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var online_bible_class_1 = __webpack_require__(21);
+var osis_1 = __webpack_require__(1);
+var BibleServerOnlineBible = /** @class */ (function (_super) {
+    __extends(BibleServerOnlineBible, _super);
+    function BibleServerOnlineBible() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.title = 'BibleServer';
+        _this.url = 'https://www.bibleserver.com';
+        _this.bibleVersionMap = {
+            'ar.ALAB': 'ALAB',
+            'bg.BGV': 'BGV',
+            'bg.CBT': 'CBT',
+            'cs.B21': 'B21',
+            'cs.BKR': 'BKR',
+            'cs.CEP': 'CEP',
+            'cs.SNC': 'SNC',
+            'da.DK': 'DK',
+            'de.ELB': 'ELB',
+            'de.EU': 'EU',
+            'de.GNB': 'GNB',
+            'de.HFA': 'HFA',
+            'de.LUT': 'LUT',
+            'de.MENG': 'MENG',
+            'de.NeÜ': 'NeÜ',
+            'de.NGÜ': 'NGÜ',
+            'de.NLB': 'NLB',
+            'de.SLT': 'SLT',
+            'de.ZB': 'ZB',
+            'en.ESV': 'ESV',
+            'en.KJV': 'KJV',
+            'en.NIRV': 'NIRV',
+            'en.NIV': 'NIV',
+            'es.BTX': 'BTX',
+            'es.CST': 'CST',
+            'es.NVI': 'NVI',
+            'fa.FCB': 'FCB',
+            'fr.BDS': 'BDS',
+            'fr.LSG': 'LSG',
+            'fr.S21': 'S21',
+            'he.OT': 'OT',
+            'hr.CKK': 'CKK',
+            'hu.HUN': 'HUN',
+            'hu.KAR': 'KAR',
+            'it.ITA': 'ITA',
+            'it.NRS': 'NRS',
+            'grc.LXX': 'LXX',
+            'la.VUL': 'VUL',
+            'nl.HTB': 'HTB',
+            'no.NOR': 'NOR',
+            'pl.PSZ': 'PSZ',
+            'pt.PRT': 'PRT',
+            'ro.NTR': 'NTR',
+            'ru.CARS': 'CARS',
+            'ru.RSZ': 'RSZ',
+            'sk.NPK': 'NPK',
+            'sv.BSV': 'BSV',
+            'tr.TR': 'TR',
+            'za.CCBT': 'CCBT',
+            'za.CUVS': 'CUVS'
+        };
+        return _this;
+    }
+    BibleServerOnlineBible.prototype.buildPassageLink = function (osis, bibleVersion) {
+        osis = osis_1.transformOsis(osis);
+        return "https://www.bibleserver.com/text/" + bibleVersion.split('.')[1] + "/" + osis;
+    };
+    return BibleServerOnlineBible;
+}(online_bible_class_1.OnlineBible));
+exports.BibleServerOnlineBible = BibleServerOnlineBible;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var bible_class_1 = __webpack_require__(5);
+var OnlineBible = /** @class */ (function (_super) {
+    __extends(OnlineBible, _super);
+    function OnlineBible() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return OnlineBible;
+}(bible_class_1.Bible));
+exports.OnlineBible = OnlineBible;
+
+
+/***/ }),
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1308,6 +1328,8 @@ var GetBibleBibleApi = /** @class */ (function (_super) {
     __extends(GetBibleBibleApi, _super);
     function GetBibleBibleApi() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.title = 'getBible.net';
+        _this.url = 'https://getbible.net/api';
         _this.bibleVersionMap = {
             'af.AOV': 'aov',
             'sq.Albanian': 'albanian',
@@ -1435,7 +1457,7 @@ var GetBibleBibleApi = /** @class */ (function (_super) {
     }
     GetBibleBibleApi.prototype.getPassage = function (osis, bibleVersion) {
         osis = osis_1.transformOsis(osis, { bookNameMap: this.bookNameMap });
-        return jsonp_1.executeJsonp("http://getbible.net/json?p=" + osis + "&v=" + this.bibleVersionMap[bibleVersion], 'getbible').then(function (result) {
+        return jsonp_1.executeJsonp("https://getbible.net/json?p=" + osis + "&v=" + this.bibleVersionMap[bibleVersion], 'getbible').then(function (result) {
             var output = '';
             var chapterObject = undefined;
             if (result.type === 'verse') {
@@ -1508,11 +1530,10 @@ function executeJsonp(url, callbackParameter) {
             resolve(result);
         };
         var completeUrl = "" + url + (url.indexOf('?') === -1 ? '?' : '&') + callbackParameter + "=" + callbackName;
-        dom_1.loadScript(completeUrl, function (successful) {
-            if (!successful) {
-                delete window[callbackName];
-                reject(false);
-            }
+        return dom_1.loadScript(completeUrl)
+            .catch(function () {
+            delete window[callbackName];
+            reject();
         });
     });
 }
@@ -1539,6 +1560,629 @@ function loadPolyfills(callback) {
     }
 }
 exports.loadPolyfills = loadPolyfills;
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(29);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(31)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../node_modules/css-loader/index.js!./blinx.css", function() {
+		var newContent = require("!!../../node_modules/css-loader/index.js!./blinx.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(30)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".bxTippy {\r\n  font-family: Arial, \"Helvetica Neue\", Helvetica, sans-serif;\r\n  max-width: 800px;\r\n  text-align: left;\r\n  font-size: 14px;\r\n}\r\n.bxTippy a {\r\n  color: #007bff;\r\n  text-decoration: none;\r\n  background-color: transparent;\r\n  -webkit-text-decoration-skip: objects;\r\n}\r\n.bxTippy a:hover {\r\n  color: #0056b3;\r\n  text-decoration: underline;\r\n}\r\n.bxTippyBody {\r\n  max-height: 200px;\r\n  overflow: auto;\r\n  margin: 5px;\r\n}\r\n.bxVerseNumber {\r\n  position: relative;\r\n  font-size: 75%;\r\n  line-height: 0;\r\n  vertical-align: baseline;\r\n  top: -.5em;\r\n}\r\n.bxPassageVersion {\r\n  font-size: 75%;\r\n  color: #bbb;\r\n}\r\n.bxTippyFooter {\r\n  background: rgba(50,50,50,0.05);\r\n  margin: 0 -10px -5px; /* Reach to tippy border */\r\n  padding: 5px 15px;\r\n}\r\n.bxPassageLink {\r\n  font-weight: 600;\r\n}\r\n.bxCredits {\r\n  font-style: italic;\r\n}\r\n\r\n/* Spinner (taken from https://projects.lukehaas.me/css-loaders/) */\r\n.bxLoader,\r\n.bxLoader:before,\r\n.bxLoader:after {\r\n  border-radius: 50%;\r\n  width: 1.25em;\r\n  height: 1.25em;\r\n  -webkit-animation-fill-mode: both;\r\n  animation-fill-mode: both;\r\n  -webkit-animation: load7 1.8s infinite ease-in-out;\r\n  animation: load7 1.8s infinite ease-in-out;\r\n}\r\n.bxLoader {\r\n  color: #555;\r\n  font-size: 10px;\r\n  margin: -10px auto 20px auto;\r\n  position: relative;\r\n  text-indent: -9999em;\r\n  -webkit-transform: translateZ(0);\r\n  -ms-transform: translateZ(0);\r\n  transform: translateZ(0);\r\n  -webkit-animation-delay: -0.16s;\r\n  animation-delay: -0.16s;\r\n}\r\n.bxLoader:before,\r\n.bxLoader:after {\r\n  content: '';\r\n  position: absolute;\r\n  top: 0;\r\n}\r\n.bxLoader:before {\r\n  left: -1.75em;\r\n  -webkit-animation-delay: -0.32s;\r\n  animation-delay: -0.32s;\r\n}\r\n.bxLoader:after {\r\n  left: 1.75em;\r\n}\r\n@-webkit-keyframes load7 {\r\n  0%,\r\n  80%,\r\n  100% {\r\n    box-shadow: 0 1.25em 0 -0.65em;\r\n  }\r\n  40% {\r\n    box-shadow: 0 1.25em 0 0;\r\n  }\r\n}\r\n@keyframes load7 {\r\n  0%,\r\n  80%,\r\n  100% {\r\n    box-shadow: 0 1.25em 0 -0.65em;\r\n  }\r\n  40% {\r\n    box-shadow: 0 1.25em 0 0;\r\n  }\r\n}\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+
+var stylesInDom = {};
+
+var	memoize = function (fn) {
+	var memo;
+
+	return function () {
+		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+		return memo;
+	};
+};
+
+var isOldIE = memoize(function () {
+	// Test for IE <= 9 as proposed by Browserhacks
+	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+	// Tests for existence of standard globals is to allow style-loader
+	// to operate correctly into non-standard environments
+	// @see https://github.com/webpack-contrib/style-loader/issues/177
+	return window && document && document.all && !window.atob;
+});
+
+var getTarget = function (target) {
+  return document.querySelector(target);
+};
+
+var getElement = (function (fn) {
+	var memo = {};
+
+	return function(target) {
+                // If passing function in options, then use it for resolve "head" element.
+                // Useful for Shadow Root style i.e
+                // {
+                //   insertInto: function () { return document.querySelector("#foo").shadowRoot }
+                // }
+                if (typeof target === 'function') {
+                        return target();
+                }
+                if (typeof memo[target] === "undefined") {
+			var styleTarget = getTarget.call(this, target);
+			// Special case to return head of iframe instead of iframe itself
+			if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+				try {
+					// This will throw an exception if access to iframe is blocked
+					// due to cross-origin restrictions
+					styleTarget = styleTarget.contentDocument.head;
+				} catch(e) {
+					styleTarget = null;
+				}
+			}
+			memo[target] = styleTarget;
+		}
+		return memo[target]
+	};
+})();
+
+var singleton = null;
+var	singletonCounter = 0;
+var	stylesInsertedAtTop = [];
+
+var	fixUrls = __webpack_require__(32);
+
+module.exports = function(list, options) {
+	if (typeof DEBUG !== "undefined" && DEBUG) {
+		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (!options.singleton && typeof options.singleton !== "boolean") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+        if (!options.insertInto) options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (!options.insertAt) options.insertAt = "bottom";
+
+	var styles = listToStyles(list, options);
+
+	addStylesToDom(styles, options);
+
+	return function update (newList) {
+		var mayRemove = [];
+
+		for (var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+
+		if(newList) {
+			var newStyles = listToStyles(newList, options);
+			addStylesToDom(newStyles, options);
+		}
+
+		for (var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+
+			if(domStyle.refs === 0) {
+				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
+
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom (styles, options) {
+	for (var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+
+		if(domStyle) {
+			domStyle.refs++;
+
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles (list, options) {
+	var styles = [];
+	var newStyles = {};
+
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = options.base ? item[0] + options.base : item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+
+		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
+		else newStyles[id].parts.push(part);
+	}
+
+	return styles;
+}
+
+function insertStyleElement (options, style) {
+	var target = getElement(options.insertInto)
+
+	if (!target) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+
+	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
+
+	if (options.insertAt === "top") {
+		if (!lastStyleElementInsertedAtTop) {
+			target.insertBefore(style, target.firstChild);
+		} else if (lastStyleElementInsertedAtTop.nextSibling) {
+			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			target.appendChild(style);
+		}
+		stylesInsertedAtTop.push(style);
+	} else if (options.insertAt === "bottom") {
+		target.appendChild(style);
+	} else if (typeof options.insertAt === "object" && options.insertAt.before) {
+		var nextSibling = getElement(options.insertInto + " " + options.insertAt.before);
+		target.insertBefore(style, nextSibling);
+	} else {
+		throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");
+	}
+}
+
+function removeStyleElement (style) {
+	if (style.parentNode === null) return false;
+	style.parentNode.removeChild(style);
+
+	var idx = stylesInsertedAtTop.indexOf(style);
+	if(idx >= 0) {
+		stylesInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement (options) {
+	var style = document.createElement("style");
+
+	options.attrs.type = "text/css";
+
+	addAttrs(style, options.attrs);
+	insertStyleElement(options, style);
+
+	return style;
+}
+
+function createLinkElement (options) {
+	var link = document.createElement("link");
+
+	options.attrs.type = "text/css";
+	options.attrs.rel = "stylesheet";
+
+	addAttrs(link, options.attrs);
+	insertStyleElement(options, link);
+
+	return link;
+}
+
+function addAttrs (el, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		el.setAttribute(key, attrs[key]);
+	});
+}
+
+function addStyle (obj, options) {
+	var style, update, remove, result;
+
+	// If a transform function was defined, run it on the css
+	if (options.transform && obj.css) {
+	    result = options.transform(obj.css);
+
+	    if (result) {
+	    	// If transform returns a value, use that instead of the original css.
+	    	// This allows running runtime transformations on the css.
+	    	obj.css = result;
+	    } else {
+	    	// If the transform function returns a falsy value, don't add this css.
+	    	// This allows conditional loading of css
+	    	return function() {
+	    		// noop
+	    	};
+	    }
+	}
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+
+		style = singleton || (singleton = createStyleElement(options));
+
+		update = applyToSingletonTag.bind(null, style, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+
+	} else if (
+		obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function"
+	) {
+		style = createLinkElement(options);
+		update = updateLink.bind(null, style, options);
+		remove = function () {
+			removeStyleElement(style);
+
+			if(style.href) URL.revokeObjectURL(style.href);
+		};
+	} else {
+		style = createStyleElement(options);
+		update = applyToTag.bind(null, style);
+		remove = function () {
+			removeStyleElement(style);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle (newObj) {
+		if (newObj) {
+			if (
+				newObj.css === obj.css &&
+				newObj.media === obj.media &&
+				newObj.sourceMap === obj.sourceMap
+			) {
+				return;
+			}
+
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag (style, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (style.styleSheet) {
+		style.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = style.childNodes;
+
+		if (childNodes[index]) style.removeChild(childNodes[index]);
+
+		if (childNodes.length) {
+			style.insertBefore(cssNode, childNodes[index]);
+		} else {
+			style.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag (style, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		style.setAttribute("media", media)
+	}
+
+	if(style.styleSheet) {
+		style.styleSheet.cssText = css;
+	} else {
+		while(style.firstChild) {
+			style.removeChild(style.firstChild);
+		}
+
+		style.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink (link, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/*
+		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+		and there is no publicPath defined then lets turn convertToAbsoluteUrls
+		on by default.  Otherwise default to the convertToAbsoluteUrls option
+		directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls) {
+		css = fixUrls(css);
+	}
+
+	if (sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = link.href;
+
+	link.href = URL.createObjectURL(blob);
+
+	if(oldSrc) URL.revokeObjectURL(oldSrc);
+}
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+
+/**
+ * When source maps are enabled, `style-loader` uses a link element with a data-uri to
+ * embed the css on the page. This breaks all relative urls because now they are relative to a
+ * bundle instead of the current page.
+ *
+ * One solution is to only use full urls, but that may be impossible.
+ *
+ * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
+ *
+ * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
+ *
+ */
+
+module.exports = function (css) {
+  // get current location
+  var location = typeof window !== "undefined" && window.location;
+
+  if (!location) {
+    throw new Error("fixUrls requires window.location");
+  }
+
+	// blank or null?
+	if (!css || typeof css !== "string") {
+	  return css;
+  }
+
+  var baseUrl = location.protocol + "//" + location.host;
+  var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
+
+	// convert each url(...)
+	/*
+	This regular expression is just a way to recursively match brackets within
+	a string.
+
+	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
+	   (  = Start a capturing group
+	     (?:  = Start a non-capturing group
+	         [^)(]  = Match anything that isn't a parentheses
+	         |  = OR
+	         \(  = Match a start parentheses
+	             (?:  = Start another non-capturing groups
+	                 [^)(]+  = Match anything that isn't a parentheses
+	                 |  = OR
+	                 \(  = Match a start parentheses
+	                     [^)(]*  = Match anything that isn't a parentheses
+	                 \)  = Match a end parentheses
+	             )  = End Group
+              *\) = Match anything and then a close parens
+          )  = Close non-capturing group
+          *  = Match anything
+       )  = Close capturing group
+	 \)  = Match a close parens
+
+	 /gi  = Get all matches, not the first.  Be case insensitive.
+	 */
+	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(fullMatch, origUrl) {
+		// strip quotes (if they exist)
+		var unquotedOrigUrl = origUrl
+			.trim()
+			.replace(/^"(.*)"$/, function(o, $1){ return $1; })
+			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
+
+		// already a full url? no change
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(unquotedOrigUrl)) {
+		  return fullMatch;
+		}
+
+		// convert the url to a full url
+		var newUrl;
+
+		if (unquotedOrigUrl.indexOf("//") === 0) {
+		  	//TODO: should we add protocol?
+			newUrl = unquotedOrigUrl;
+		} else if (unquotedOrigUrl.indexOf("/") === 0) {
+			// path should be relative to the base url
+			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
+		} else {
+			// path should be relative to current directory
+			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
+		}
+
+		// send back the fixed url(...)
+		return "url(" + JSON.stringify(newUrl) + ")";
+	});
+
+	// send back the fixed css
+	return fixedCss;
+};
 
 
 /***/ })

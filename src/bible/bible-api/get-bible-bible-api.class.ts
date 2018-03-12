@@ -41,6 +41,9 @@ type Response = VerseResponse | ChapterResponse;
 
 export class GetBibleBibleApi extends BibleApi {
 
+  public readonly title = 'getBible.net';
+  public readonly url = 'https://getbible.net/api';
+
   protected readonly bibleVersionMap: BibleVersionMap = {
     'af.AOV': 'aov',
     'sq.Albanian': 'albanian',
@@ -169,7 +172,7 @@ export class GetBibleBibleApi extends BibleApi {
   public getPassage(osis: string, bibleVersion: BibleVersionCode): Promise<string> {
     osis = transformOsis(osis, { bookNameMap: this.bookNameMap });
     return executeJsonp<Response>(
-      `http://getbible.net/json?p=${osis}&v=${this.bibleVersionMap[bibleVersion]}`, 'getbible'
+      `https://getbible.net/json?p=${osis}&v=${this.bibleVersionMap[bibleVersion]}`, 'getbible'
     ).then(result => {
       let output = '';
       let chapterObject: ChapterResponse['chapter'] | undefined = undefined;

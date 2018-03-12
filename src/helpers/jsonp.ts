@@ -10,11 +10,10 @@ export function executeJsonp<T extends object = object>(url: string, callbackPar
       resolve(result as T);
     };
     const completeUrl = `${url}${url.indexOf('?') === -1 ? '?' : '&'}${callbackParameter}=${callbackName}`;
-    loadScript(completeUrl, (successful) => {
-      if (!successful) {
+    return loadScript(completeUrl)
+      .catch(() => {
         delete (window as any)[callbackName];
-        reject(false);
-      }
-    });
+        reject();
+      });
   });
 }
