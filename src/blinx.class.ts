@@ -86,9 +86,9 @@ export class Blinx {
       ${this.convertOsisToContext(osis)}</a>
     <span class="bxCredits">
       retrieved from
-      <a href="${this.bibleApi.url}">${this.bibleApi.title}</a>
+      <a href="${this.bibleApi.url}"  target="_blank">${this.bibleApi.title}</a>
       by
-      <a href="https://github.com/renehamburger/blinx.js">blinx.js</a>.
+      <a href="https://github.com/renehamburger/blinx.js" target="_blank">blinx.js</a>.
     </span>
   </div>
 </div>
@@ -98,7 +98,7 @@ export class Blinx {
             placement: 'top',
             arrow: true,
             arrowType: 'round',
-            theme: 'light',
+            theme: this.options.theme,
             interactive: true,
             html: template.nodes[0],
             onShow: (tippyInstance) => {
@@ -255,15 +255,23 @@ export class Blinx {
   }
 
   private loadTippy() {
-    let counter = 2;
-    const callback = () => {
-      counter--;
-      if (counter === 0) {
-        this.tippyLoaded.resolve();
+    if ('tippy' in window) {
+      this.tippyLoaded.resolve();
+    } else {
+      let counter = 2;
+      const callback = () => {
+        counter--;
+        if (counter === 0) {
+          this.tippyLoaded.resolve();
+        }
+      };
+      loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`).then(callback);
+      if (this.options.theme === 'light') {
+        loadCSS('https://unpkg.com/tippy.js/dist/themes/light.css').then(callback);
+      } else {
+        callback();
       }
-    };
-    loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`).then(callback);
-    loadCSS('https://unpkg.com/tippy.js/dist/themes/light.css').then(callback);
+    }
   }
 
 }

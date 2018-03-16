@@ -28,12 +28,22 @@
 }
 .bxPassageVersion {
   font-size: 75%;
-  color: #bbb;
+  color: hsl(0, 0%, 70%);
+  float: right;
+  line-height: 19.6px;
+  margin-left: 15px;
+}
+.tippy-tooltip.dark-theme .bxPassageVersion {
+  color: hsl(0, 0%, 40%);
 }
 .bxTippyFooter {
-  background: rgba(50,50,50,0.05);
-  margin: 0 -10px -5px; /* Reach to tippy border */
+  background: hsl(0, 0%, 95%);
+  margin: 0 -9px -5px; /* Reach to tippy border */
   padding: 5px 15px;
+  border-radius: 0 0 4px 4px;
+}
+.tippy-tooltip.dark-theme .bxTippyFooter {
+  background: hsl(0, 0%, 25%);
 }
 .bxPassageLink {
   font-weight: 600;

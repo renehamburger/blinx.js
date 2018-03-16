@@ -29,6 +29,8 @@ export class Options {
   whitelist: string[] = ['body'];
   /** Automatic parsing can be disabled with the following whitelisted selectors. */
   blacklist: string[] = ['a'];
+  /** Color theme */
+  theme: 'dark' | 'light' = 'light';
 }
 
 export function applyScriptTagOptions(options: Options): void {
