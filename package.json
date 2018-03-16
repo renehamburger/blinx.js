@@ -1,12 +1,11 @@
 {
   "name": "blinx.js",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "A multi-language client-side library to automatically convert Bible references to Bible links with passage pop-ups",
   "main": "dist/blinx.js",
   "scripts": {
     "start": "webpack-dev-server --port 9000 --host 0.0.0.0 --inline --progress --profile --colors --watch --content-base src/",
-    "build": "webpack --config webpack.config.js",
-    "build.prod": "webpack --config webpack.config.js -p",
+    "build": "webpack --config webpack.config.js -p",
     "test": "karma start karma.config.js"
   },
   "keywords": [

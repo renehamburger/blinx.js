@@ -255,6 +255,17 @@ export class Blinx {
   }
 
   private loadTippy() {
+    // For websites with require.js support, tippy will try to load through require.js, which fails.
+    // Defining a temporary module object is a nasty workaround to force tippy to add itself as module.exports.
+    // tslint:disable-next-line:no-eval
+    const requireWorkaround = eval(`
+      if (typeof define === 'function' && typeof module === 'undefined' && typeof exports === 'undefined') {
+        var exports = {};
+        var module = {};
+        true;
+      } else {
+        false;
+      }`);
     if ('tippy' in window) {
       this.tippyLoaded.resolve();
     } else {
@@ -262,6 +273,12 @@ export class Blinx {
       const callback = () => {
         counter--;
         if (counter === 0) {
+          if (requireWorkaround) {
+            const win: any = window;
+            win.tippy = win.module.exports;
+            delete win.module;
+            delete win.exports;
+          }
           this.tippyLoaded.resolve();
         }
       };
