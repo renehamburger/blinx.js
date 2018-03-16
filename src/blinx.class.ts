@@ -258,9 +258,8 @@ export class Blinx {
     const win: any = window;
     // For websites with require.js support, tippy will try to load through require.js, which fails.
     // Defining a temporary module object is a nasty workaround to force tippy to add itself as module.exports.
-    // tslint:disable-next-line:no-eval
-    const requireWorkaround = eval(
-      `typeof define === 'function' && typeof module === 'undefined' && typeof exports === 'undefined'`);
+    const requireWorkaround = typeof win.define === 'function' && typeof win.module === 'undefined' &&
+      typeof win.exports === 'undefined';
     if (requireWorkaround) {
       win.exports = {};
       win.module = {};
