@@ -24,9 +24,14 @@ export class Blinx {
   private bibleApi: BibleApi;
   private tippyObjects: Tippy.Object[] = [];
   private tippyLoaded = new Deferred<void>();
+  private touchStarted = false;
 
   /** Initialise blinx. */
   constructor() {
+    // Identify touch devices
+    window.addEventListener('touchstart', () => {
+      this.touchStarted = true;
+    });
     applyScriptTagOptions(this.options);
     this.onlineBible = getOnlineBible(this.options.onlineBible);
     // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
@@ -93,7 +98,6 @@ export class Blinx {
             placement: 'top',
             arrow: true,
             arrowType: 'round',
-            maxWidth: '800px',
             theme: 'light',
             interactive: true,
             html: template.nodes[0],
@@ -222,7 +226,12 @@ export class Blinx {
       .wrap(`<a></a>`)
       .attr('href', this.onlineBible.buildPassageLink(ref.osis, versionCode))
       .attr('target', '_blank')
-      .data('osis', ref.osis);
+      .data('osis', ref.osis)
+      .on('click', (evt: MouseEvent) => {
+        if (this.touchStarted) {
+          evt.preventDefault();
+        }
+      });
   }
 
   private getVersionCode(bible: Bible): BibleVersionCode {
