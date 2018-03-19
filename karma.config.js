@@ -12,13 +12,6 @@ module.exports = function(config) {
         base: 'Chrome',
         flags: [ '--remote-debugging-port=9333' ]
       },
-      winxp_ie7: {
-        base: 'BrowserStack',
-        os: 'Windows',
-        os_version: 'XP',
-        browser: 'IE',
-        browser_version: '7'
-      },
       winxp_chrome: {
         base: 'BrowserStack',
         os: 'Windows',
@@ -36,20 +29,6 @@ module.exports = function(config) {
         os: 'Windows',
         os_version: 'XP',
         browser: 'Opera'
-      },
-      win7_ie8: {
-        base: 'BrowserStack',
-        os: 'Windows',
-        os_version: '7',
-        browser: 'IE',
-        browser_version: '8'
-      },
-      win7_ie9: {
-        base: 'BrowserStack',
-        os: 'Windows',
-        os_version: '7',
-        browser: 'IE',
-        browser_version: '9'
       },
       win7_ie10: {
         base: 'BrowserStack',
@@ -103,9 +82,8 @@ module.exports = function(config) {
       }
     },
     browsers: [
-      'winxp_ie7', 'winxp_chrome', 'winxp_firefox', 'winxp_opera',
-      'win7_ie8', 'win7_ie9', 'win7_ie10', 'win7_ie11',
-      'win10_chrome',
+      'winxp_chrome', 'winxp_firefox', 'winxp_opera',
+      'win7_ie10', 'win7_ie11', 'win10_chrome',
       'osx_safari', 'iphone4s', 'ipad2',
       'google_nexus', 'kindle_fire'],
 
