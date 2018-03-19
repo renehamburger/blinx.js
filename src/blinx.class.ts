@@ -16,6 +16,12 @@ import 'src/css/blinx.css';
 
 const bibleVersions = new BibleVersions();
 
+export interface Testability {
+  u: typeof u;
+  linksApplied?: () => void;
+  passageDisplayed?: () => void;
+}
+
 export class Blinx {
 
   private options = new Options();
@@ -25,6 +31,7 @@ export class Blinx {
   private tippyObjects: Tippy.Object[] = [];
   private tippyLoaded = new Deferred<void>();
   private touchStarted = false;
+  private testability: Testability = { u };
 
   /** Initialise blinx. */
   constructor() {
@@ -64,7 +71,12 @@ export class Blinx {
       .each(node => this.parseReferencesInNode(node));
     // Once tippy.js is loaded, add tooltips
     this.tippyLoaded.promise
-      .then(() => this.addTooltips());
+      .then(() => {
+        this.addTooltips();
+        if (this.testability.linksApplied) {
+          this.testability.linksApplied();
+        }
+      });
   }
 
   private addTooltips() {
@@ -106,6 +118,9 @@ export class Blinx {
               this.getTooltipContent(osis)
                 .then((text: string) => {
                   u(template).find('.bxPassageText').html(text);
+                  if (this.testability.passageDisplayed) {
+                    this.testability.passageDisplayed();
+                  }
                 });
             }
           })

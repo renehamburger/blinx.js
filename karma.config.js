@@ -8,14 +8,106 @@ module.exports = function(config) {
       project: 'blinx.js'
     },
     customLaunchers: {
-      bs_chrome: {
+      ChromeDebugging: {
+        base: 'Chrome',
+        flags: [ '--remote-debugging-port=9333' ]
+      },
+      winxp_ie7: {
         base: 'BrowserStack',
-        browser: 'Chrome',
         os: 'Windows',
-        os_version: '10'
+        os_version: 'XP',
+        browser: 'IE',
+        browser_version: '7'
+      },
+      winxp_chrome: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: 'XP',
+        browser: 'Chrome'
+      },
+      winxp_firefox: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: 'XP',
+        browser: 'Firefox'
+      },
+      winxp_opera: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: 'XP',
+        browser: 'Opera'
+      },
+      win7_ie8: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: '7',
+        browser: 'IE',
+        browser_version: '8'
+      },
+      win7_ie9: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: '7',
+        browser: 'IE',
+        browser_version: '9'
+      },
+      win7_ie10: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: '7',
+        browser: 'IE',
+        browser_version: '10'
+      },
+      win7_ie11: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: '7',
+        browser: 'IE',
+        browser_version: '11'
+      },
+      win10_chrome: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: '10',
+        browser: 'Chrome'
+      },
+      osx_safari: {
+        base: 'BrowserStack',
+        os: 'OS X',
+        os_version: 'Snow Leopard',
+        browser: 'Safari'
+      },
+      iphone4s: {
+        base: 'BrowserStack',
+        device: 'iPhone 4S',
+        os: 'iOS',
+        os_version: '5.1'
+      },
+      ipad2: {
+        base: 'BrowserStack',
+        device: 'iPad 2 (5.0)',
+        os: 'iOS',
+        os_version: '5.0'
+      },
+      google_nexus: {
+        base: 'BrowserStack',
+        device: 'Google Nexus',
+        os: 'Android',
+        os_version: '4.0'
+      },
+      kindle_fire: {
+        base: 'BrowserStack',
+        device: 'Amazon Kindle Fire HD 8.9',
+        os: 'Android',
+        os_version: '4.0'
       }
     },
-    browsers: ['bs_chrome', 'PhantomJS'],
+    browsers: [
+      'winxp_ie7', 'winxp_chrome', 'winxp_firefox', 'winxp_opera',
+      'win7_ie8', 'win7_ie9', 'win7_ie10', 'win7_ie11',
+      'win10_chrome',
+      'osx_safari', 'iphone4s', 'ipad2',
+      'google_nexus', 'kindle_fire'],
 
     frameworks: [
       'jasmine'
@@ -38,6 +130,7 @@ module.exports = function(config) {
     plugins: [
       require('karma-jasmine'),
       require('karma-phantomjs-launcher'),
+      require('karma-chrome-launcher'),
       require('karma-browserstack-launcher'),
       require('karma-webpack')
     ],

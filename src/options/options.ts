@@ -35,7 +35,7 @@ export class Options {
 
 export function applyScriptTagOptions(options: Options): void {
   // Parse options object from data-blinx attribute on script tag
-  const tagOptionsString = u('script[data-blinx]').data('blinx');
+  const tagOptionsString = u('script[data-blinx]').data('blinx') || '{}';
   let opts: Partial<Options> = {};
   try {
     // tslint:disable-next-line:no-eval

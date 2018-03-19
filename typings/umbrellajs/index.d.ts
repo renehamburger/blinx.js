@@ -29,7 +29,7 @@ declare namespace Umbrella {
 
     args(a: any, b: any, c: any): Instance;
 
-    array(a: any): Instance;
+    array<T = string>(callback?: (node: Node) => T | T[] | null | void): T[];
 
     attr(name: string): string;
     attr(attributes: { [name: string]: string }): Instance;
