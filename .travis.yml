@@ -1,9 +1,11 @@
 sudo: false
 language: node_js
 
-cache:
-  directories:
-    - node_modules
+# Caching node_modules seems to lead to issues.
+# See e.g. https://travis-ci.org/renehamburger/blinx.js/builds/355595242?utm_source=github_status&utm_medium=notification and https://github.com/karma-runner/karma-browserstack-launcher/issues/69
+# cache:
+#   directories:
+#    - node_modules
 
 notifications:
   email:
@@ -14,6 +16,7 @@ node_js:
 
 before_script:
   - npm prune
+  - npm ls
 
 script:
   - npm run build

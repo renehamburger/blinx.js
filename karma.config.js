@@ -3,6 +3,8 @@ module.exports = function(config) {
   config.set({
     singleRun: true,
 
+    browserDisconnectTimeout: 20000,
+
     //--- BrowserStack settings
     browserStack: {
       project: 'blinx.js'
