@@ -75,19 +75,13 @@ module.exports = function(config) {
         device: 'Google Nexus',
         os: 'Android',
         os_version: '4.0'
-      },
-      kindle_fire: {
-        base: 'BrowserStack',
-        device: 'Amazon Kindle Fire HD 8.9',
-        os: 'Android',
-        os_version: '4.0'
       }
     },
     browsers: [
       'winxp_chrome', 'winxp_firefox', 'winxp_opera',
       'win7_ie10', 'win7_ie11', 'win10_chrome',
       'osx_safari', 'iphone4s', 'ipad2',
-      'google_nexus', 'kindle_fire'],
+      'google_nexus'],
 
     frameworks: [
       'jasmine'
