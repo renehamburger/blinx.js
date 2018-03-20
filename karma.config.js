@@ -109,7 +109,6 @@ module.exports = function(config) {
 
     plugins: [
       require('karma-jasmine'),
-      require('karma-phantomjs-launcher'),
       require('karma-chrome-launcher'),
       require('karma-browserstack-launcher'),
       require('karma-webpack')

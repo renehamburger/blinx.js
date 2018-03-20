@@ -1,11 +1,8 @@
 sudo: false
 language: node_js
 
-# Caching node_modules seems to lead to issues.
-# See e.g. https://travis-ci.org/renehamburger/blinx.js/builds/355595242?utm_source=github_status&utm_medium=notification and https://github.com/karma-runner/karma-browserstack-launcher/issues/69
-# cache:
-#   directories:
-#    - node_modules
+cache:
+  yarn: true
 
 notifications:
   email:
@@ -14,8 +11,11 @@ notifications:
 node_js:
   - '8.9.4'
 
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.5.1
+  - export PATH=$HOME/.yarn/bin:$PATH
+
 before_script:
-  - npm prune
   - npm ls
 
 script:
