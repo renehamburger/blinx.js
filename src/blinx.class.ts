@@ -11,7 +11,6 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis } from 'src/helpers/osis';
-import { loadPolyfills } from 'src/helpers/polyfills';
 import 'src/css/blinx.css';
 
 const bibleVersions = new BibleVersions();
@@ -43,19 +42,9 @@ export class Blinx {
     this.onlineBible = getOnlineBible(this.options.onlineBible);
     // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
     this.bibleApi = getBibleApi(this.options.bibleApi);
-    // Load dependencies required for link creation
-    let pending = 2;
-    const callback = (successful: boolean) => {
-      if (successful) {
-        pending--;
-        if (pending === 0) {
-          this.initComplete();
-        }
-      }
-    };
-    this.parser.load(this.options, callback);
-    loadPolyfills(callback);
-    // Load dependencies required for tooltip display
+    // Load dependency required for link creation
+    this.parser.load(this.options, () => this.initComplete());
+    // Load dependency required for tooltip display
     this.loadTippy();
   }
 

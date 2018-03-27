@@ -3,3 +3,6 @@
 interface Window {
   blinx: any;
 }
+
+declare module 'src/lib/promise.js' {
+}
