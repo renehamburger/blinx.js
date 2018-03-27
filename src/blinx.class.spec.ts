@@ -5,6 +5,7 @@ describe('Blinx', () => {
 
   beforeEach(() => {
     document.body.innerHTML = '<p>Check out Gen 1:3 and II Cor 4:5-6.</p>';
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
 
   it('links single passage & shows tooltip', done => {
