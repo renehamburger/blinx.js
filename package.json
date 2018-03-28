@@ -8,7 +8,7 @@
     "build": "webpack --config webpack.config.js -p",
     "test": "karma start karma.config.js",
     "test.watch": "npm run test -- --no-single-run",
-    "test.debug": "npm run test.watch -- --browsers ChromeDebugging --reporters dots"
+    "test.debug": "npm run test.watch -- --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999"
   },
   "keywords": [
     "bible",
@@ -45,7 +45,6 @@
     "webpack-dev-server": "2.11.1"
   },
   "dependencies": {
-    "lodash": "^4.17.5",
-    "umbrellajs": "2.10.1"
+    "lodash": "^4.17.5"
   }
 }

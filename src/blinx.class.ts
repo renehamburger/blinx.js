@@ -1,6 +1,6 @@
 import { Options, applyScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
-import { u } from 'umbrellajs';
+import { u } from 'src/lib/u.js';
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
 import isString = require('lodash/isString');
 import { getOnlineBible } from 'src/bible/online-bible/online-bible-overview';

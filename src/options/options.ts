@@ -1,4 +1,4 @@
-import { u } from 'umbrellajs';
+import { u } from 'src/lib/u.js';
 import { Languages } from 'src/options/languages';
 import { Parser } from 'src/parser/parser.class';
 import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
