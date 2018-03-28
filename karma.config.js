@@ -83,8 +83,8 @@ module.exports = function(config) {
     browsers: [
       'winxp_chrome', 'winxp_firefox', 'winxp_opera',
       'win7_ie10', 'win7_ie11', 'win10_chrome',
-      'osx_safari', 'iphone4s', 'ipad2',
-      'google_nexus'
+      // 'osx_safari', 'iphone4s', 'ipad2',
+      // 'google_nexus'
     ],
 
     frameworks: [
