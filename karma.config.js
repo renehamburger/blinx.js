@@ -1,4 +1,3 @@
-
 module.exports = function(config) {
   config.set({
     singleRun: true,
@@ -6,11 +5,8 @@ module.exports = function(config) {
     /** maximum number of tries a browser will attempt in the case of a disconnection */
     browserDisconnectTolerance: 2,
 
-    /** How long will Karma wait for a message from a browser before disconnecting from it (in ms). */ browserNoActivityTimeout: 30000,
-
-    client: {
-      runInParent: true
-    },
+    /** How long will Karma wait for a message from a browser before disconnecting from it (in ms). */
+    browserNoActivityTimeout: 30000,
 
     //--- BrowserStack settings
     browserStack: {
@@ -88,33 +84,48 @@ module.exports = function(config) {
       'winxp_chrome', 'winxp_firefox', 'winxp_opera',
       'win7_ie10', 'win7_ie11', 'win10_chrome',
       'osx_safari', 'iphone4s', 'ipad2',
-      'google_nexus'],
+      'google_nexus'
+    ],
 
     frameworks: [
-      'jasmine'
+      'jasmine',
+      'karma-typescript'
     ],
 
     files: [
-      'spec.bundle.js'
+      'src/**/!(languages).ts',
+      'src/**/!(promise).js'
     ],
 
     preprocessors: {
-      'spec.bundle.js': ['webpack']
+      'src/**/*.ts': ['karma-typescript'],
+      'src/**/*.js': ['karma-typescript']
     },
 
-    webpack: require('./webpack-test.config'),
-
-    webpackMiddleware: {
-      stats: 'errors-only'
-    },
-
-    plugins: [
-      require('karma-jasmine'),
-      require('karma-chrome-launcher'),
-      require('karma-browserstack-launcher'),
-      require('karma-webpack')
+    reporters: [
+      'dots',
+      'BrowserStack',
+      'karma-typescript'
     ],
 
-    reporters: ['dots', 'BrowserStack']
+    karmaTypescriptConfig: {
+      tsconfig: './tsconfig.json',
+      reports: {
+        'clover': {
+          'subdirectory': 'clover',
+          'filename': 'clover.xml'
+        },
+        'cobertura': {
+          'subdirectory': 'cobertura',
+          'filename': 'cobertura.xml'
+        },
+        'lcovonly': {
+          'subdirectory': 'lcovonly',
+          'filename': 'lcovonly'
+        },
+        'html': 'coverage',
+        'text-summary': ''
+      }
+    }
   });
 };

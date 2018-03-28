@@ -11,7 +11,7 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis } from 'src/helpers/osis';
-import 'src/css/blinx.css';
+import './css/blinx.css';
 
 const bibleVersions = new BibleVersions();
 
