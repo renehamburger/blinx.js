@@ -111,17 +111,9 @@ module.exports = function(config) {
     karmaTypescriptConfig: {
       tsconfig: './tsconfig.json',
       reports: {
-        'clover': {
-          'subdirectory': 'clover',
-          'filename': 'clover.xml'
-        },
-        'cobertura': {
-          'subdirectory': 'cobertura',
-          'filename': 'cobertura.xml'
-        },
         'lcovonly': {
-          'subdirectory': 'lcovonly',
-          'filename': 'lcovonly'
+          'subdirectory': '',
+          'filename': 'lcov.info'
         },
         'html': 'coverage',
         'text-summary': ''

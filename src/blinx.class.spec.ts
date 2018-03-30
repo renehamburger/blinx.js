@@ -4,7 +4,7 @@ declare var require: any;
 describe('Blinx', () => {
 
   beforeEach(() => {
-    document.body.innerHTML = '<p>Check out Gen 1:3 and II Cor 4:5-6.</p>';
+    document.body.innerHTML = '<p>Check out Gen 1:3, II Cor 4:5, and then verse 6.</p>';
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
 
@@ -17,8 +17,8 @@ describe('Blinx', () => {
       const links: Umbrella.Instance = u('[data-osis]');
       const passages: string[] = [];
       links.each(node => passages.push(u(node).data('osis')));
-      expect(links.array()).toEqual(['Gen 1:3', 'II Cor 4:5-6']);
-      expect(passages).toEqual(['Gen.1.3', '2Cor.4.5-2Cor.4.6']);
+      expect(links.array()).toEqual(['Gen 1:3', 'II Cor 4:5', 'verse 6']);
+      expect(passages).toEqual(['Gen.1.3', '2Cor.4.5', '2Cor.4.6']);
       u(links.first() as Node).trigger('mouseenter');
       // Wait until passage is displayed & checked displayed passage
       testability.passageDisplayed = () => {
