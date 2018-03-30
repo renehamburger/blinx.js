@@ -5,12 +5,10 @@
     "paths": {
       "*": ["./*"]
     },
+    "allowJs": true,
     "outDir": "./dist/",
     "sourceMap": true,
-    "target": "es5",
-    "lib": [
-      "dom", "es5", "scripthost", "es6" // Some features are polyfilled
-    ],
+    "target": "es3",
     "typeRoots" : ["./typings", "./node_modules/@types"],
     "types" : ["global", "bible-passage-reference-parser", "jasmine"],
     // Linting

@@ -1,4 +1,4 @@
-import { u } from 'umbrellajs';
+import { u } from 'src/lib/u.js';
 
 // [INTERNAL USE ONLY]
 // Parse JSON without throwing an error
@@ -19,7 +19,9 @@ function parseJson(jsonString: string) {
 // Slightly modified version of Umbrella's ajax function
 
 // Perform ajax calls
-export function ajax(action: string, options?: Umbrella.AjaxOptions, doneCallback?: Umbrella.AjaxAfter, before?: Umbrella.AjaxBefore): XMLHttpRequest {
+export function ajax(
+  action: string, options?: Umbrella.AjaxOptions, doneCallback?: Umbrella.AjaxAfter, before?: Umbrella.AjaxBefore
+): XMLHttpRequest {
   const done = doneCallback || function () { };
 
   // A bunch of options and defaults

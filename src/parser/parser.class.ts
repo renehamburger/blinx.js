@@ -4,12 +4,7 @@ import { Options } from 'src/options/options';
 
 export class Parser {
   private _bcv?: BCV.Parser;
-  public get bcv(): BCV.Parser {
-    if (this._bcv) {
-      return this._bcv;
-    }
-    throw new Error('The bcv_parser script has not been loaded successfully yet.');
-  }
+
   static getCurrentParserLanguage(): LanguageCode | false {
     if (window.bcv_parser) {
       const parser: BCV.Parser = new window.bcv_parser();
@@ -18,6 +13,13 @@ export class Parser {
       }
     }
     return false;
+  }
+
+  public bcv(): BCV.Parser {
+    if (this._bcv) {
+      return this._bcv;
+    }
+    throw new Error('The bcv_parser script has not been loaded successfully yet.');
   }
 
   /** Load bcv parser script for the given language */

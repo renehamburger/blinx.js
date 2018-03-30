@@ -28,10 +28,9 @@ For now, the script can be included directly from GitHub via RawGit, either thro
 
 The `data-blinx` attribute contains the options for blinx.js. For now, look at the definitions of the [blinx.js Options](src/options/options.ts#L7) and the related classes & types such as the [available Languages](src/options/languages.ts) or [the Bible Passage Reference Parser's Options](typings/bible-passage-reference-parser/index.d.ts#L35).
 
-blinx.js loads several resources it requires dnamically and asynchronously. To speed up the identification and linking of Bible references on the page, the following two scripts can already be loaded in parallel to blinx.js:
+blinx.js loads several resources it requires dynamically and asynchronously. To speed up the identification and linking of Bible references on the page, the following script can already be loaded in parallel to blinx.js:
 
 ```html
-<script src="https://cdn.polyfill.io/v2/polyfill.js?features=Promise|gated" defer></script>
 <script src="https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/<LANGUAGE_CODE>_bcv_parser.js" defer></script>
 <script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.1.2/dist/blinx.js" defer></script>
 ```

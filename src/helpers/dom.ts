@@ -4,7 +4,7 @@ export function loadScript(url: string): Promise<void>;
 export function loadScript(url: string, callback?: (succesful: boolean) => void): Promise<void> | void {
   const script = document.createElement('script');
   script.src = url;
-  document.body.appendChild(script);
+  document.head.appendChild(script);
   if (callback) {
     script.onload = () => callback(true);
     script.onerror = () => callback(false);

@@ -1,6 +1,6 @@
 import { Options, applyScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
-import { u } from 'umbrellajs';
+import { u } from 'src/lib/u.js';
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
 import isString = require('lodash/isString');
 import { getOnlineBible } from 'src/bible/online-bible/online-bible-overview';
@@ -11,10 +11,15 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis } from 'src/helpers/osis';
-import { loadPolyfills } from 'src/helpers/polyfills';
-import 'src/css/blinx.css';
+import './css/blinx.css';
 
 const bibleVersions = new BibleVersions();
+
+export interface Testability {
+  u: typeof u;
+  linksApplied?: () => void;
+  passageDisplayed?: () => void;
+}
 
 export class Blinx {
 
@@ -25,6 +30,7 @@ export class Blinx {
   private tippyObjects: Tippy.Object[] = [];
   private tippyLoaded = new Deferred<void>();
   private touchStarted = false;
+  private testability: Testability = { u };
 
   /** Initialise blinx. */
   constructor() {
@@ -36,19 +42,9 @@ export class Blinx {
     this.onlineBible = getOnlineBible(this.options.onlineBible);
     // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
     this.bibleApi = getBibleApi(this.options.bibleApi);
-    // Load dependencies required for link creation
-    let pending = 2;
-    const callback = (successful: boolean) => {
-      if (successful) {
-        pending--;
-        if (pending === 0) {
-          this.initComplete();
-        }
-      }
-    };
-    this.parser.load(this.options, callback);
-    loadPolyfills(callback);
-    // Load dependencies required for tooltip display
+    // Load dependency required for link creation
+    this.parser.load(this.options, () => this.initComplete());
+    // Load dependency required for tooltip display
     this.loadTippy();
   }
 
@@ -64,7 +60,12 @@ export class Blinx {
       .each(node => this.parseReferencesInNode(node));
     // Once tippy.js is loaded, add tooltips
     this.tippyLoaded.promise
-      .then(() => this.addTooltips());
+      .then(() => {
+        this.addTooltips();
+        if (this.testability.linksApplied) {
+          this.testability.linksApplied();
+        }
+      });
   }
 
   private addTooltips() {
@@ -106,6 +107,9 @@ export class Blinx {
               this.getTooltipContent(osis)
                 .then((text: string) => {
                   u(template).find('.bxPassageText').html(text);
+                  if (this.testability.passageDisplayed) {
+                    this.testability.passageDisplayed();
+                  }
                 });
             }
           })
@@ -139,8 +143,8 @@ export class Blinx {
     for (const childNode of childNodes) {
       if (this.isTextNode(childNode)) {
         // Look for all complete Bible references
-        this.parser.bcv.parse(childNode.textContent || '');
-        const refs = this.parser.bcv.osis_and_indices();
+        this.parser.bcv().parse(childNode.textContent || '');
+        const refs = this.parser.bcv().osis_and_indices();
         this.handleReferencesFoundInText(childNode, refs);
       }
     }
@@ -197,15 +201,15 @@ export class Blinx {
       }
       // Check for possible reference with prefix first
       if (possibleReferenceWithPrefix) {
-        this.parser.bcv.parse_with_context(possibleReferenceWithPrefix, previousPassage);
+        this.parser.bcv().parse_with_context(possibleReferenceWithPrefix, previousPassage);
       }
       // If none available or unsuccessful, check for possible reference starting with number(s)
-      if (!possibleReferenceWithPrefix || !this.parser.bcv.osis()) {
-        this.parser.bcv.parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
+      if (!possibleReferenceWithPrefix || !this.parser.bcv().osis()) {
+        this.parser.bcv().parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
         offset = match.index;
       }
       // If either successful, adjust the indices due to the slice above and handle the reference
-      const refs = this.parser.bcv.osis_and_indices();
+      const refs = this.parser.bcv().osis_and_indices();
       if (refs.length) {
         for (const ref of refs) {
           ref.indices[0] += offset;

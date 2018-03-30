@@ -1,4 +1,4 @@
-import { u } from 'umbrellajs';
+import { u } from 'src/lib/u.js';
 import { Languages } from 'src/options/languages';
 import { Parser } from 'src/parser/parser.class';
 import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
@@ -35,7 +35,7 @@ export class Options {
 
 export function applyScriptTagOptions(options: Options): void {
   // Parse options object from data-blinx attribute on script tag
-  const tagOptionsString = u('script[data-blinx]').data('blinx');
+  const tagOptionsString = u('script[data-blinx]').data('blinx') || '{}';
   let opts: Partial<Options> = {};
   try {
     // tslint:disable-next-line:no-eval

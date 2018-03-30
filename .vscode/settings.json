@@ -2,6 +2,9 @@
   "typescript.tsdk": "./node_modules/typescript/lib",
   "files.exclude": {
   },
+  "search.exclude": {
+    "dist": true
+  },
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "editor.tabSize": 2,
