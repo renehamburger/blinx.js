@@ -535,14 +535,14 @@ u.prototype.not = function (filter) {
 };
 
 
-// // Removes the callback to the event listener for each node
-// u.prototype.off = function (events) {
-//   return this.eacharg(events, function (node, event) {
-//     u(node._e ? node._e[event] : []).each(function (cb) {
-//       node.removeEventListener(event, cb);
-//     });
-//   });
-// };
+// Removes the callback to the event listener for each node
+u.prototype.off = function (events) {
+  return this.eacharg(events, function (node, event) {
+    u(node._e ? node._e[event] : []).each(function (cb) {
+      node.removeEventListener(event, cb);
+    });
+  });
+};
 
 
 // Attach a callback to the specified events
