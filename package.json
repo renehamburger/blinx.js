@@ -6,8 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server --port 9000 --host 0.0.0.0 --inline --progress --profile --colors --watch --content-base src/",
     "build": "webpack --config webpack.config.js -p",
-    "test": "karma start karma.config.js",
-    "test.chrome": "karma start karma.config.js --browsers Chrome",
+    "test": "karma start karma.config.js && codecov",
+    "test.chrome": "npm run test -- --browsers Chrome",
     "test.watch": "npm run test -- --no-single-run",
     "test.debug": "npm run test.watch -- --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999"
   },
@@ -28,6 +28,7 @@
     "@types/node": "9.4.6",
     "awesome-typescript-loader": "3.4.1",
     "circular-dependency-plugin": "^4.4.0",
+    "codecov": "^3.0.0",
     "css-loader": "^0.28.10",
     "jasmine-core": "2.99.1",
     "karma": "2.0.0",
