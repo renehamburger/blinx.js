@@ -35,6 +35,13 @@ module.exports = function(config) {
         os_version: 'XP',
         browser: 'Opera'
       },
+      win7_ie9: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: '7',
+        browser: 'IE',
+        browser_version: '9'
+      },
       win7_ie10: {
         base: 'BrowserStack',
         os: 'Windows',
@@ -82,7 +89,7 @@ module.exports = function(config) {
     },
     browsers: [
       'winxp_chrome', 'winxp_firefox', 'winxp_opera',
-      'win7_ie10', 'win7_ie11', 'win10_chrome',
+      'win7_ie9', 'win7_ie10', 'win7_ie11', 'win10_chrome',
       // 'osx_safari', 'iphone4s', 'ipad2',
       // 'google_nexus'
     ],
