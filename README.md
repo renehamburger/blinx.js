@@ -65,6 +65,10 @@ blinx.js is based on the amazingly comprehensive [Bible Passage Reference Parser
   <img src="./assets/browserstack-logo.png" alt="Browser Stack Logo" height="105">
 </a>
 
-[BrowserStack](https://www.browserstack.com/start) is used to ensure a wide browser compatibility by running unit tests on multiple devices.
+[BrowserStack](https://www.browserstack.com/start) is used to ensure a wide browser compatibility by running unit tests on multiple devices:
+
+- Chrome, Firefox, MS Edge, Safari: Runs well on latest versions for each of these, but should also run on significantly older versions.
+- Internet Explorer: Runs well on IE11 and with occasional problems on IE10. On IE9, only the linking of references works for now, but no tooltip is shown.
+- Mobile Browsers: Not tested systematically yet, but support should be good on recent mobile browsers.
 
 If you want to run those unit tests locally in a clone of blinx.js, it's easiest to change the `browsers` array in karma.conf.js to `[PhantomJS]`. Alternatively, you can add your BrowserStack credentials via the environment variables `BROWSER_STACK_USERNAME` and `BROWSER_STACK_ACCESS_KEY`. (If the BrowserStack tunnel is [not executed automatically](https://github.com/karma-runner/karma-browserstack-launcher/issues/42), e.g. on Windows, you may need to start it manually with  `./node_modules/browserstacktunnel-wrapper/bin/win32/BrowserStackLocal.exe --key $BROWSER_STACK_ACCESS_KEY`.)
