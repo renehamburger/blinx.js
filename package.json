@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --port 9000 --host 0.0.0.0 --inline --progress --profile --colors --watch --content-base src/",
     "build": "webpack --config webpack.config.js -p",
-    "test": "karma start karma.config.js && codecov",
+    "test": "karma start karma.config.js",
     "test.chrome": "npm run test -- --browsers Chrome",
     "test.watch": "npm run test -- --no-single-run",
     "test.debug": "npm run test.watch -- --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999"
@@ -35,7 +35,7 @@
     "karma-browserstack-launcher": "^1.3.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "1.1.1",
-    "karma-typescript": "^3.0.12",
+    "karma-typescript": "git+https://github.com/renehamburger/karma-typescript.git#bundled",
     "source-map-loader": "0.2.3",
     "style-loader": "^0.20.3",
     "tsconfig-paths-webpack-plugin": "^2.0.0",

@@ -6,5 +6,8 @@ interface Window {
   blinx: any;
 }
 
-declare module 'src/lib/promise.js' {
-}
+declare let module: { exports: any };
+declare const require: (module: string) => any;
+
+declare module 'src/lib/promise.js' { }
+
