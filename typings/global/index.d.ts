@@ -11,3 +11,7 @@ declare const require: (module: string) => any;
 
 declare module 'src/lib/promise.js' { }
 
+declare module 'src/lib/request-animation-frame.js' { }
+
+declare module 'src/lib/class-list.js' { }
+
