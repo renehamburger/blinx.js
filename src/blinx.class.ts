@@ -143,8 +143,8 @@ export class Blinx {
     for (const childNode of childNodes) {
       if (this.isTextNode(childNode)) {
         // Look for all complete Bible references
-        this.parser.bcv().parse(childNode.textContent || '');
-        const refs = this.parser.bcv().osis_and_indices();
+        this.parser.bcv.parse(childNode.textContent || '');
+        const refs = this.parser.bcv.osis_and_indices();
         this.handleReferencesFoundInText(childNode, refs);
       }
     }
@@ -201,15 +201,15 @@ export class Blinx {
       }
       // Check for possible reference with prefix first
       if (possibleReferenceWithPrefix) {
-        this.parser.bcv().parse_with_context(possibleReferenceWithPrefix, previousPassage);
+        this.parser.bcv.parse_with_context(possibleReferenceWithPrefix, previousPassage);
       }
       // If none available or unsuccessful, check for possible reference starting with number(s)
-      if (!possibleReferenceWithPrefix || !this.parser.bcv().osis()) {
-        this.parser.bcv().parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
+      if (!possibleReferenceWithPrefix || !this.parser.bcv.osis()) {
+        this.parser.bcv.parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
         offset = match.index;
       }
       // If either successful, adjust the indices due to the slice above and handle the reference
-      const refs = this.parser.bcv().osis_and_indices();
+      const refs = this.parser.bcv.osis_and_indices();
       if (refs.length) {
         for (const ref of refs) {
           ref.indices[0] += offset;

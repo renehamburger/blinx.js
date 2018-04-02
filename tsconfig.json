@@ -8,7 +8,7 @@
     "allowJs": true,
     "outDir": "./dist/",
     "sourceMap": true,
-    "target": "es3",
+    "target": "es5",
     "typeRoots" : ["./typings", "./node_modules/@types"],
     "types" : ["global", "bible-passage-reference-parser", "jasmine"],
     // Linting

@@ -46,12 +46,12 @@ u.prototype = {
 // https://developers.google.com/speed/articles/optimizing-javascript
 u.prototype.nodes = [];
 
-// Add class(es) to the matched nodes
-u.prototype.addClass = function () {
-  return this.eacharg(arguments, function (el, name) {
-    el.classList.add(name);
-  });
-};
+// // Add class(es) to the matched nodes
+// u.prototype.addClass = function () {
+//   return this.eacharg(arguments, function (el, name) {
+//     el.classList.add(name);
+//   });
+// };
 
 
 // [INTERNAL USE ONLY]
@@ -90,25 +90,25 @@ u.prototype.adjacent = function (html, data, callback) {
   });
 };
 
-// Add some html as a sibling after each of the matched elements.
-u.prototype.after = function (html, data) {
-  return this.adjacent(html, data, function (node, fragment) {
-    node.parentNode.insertBefore(fragment, node.nextSibling);
-  });
-};
+// // Add some html as a sibling after each of the matched elements.
+// u.prototype.after = function (html, data) {
+//   return this.adjacent(html, data, function (node, fragment) {
+//     node.parentNode.insertBefore(fragment, node.nextSibling);
+//   });
+// };
 
 
-// Create a HTTP request for whenever the matched form submits
-u.prototype.ajax = function (done, before) {
-  return this.handle('submit', function (e) {
-    ajax(
-      u(this).attr('action'),
-      { body: u(this).serialize(), method: u(this).attr('method') },
-      done && done.bind(this),
-      before && before.bind(this)
-    );
-  });
-};
+// // Create a HTTP request for whenever the matched form submits
+// u.prototype.ajax = function (done, before) {
+//   return this.handle('submit', function (e) {
+//     ajax(
+//       u(this).attr('action'),
+//       { body: u(this).serialize(), method: u(this).attr('method') },
+//       done && done.bind(this),
+//       before && before.bind(this)
+//     );
+//   });
+// };
 
 
 // Add some html as a child at the end of each of the matched elements.
@@ -177,11 +177,11 @@ u.prototype.attr = function (name, value, data) {
 
 
 // Add some html before each of the matched elements.
-u.prototype.before = function (html, data) {
-  return this.adjacent(html, data, function (node, fragment) {
-    node.parentNode.insertBefore(fragment, node);
-  });
-};
+// u.prototype.before = function (html, data) {
+//   return this.adjacent(html, data, function (node, fragment) {
+//     node.parentNode.insertBefore(fragment, node);
+//   });
+// };
 
 
 // Get the direct children of all of the nodes with an optional filter
@@ -196,20 +196,20 @@ u.prototype.children = function (selector) {
  * Deep clone a DOM node and its descendants.
  * @return {[Object]}         Returns an Umbrella.js instance.
  */
-u.prototype.clone = function () {
-  return this.map(function (node, i) {
-    var clone = node.cloneNode(true);
-    var dest = this.getAll(clone);
+// u.prototype.clone = function () {
+//   return this.map(function (node, i) {
+//     var clone = node.cloneNode(true);
+//     var dest = this.getAll(clone);
 
-    this.getAll(node).each(function (src, i) {
-      for (var key in this.mirror) {
-        this.mirror[key](src, dest.nodes[i]);
-      }
-    });
+//     this.getAll(node).each(function (src, i) {
+//       for (var key in this.mirror) {
+//         this.mirror[key](src, dest.nodes[i]);
+//       }
+//     });
 
-    return clone;
-  });
-};
+//     return clone;
+//   });
+// };
 
 /**
  * Return an array of DOM nodes of a source node and its children.
@@ -217,9 +217,9 @@ u.prototype.clone = function () {
  * @param  {[String]} tag     DOM node tagName.
  * @return {[Array]}          Array containing queried DOM nodes.
  */
-u.prototype.getAll = function getAll (context) {
-  return u([context].concat(u('*', context).nodes));
-};
+// u.prototype.getAll = function getAll (context) {
+//   return u([context].concat(u('*', context).nodes));
+// };
 
 // Store all of the operations to perform when cloning elements
 u.prototype.mirror = {};
@@ -230,15 +230,15 @@ u.prototype.mirror = {};
  * @param  {[Object]} destination DOM node
  * @return {[undefined]]}
  */
-u.prototype.mirror.events = function (src, dest) {
-  if (!src._e) return;
+// u.prototype.mirror.events = function (src, dest) {
+//   if (!src._e) return;
 
-  for (var type in src._e) {
-    src._e[type].forEach(function (event) {
-      u(dest).on(type, event);
-    });
-  }
-};
+//   for (var type in src._e) {
+//     src._e[type].forEach(function (event) {
+//       u(dest).on(type, event);
+//     });
+//   }
+// };
 
 /**
  * Copy select input value to its clone.
@@ -246,11 +246,11 @@ u.prototype.mirror.events = function (src, dest) {
  * @param  {[Object]} dest DOM node
  * @return {[undefined]}
  */
-u.prototype.mirror.select = function (src, dest) {
-  if (u(src).is('select')) {
-    dest.value = src.value;
-  }
-};
+// u.prototype.mirror.select = function (src, dest) {
+//   if (u(src).is('select')) {
+//     dest.value = src.value;
+//   }
+// };
 
 /**
  * Copy textarea input value to its clone
@@ -258,24 +258,24 @@ u.prototype.mirror.select = function (src, dest) {
  * @param  {[Object]} dest DOM node
  * @return {[undefined]}
  */
-u.prototype.mirror.textarea = function (src, dest) {
-  if (u(src).is('textarea')) {
-    dest.value = src.value;
-  }
-};
+// u.prototype.mirror.textarea = function (src, dest) {
+//   if (u(src).is('textarea')) {
+//     dest.value = src.value;
+//   }
+// };
 
 
-// Find the first ancestor that matches the selector for each node
-u.prototype.closest = function (selector) {
-  return this.map(function (node) {
-    // Keep going up and up on the tree. First element is also checked
-    do {
-      if (u(node).is(selector)) {
-        return node;
-      }
-    } while ((node = node.parentNode) && node !== document);
-  });
-};
+// // Find the first ancestor that matches the selector for each node
+// u.prototype.closest = function (selector) {
+//   return this.map(function (node) {
+//     // Keep going up and up on the tree. First element is also checked
+//     do {
+//       if (u(node).is(selector)) {
+//         return node;
+//       }
+//     } while ((node = node.parentNode) && node !== document);
+//   });
+// };
 
 
 // Handle data-* attributes for the matched elements
@@ -309,13 +309,13 @@ u.prototype.eacharg = function (args, callback) {
 
 
 // Remove all children of the matched nodes from the DOM.
-u.prototype.empty = function () {
-  return this.each(function (node) {
-    while (node.firstChild) {
-      node.removeChild(node.firstChild);
-    }
-  });
-};
+// u.prototype.empty = function () {
+//   return this.each(function (node) {
+//     while (node.firstChild) {
+//       node.removeChild(node.firstChild);
+//     }
+//   });
+// };
 
 
 // .filter(selector)
@@ -362,88 +362,88 @@ u.prototype.first = function () {
 
 // Perform ajax calls
 /* eslint-disable no-unused-vars*/
-function ajax (action, opt, done, before) {
-  done = done || function () {};
+// function ajax (action, opt, done, before) {
+//   done = done || function () {};
 
-  // A bunch of options and defaults
-  opt = opt || {};
-  opt.body = opt.body || {};
-  opt.method = (opt.method || 'GET').toUpperCase();
-  opt.headers = opt.headers || {};
+//   // A bunch of options and defaults
+//   opt = opt || {};
+//   opt.body = opt.body || {};
+//   opt.method = (opt.method || 'GET').toUpperCase();
+//   opt.headers = opt.headers || {};
 
-  // Tell the back-end it's an AJAX request
-  opt.headers['X-Requested-With'] = opt.headers['X-Requested-With'] || 'XMLHttpRequest';
+//   // Tell the back-end it's an AJAX request
+//   opt.headers['X-Requested-With'] = opt.headers['X-Requested-With'] || 'XMLHttpRequest';
 
-  if (typeof window.FormData === 'undefined' || !(opt.body instanceof window.FormData)) {
-    opt.headers['Content-Type'] = opt.headers['Content-Type'] || 'application/x-www-form-urlencoded';
-  }
+//   if (typeof window.FormData === 'undefined' || !(opt.body instanceof window.FormData)) {
+//     opt.headers['Content-Type'] = opt.headers['Content-Type'] || 'application/x-www-form-urlencoded';
+//   }
 
-  // If it's of type JSON, encode it as such
-  if (/json/.test(opt.headers['Content-Type'])) {
-    opt.body = JSON.stringify(opt.body);
-  }
+//   // If it's of type JSON, encode it as such
+//   if (/json/.test(opt.headers['Content-Type'])) {
+//     opt.body = JSON.stringify(opt.body);
+//   }
 
-  if ((typeof opt.body === 'object') && !(opt.body instanceof window.FormData)) {
-    opt.body = u().param(opt.body);
-  }
+//   if ((typeof opt.body === 'object') && !(opt.body instanceof window.FormData)) {
+//     opt.body = u().param(opt.body);
+//   }
 
-  // Create and send the actual request
-  var request = new window.XMLHttpRequest();
+//   // Create and send the actual request
+//   var request = new window.XMLHttpRequest();
 
-  // An error is just an error
-  // This uses a little hack of passing an array to u() so it handles it as
-  // an array of nodes, hence we can use 'on'. However a single element wouldn't
-  // work since it a) doesn't have nodeName and b) it will be sliced, failing
-  u(request).on('error timeout abort', function () {
-    done(new Error(), null, request);
-  }).on('load', function () {
-    // Also an error if it doesn't start by 2 or 3...
-    // This is valid as there's no code 2x nor 2, nor 3x nor 3, only 2xx and 3xx
-    // We don't want to return yet though as there might be some content
-    var err = /^(4|5)/.test(request.status) ? new Error(request.status) : null;
+//   // An error is just an error
+//   // This uses a little hack of passing an array to u() so it handles it as
+//   // an array of nodes, hence we can use 'on'. However a single element wouldn't
+//   // work since it a) doesn't have nodeName and b) it will be sliced, failing
+//   u(request).on('error timeout abort', function () {
+//     done(new Error(), null, request);
+//   }).on('load', function () {
+//     // Also an error if it doesn't start by 2 or 3...
+//     // This is valid as there's no code 2x nor 2, nor 3x nor 3, only 2xx and 3xx
+//     // We don't want to return yet though as there might be some content
+//     var err = /^(4|5)/.test(request.status) ? new Error(request.status) : null;
 
-    // Attempt to parse the body into JSON
-    var body = parseJson(request.response) || request.response;
+//     // Attempt to parse the body into JSON
+//     var body = parseJson(request.response) || request.response;
 
-    return done(err, body, request);
-  });
+//     return done(err, body, request);
+//   });
 
-  // Create a request of the specified type to the URL and ASYNC
-  request.open(opt.method, action);
+//   // Create a request of the specified type to the URL and ASYNC
+//   request.open(opt.method, action);
 
-  request.withCredentials = true;
+//   request.withCredentials = true;
 
-  // Set the corresponding headers
-  for (var name in opt.headers) {
-    request.setRequestHeader(name, opt.headers[name]);
-  }
+//   // Set the corresponding headers
+//   for (var name in opt.headers) {
+//     request.setRequestHeader(name, opt.headers[name]);
+//   }
 
-  // Load the before callback before sending the data
-  if (before) before(request);
+//   // Load the before callback before sending the data
+//   if (before) before(request);
 
-  request.send(opt.body);
+//   request.send(opt.body);
 
-  return request;
-}
+//   return request;
+// }
 /* eslint-enable no-unused-vars*/
 
 
 // [INTERNAL USE ONLY]
 // Parse JSON without throwing an error
 /* eslint-disable no-unused-vars*/
-function parseJson (jsonString) {
-  try {
-    var o = JSON.parse(jsonString);
-    // Handle non-exception-throwing cases:
-    // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking
-    // so we must check for that, too.
-    if (o && typeof o === 'object') {
-      return o;
-    }
-  } catch (e) {}
+// function parseJson (jsonString) {
+//   try {
+//     var o = JSON.parse(jsonString);
+//     // Handle non-exception-throwing cases:
+//     // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking
+//     // so we must check for that, too.
+//     if (o && typeof o === 'object') {
+//       return o;
+//     }
+//   } catch (e) {}
 
-  return false;
-}
+//   return false;
+// }
 /* eslint-enable no-unused-vars*/
 
 
@@ -460,27 +460,27 @@ u.prototype.generate = function (html) {
   }
 };
 
-// Change the default event for the callback. Simple decorator to preventDefault
-u.prototype.handle = function () {
-  var args = this.slice(arguments).map(function (arg) {
-    if (typeof arg === 'function') {
-      return function (e) {
-        e.preventDefault();
-        arg.apply(this, arguments);
-      };
-    }
-    return arg;
-  }, this);
+// // Change the default event for the callback. Simple decorator to preventDefault
+// u.prototype.handle = function () {
+//   var args = this.slice(arguments).map(function (arg) {
+//     if (typeof arg === 'function') {
+//       return function (e) {
+//         e.preventDefault();
+//         arg.apply(this, arguments);
+//       };
+//     }
+//     return arg;
+//   }, this);
 
-  return this.on.apply(this, args);
-};
+//   return this.on.apply(this, args);
+// };
 
 
-// Find out whether the matched elements have a class or not
-u.prototype.hasClass = function () {
-  // Check if any of them has all of the classes
-  return this.is('.' + this.args(arguments).join('.'));
-};
+// // Find out whether the matched elements have a class or not
+// u.prototype.hasClass = function () {
+//   // Check if any of them has all of the classes
+//   return this.is('.' + this.args(arguments).join('.'));
+// };
 
 
 // Set or retrieve the html from the matched node(s)
@@ -515,10 +515,10 @@ u.prototype.isInPage = function isInPage (node) {
   return (node === document.body) ? false : document.body.contains(node);
 };
 
-  // Get the last of the nodes
-u.prototype.last = function () {
-  return this.nodes[this.length - 1] || false;
-};
+//   // Get the last of the nodes
+// u.prototype.last = function () {
+//   return this.nodes[this.length - 1] || false;
+// };
 
 
 // Merge all of the nodes that the callback returns
@@ -609,67 +609,67 @@ u.prototype.pairs = function (name, value, get, set) {
 
 // [INTERNAL USE ONLY]
 
-// Parametize an object: { a: 'b', c: 'd' } => 'a=b&c=d'
-u.prototype.param = function (obj) {
-  return Object.keys(obj).map(function (key) {
-    return this.uri(key) + '=' + this.uri(obj[key]);
-  }.bind(this)).join('&');
-};
+// // Parametize an object: { a: 'b', c: 'd' } => 'a=b&c=d'
+// u.prototype.param = function (obj) {
+//   return Object.keys(obj).map(function (key) {
+//     return this.uri(key) + '=' + this.uri(obj[key]);
+//   }.bind(this)).join('&');
+// };
 
-// Travel the matched elements one node up
-u.prototype.parent = function (selector) {
-  return this.map(function (node) {
-    return node.parentNode;
-  }).filter(selector);
-};
-
-
-// Add nodes at the beginning of each node
-u.prototype.prepend = function (html, data) {
-  return this.adjacent(html, data, function (node, fragment) {
-    node.insertBefore(fragment, node.firstChild);
-  });
-};
+// // Travel the matched elements one node up
+// u.prototype.parent = function (selector) {
+//   return this.map(function (node) {
+//     return node.parentNode;
+//   }).filter(selector);
+// };
 
 
-// Delete the matched nodes from the DOM
-u.prototype.remove = function () {
-  // Loop through all the nodes
-  return this.each(function (node) {
-    // Perform the removal only if the node has a parent
-    if (node.parentNode) {
-      node.parentNode.removeChild(node);
-    }
-  });
-};
+// // Add nodes at the beginning of each node
+// u.prototype.prepend = function (html, data) {
+//   return this.adjacent(html, data, function (node, fragment) {
+//     node.insertBefore(fragment, node.firstChild);
+//   });
+// };
 
 
-// Removes a class from all of the matched nodes
-u.prototype.removeClass = function () {
-  // Loop the combination of each node with each argument
-  return this.eacharg(arguments, function (el, name) {
-    // Remove the class using the native method
-    el.classList.remove(name);
-  });
-};
+// // Delete the matched nodes from the DOM
+// u.prototype.remove = function () {
+//   // Loop through all the nodes
+//   return this.each(function (node) {
+//     // Perform the removal only if the node has a parent
+//     if (node.parentNode) {
+//       node.parentNode.removeChild(node);
+//     }
+//   });
+// };
 
 
-// Replace the matched elements with the passed argument.
-u.prototype.replace = function (html, data) {
-  var nodes = [];
-  this.adjacent(html, data, function (node, fragment) {
-    nodes = nodes.concat(this.slice(fragment.children));
-    node.parentNode.replaceChild(fragment, node);
-  });
-  return u(nodes);
-};
+// // Removes a class from all of the matched nodes
+// u.prototype.removeClass = function () {
+//   // Loop the combination of each node with each argument
+//   return this.eacharg(arguments, function (el, name) {
+//     // Remove the class using the native method
+//     el.classList.remove(name);
+//   });
+// };
 
 
-// Scroll to the first matched element
-u.prototype.scroll = function () {
-  this.first().scrollIntoView({ behavior: 'smooth' });
-  return this;
-};
+// // Replace the matched elements with the passed argument.
+// u.prototype.replace = function (html, data) {
+//   var nodes = [];
+//   this.adjacent(html, data, function (node, fragment) {
+//     nodes = nodes.concat(this.slice(fragment.children));
+//     node.parentNode.replaceChild(fragment, node);
+//   });
+//   return u(nodes);
+// };
+
+
+// // Scroll to the first matched element
+// u.prototype.scroll = function () {
+//   this.first().scrollIntoView({ behavior: 'smooth' });
+//   return this;
+// };
 
 
 // [INTERNAL USE ONLY]
@@ -707,15 +707,15 @@ u.prototype.selectors[/^\.[\w\-]+$/] = function (param) {
   return document.getElementsByClassName(param.substring(1));
 };
 
-// The tag nodes
-u.prototype.selectors[/^\w+$/] = function (param) {
-  return document.getElementsByTagName(param);
-};
+// // The tag nodes
+// u.prototype.selectors[/^\w+$/] = function (param) {
+//   return document.getElementsByTagName(param);
+// };
 
-// Find some html nodes using an Id
-u.prototype.selectors[/^\#[\w\-]+$/] = function (param) {
-  return document.getElementById(param.substring(1));
-};
+// // Find some html nodes using an Id
+// u.prototype.selectors[/^\#[\w\-]+$/] = function (param) {
+//   return document.getElementById(param.substring(1));
+// };
 
 // Create a new element for the DOM
 u.prototype.selectors[/^</] = function (param) {
@@ -723,45 +723,45 @@ u.prototype.selectors[/^</] = function (param) {
 };
 
 
-// Convert forms into a string able to be submitted
-// Original source: http://stackoverflow.com/q/11661187
-u.prototype.serialize = function () {
-  var self = this;
+// // Convert forms into a string able to be submitted
+// // Original source: http://stackoverflow.com/q/11661187
+// u.prototype.serialize = function () {
+//   var self = this;
 
-  // Store the class in a variable for manipulation
-  return this.slice(this.first().elements).reduce(function (query, el) {
-    // We only want to match enabled elements with names, but not files
-    if (!el.name || el.disabled || el.type === 'file') return query;
+//   // Store the class in a variable for manipulation
+//   return this.slice(this.first().elements).reduce(function (query, el) {
+//     // We only want to match enabled elements with names, but not files
+//     if (!el.name || el.disabled || el.type === 'file') return query;
 
-    // Ignore the checkboxes that are not checked
-    if (/(checkbox|radio)/.test(el.type) && !el.checked) return query;
+//     // Ignore the checkboxes that are not checked
+//     if (/(checkbox|radio)/.test(el.type) && !el.checked) return query;
 
-    // Handle multiple selects
-    if (el.type === 'select-multiple') {
-      u(el.options).each(function (opt) {
-        if (opt.selected) {
-          query += '&' + self.uri(el.name) + '=' + self.uri(opt.value);
-        }
-      });
-      return query;
-    }
+//     // Handle multiple selects
+//     if (el.type === 'select-multiple') {
+//       u(el.options).each(function (opt) {
+//         if (opt.selected) {
+//           query += '&' + self.uri(el.name) + '=' + self.uri(opt.value);
+//         }
+//       });
+//       return query;
+//     }
 
-    // Add the element to the object
-    return query + '&' + self.uri(el.name) + '=' + self.uri(el.value);
-  }, '').slice(1);
-};
-
-
-// Travel the matched elements at the same level
-u.prototype.siblings = function (selector) {
-  return this.parent().children(selector).not(this);
-};
+//     // Add the element to the object
+//     return query + '&' + self.uri(el.name) + '=' + self.uri(el.value);
+//   }, '').slice(1);
+// };
 
 
-// Find the size of the first matched element
-u.prototype.size = function () {
-  return this.first().getBoundingClientRect();
-};
+// // Travel the matched elements at the same level
+// u.prototype.siblings = function (selector) {
+//   return this.parent().children(selector).not(this);
+// };
+
+
+// // Find the size of the first matched element
+// u.prototype.size = function () {
+//   return this.first().getBoundingClientRect();
+// };
 
 
 // [INTERNAL USE ONLY]
@@ -782,18 +782,18 @@ u.prototype.slice = function (pseudo) {
 
 // [INTERNAL USE ONLY]
 
-// Create a string from different things
-u.prototype.str = function (node, i) {
-  return function (arg) {
-    // Call the function with the corresponding nodes
-    if (typeof arg === 'function') {
-      return arg.call(this, node, i);
-    }
+// // Create a string from different things
+// u.prototype.str = function (node, i) {
+//   return function (arg) {
+//     // Call the function with the corresponding nodes
+//     if (typeof arg === 'function') {
+//       return arg.call(this, node, i);
+//     }
 
-    // From an array or other 'weird' things
-    return arg.toString();
-  };
-};
+//     // From an array or other 'weird' things
+//     return arg.toString();
+//   };
+// };
 
 
 // Set or retrieve the text content from the matched node(s)
@@ -812,20 +812,20 @@ u.prototype.text = function (text) {
 };
 
 
-// Activate/deactivate classes in the elements
-u.prototype.toggleClass = function (classes, addOrRemove) {
-  /* jshint -W018 */
-  // Check if addOrRemove was passed as a boolean
-  if (!!addOrRemove === addOrRemove) {
-    return this[addOrRemove ? 'addClass' : 'removeClass'](classes);
-  }
-  /* jshint +W018 */
+// // Activate/deactivate classes in the elements
+// u.prototype.toggleClass = function (classes, addOrRemove) {
+//   /* jshint -W018 */
+//   // Check if addOrRemove was passed as a boolean
+//   if (!!addOrRemove === addOrRemove) {
+//     return this[addOrRemove ? 'addClass' : 'removeClass'](classes);
+//   }
+//   /* jshint +W018 */
 
-  // Loop through all the nodes and classes combinations
-  return this.eacharg(classes, function (el, name) {
-    el.classList.toggle(name);
-  });
-};
+//   // Loop through all the nodes and classes combinations
+//   return this.eacharg(classes, function (el, name) {
+//     el.classList.toggle(name);
+//   });
+// };
 
 
 // Call an event manually on all the nodes
@@ -862,10 +862,10 @@ u.prototype.unique = function () {
 
 // [INTERNAL USE ONLY]
 
-// Encode the different strings https://gist.github.com/brettz9/7147458
-u.prototype.uri = function (str) {
-  return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');
-};
+// // Encode the different strings https://gist.github.com/brettz9/7147458
+// u.prototype.uri = function (str) {
+//   return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');
+// };
 
 
 u.prototype.wrap = function (selector) {
@@ -895,6 +895,6 @@ u.prototype.wrap = function (selector) {
 if (typeof module === 'object' && module.exports) {
   module.exports = {
     u: u,
-    ajax: ajax
+    //ajax: ajax
   };
 }

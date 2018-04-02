@@ -15,7 +15,7 @@ export class Parser {
     return false;
   }
 
-  public bcv(): BCV.Parser {
+  public get bcv(): BCV.Parser {
     if (this._bcv) {
       return this._bcv;
     }
