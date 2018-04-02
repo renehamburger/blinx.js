@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/renehamburger/blinx.js.svg?branch=master)](https://travis-ci.org/renehamburger/blinx.js)
 [![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=NDFySHJvMm5tYU9TR2R6ckx3V1VPVEE2RWVaeUQwZkF4VUM4YWZXcmRDbz0tLVc0MmI0VTBxRWowTnZRcmw4WCswamc9PQ==--860f7ea93b85417a113f565e070df60691fd0097)](https://www.browserstack.com/automate/public-build/NDFySHJvMm5tYU9TR2R6ckx3V1VPVEE2RWVaeUQwZkF4VUM4YWZXcmRDbz0tLVc0MmI0VTBxRWowTnZRcmw4WCswamc9PQ==--860f7ea93b85417a113f565e070df60691fd0097)
 [![codecov](https://codecov.io/gh/renehamburger/blinx.js/branch/master/graph/badge.svg)](https://codecov.io/gh/renehamburger/blinx.js)
-<a href="https://www.travis-ci.org/renehamburger/blinx.js" target="_blank"><img src="https://badges.herokuapp.com/browsers?labels=none&googlechrome=latest&firefox=latest&microsoftedge=latest&iexplore=-9,10,11&safari=latest" alt="SauceLabs Reports"/></a>
+<a href="#browser-compatibility--test"><img src="https://badges.herokuapp.com/browsers?labels=none&googlechrome=latest&firefox=latest&microsoftedge=latest&iexplore=-9,10,11&safari=latest" alt="Browser Support"/></a>
 
 A multi-language client-side library to automatically convert Bible references to Bible links with passage pop-ups.
 
@@ -65,10 +65,10 @@ blinx.js is based on the amazingly comprehensive [Bible Passage Reference Parser
   <img src="./assets/browserstack-logo.png" alt="Browser Stack Logo" height="105">
 </a>
 
-[BrowserStack](https://www.browserstack.com/start) is used to ensure a wide browser compatibility by running unit tests on multiple devices:
+[BrowserStack](https://www.browserstack.com/start) is used to ensure a wide browser compatibility by running unit tests on multiple devices (cf. latest [test run]()https://www.travis-ci.org/renehamburger/blinx.js):
 
-- Chrome, Firefox, MS Edge, Safari: Runs well on latest versions for each of these, but should also run on significantly older versions.
-- Internet Explorer: Runs well on IE11 and with occasional problems on IE10. On IE9, only the linking of references works for now, but no tooltip is shown.
-- Mobile Browsers: Not tested systematically yet, but support should be good on recent mobile browsers.
+- **Chrome, Firefox, MS Edge, Safari**: Runs well on latest versions for each of these, but should also run on significantly older versions.
+- **Internet Explorer**: Runs well on IE11 and with occasional problems on IE10. On IE9, only the linking of references works for now, but no tooltip is shown.
+- **Mobile Browsers**: Not tested systematically yet, but support should be good on recent mobile browsers.
 
 If you want to run those unit tests locally in a clone of blinx.js, it's easiest to change the `browsers` array in karma.conf.js to `[PhantomJS]`. Alternatively, you can add your BrowserStack credentials via the environment variables `BROWSER_STACK_USERNAME` and `BROWSER_STACK_ACCESS_KEY`. (If the BrowserStack tunnel is [not executed automatically](https://github.com/karma-runner/karma-browserstack-launcher/issues/42), e.g. on Windows, you may need to start it manually with  `./node_modules/browserstacktunnel-wrapper/bin/win32/BrowserStackLocal.exe --key $BROWSER_STACK_ACCESS_KEY`.)
