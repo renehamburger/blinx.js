@@ -6,7 +6,9 @@ module.exports = function(config) {
     browserDisconnectTolerance: 2,
 
     /** How long will Karma wait for a message from a browser before disconnecting from it (in ms). */
-    browserNoActivityTimeout: 30000,
+    browserNoActivityTimeout: 20000,
+
+    retryLimit: 3,
 
     //--- BrowserStack settings
     browserStack: {
@@ -66,7 +68,7 @@ module.exports = function(config) {
         base: 'BrowserStack',
         os: 'Windows',
         os_version: '10',
-        browser: 'Chrome'
+        browser: 'Firefox'
       },
       win10_opera: {
         base: 'BrowserStack',
@@ -121,7 +123,8 @@ module.exports = function(config) {
       'winxp_chrome', 'winxp_firefox', 'winxp_opera',
       'win7_ie9', 'win7_ie10', 'win7_ie11',
       'win10_chrome', 'win10_firefox', 'win10_opera', 'win10_edge',
-      'osx_10_6_safari', 'osx_10_13_safari',
+      //'osx_10_6_safari',
+      'osx_10_13_safari',
       //'iphone4s', 'ipad2', 'google_nexus'
     ],
 
