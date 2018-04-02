@@ -62,10 +62,40 @@ module.exports = function(config) {
         os_version: '10',
         browser: 'Chrome'
       },
+      win10_firefox: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: '10',
+        browser: 'Chrome'
+      },
+      win10_opera: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: '10',
+        browser: 'Opera'
+      },
+      win10_edge: {
+        base: 'BrowserStack',
+        os: 'Windows',
+        os_version: '10',
+        browser: 'Edge'
+      },
       osx_safari: {
         base: 'BrowserStack',
         os: 'OS X',
         os_version: 'Snow Leopard',
+        browser: 'Safari'
+      },
+      osx_10_6_safari: {
+        base: 'BrowserStack',
+        os: 'OS X',
+        os_version: 'Snow Leopard',
+        browser: 'Safari'
+      },
+      osx_10_13_safari: {
+        base: 'BrowserStack',
+        os: 'OS X',
+        os_version: 'High Sierra',
         browser: 'Safari'
       },
       iphone4s: {
@@ -89,9 +119,10 @@ module.exports = function(config) {
     },
     browsers: [
       'winxp_chrome', 'winxp_firefox', 'winxp_opera',
-      'win7_ie9', 'win7_ie10', 'win7_ie11', 'win10_chrome',
-      // 'osx_safari', 'iphone4s', 'ipad2',
-      // 'google_nexus'
+      'win7_ie9', 'win7_ie10', 'win7_ie11',
+      'win10_chrome', 'win10_firefox', 'win10_opera', 'win10_edge',
+      'osx_10_6_safari', 'osx_10_13_safari',
+      //'iphone4s', 'ipad2', 'google_nexus'
     ],
 
     frameworks: [
