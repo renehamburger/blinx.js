@@ -31,6 +31,8 @@ export class Blinx {
   private tippyLoaded = new Deferred<void>();
   private touchStarted = false;
   private testability: Testability = { u };
+  private tippyPolyfills = false;
+  private tippyPolyfillInterval = 0;
 
   /** Initialise blinx. */
   constructor() {
@@ -103,6 +105,9 @@ export class Blinx {
             interactive: true,
             html: template.nodes[0],
             onShow: (tippyInstance) => {
+              if (this.tippyPolyfills) {
+                this.fixPopperPosition(tippyInstance);
+              }
               const osis = u(tippyInstance.reference).data('osis');
               this.getTooltipContent(osis)
                 .then((text: string) => {
@@ -111,10 +116,41 @@ export class Blinx {
                     this.testability.passageDisplayed();
                   }
                 });
+            },
+            onHide: (tippyInstance) => {
+              if (this.tippyPolyfills) {
+                clearInterval(this.tippyPolyfillInterval);
+                this.tippyPolyfillInterval = 0;
+                // Not removed automatically for IE9
+                setTimeout(() => {
+                  const el: any = tippyInstance.popper;
+                  if (el.removeNode) {
+                    el.removeNode(true);
+                  } else if (el.remove) {
+                    el.remove();
+                  }
+                }, 500);
+              }
             }
           })
         );
       });
+  }
+
+  /** Fiy positon of Popper for polyfilled browsers, as Popper won't position them. */
+  private fixPopperPosition(tippyInstance: Tippy.Instance) {
+    const popper = tippyInstance.popper as HTMLElement;
+    const adjustPos = () => {
+      popper.style.top = popper.getAttribute('x-placement') === 'top' ? '20px' : '10px';
+      popper.style.left = '10px';
+      popper.style.position = 'fixed';
+      const arrow = popper.getElementsByClassName('tippy-roundarrow').item(0) as HTMLElement;
+      arrow.style.display = 'none';
+    };
+    // A very crude way of correcting the position, but Popper seems to set it several times
+    setTimeout(adjustPos, 0);
+    clearInterval(this.tippyPolyfillInterval);
+    this.tippyPolyfillInterval = setInterval(adjustPos, 10);
   }
 
   /** Second step of initialisation after parser & polyfills are loaded. */
@@ -258,7 +294,7 @@ export class Blinx {
       .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`);
   }
 
-  private loadTippy() {
+  private async loadTippy(): Promise<any> {
     const win: any = window;
     // For websites with require.js support, tippy will try to load through require.js, which fails.
     // Defining a temporary module object is a nasty workaround to force tippy to add itself as module.exports.
@@ -271,24 +307,21 @@ export class Blinx {
     if ('tippy' in window) {
       this.tippyLoaded.resolve();
     } else {
-      let counter = 2;
-      const callback = () => {
-        counter--;
-        if (counter === 0) {
-          if (requireWorkaround) {
-            win.tippy = win.module.exports;
-            delete win.module;
-            delete win.exports;
-          }
-          this.tippyLoaded.resolve();
-        }
-      };
-      loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`).then(callback);
-      if (this.options.theme === 'light') {
-        loadCSS('https://unpkg.com/tippy.js/dist/themes/light.css').then(callback);
-      } else {
-        callback();
+      if (!('requestAnimationFrame' in window)) {
+        loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
+          'requestAnimationFrame|gated,Element.prototype.classList|gated');
+        this.tippyPolyfills = true;
       }
+      await loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`);
+      if (this.options.theme === 'light') {
+        await loadCSS('https://unpkg.com/tippy.js/dist/themes/light.css');
+      }
+      if (requireWorkaround) {
+        win.tippy = win.module.exports;
+        delete win.module;
+        delete win.exports;
+      }
+      this.tippyLoaded.resolve();
     }
   }
 

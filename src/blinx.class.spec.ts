@@ -18,10 +18,10 @@ describe('Blinx', () => {
       links.each(node => passages.push(u(node).data('osis')));
       expect(links.array()).toEqual(['Gen 1:3', 'II Cor 4:5', 'verse 6']);
       expect(passages).toEqual(['Gen.1.3', '2Cor.4.5', '2Cor.4.6']);
-      if (!(window as any).tippy.browser.supported) {
-        console.warn('Browser does not support tippy. Skipping second part of test');
-        return done();
-      }
+      // if (!(window as any).tippy.browser.supported) {
+      //   console.warn('Browser does not support tippy. Skipping second part of test');
+      //   return done();
+      // }
       u(links.first() as Node).trigger('mouseenter');
       // Wait until passage is displayed & checked displayed passage
       testability.passageDisplayed = () => {
