@@ -137,15 +137,18 @@ export class Blinx {
       });
   }
 
-  /** Fiy positon of Popper for polyfilled browsers, as Popper won't position them. */
+  /** Fix positon of Popper for polyfilled browsers, as Popper won't position them. */
   private fixPopperPosition(tippyInstance: Tippy.Instance) {
     const popper = tippyInstance.popper as HTMLElement;
     const adjustPos = () => {
-      popper.style.top = popper.getAttribute('x-placement') === 'top' ? '20px' : '10px';
-      popper.style.left = '10px';
-      popper.style.position = 'fixed';
-      const arrow = popper.getElementsByClassName('tippy-roundarrow').item(0) as HTMLElement;
-      arrow.style.display = 'none';
+      // Suppress errors for the sake of IE9 test
+      try {
+        popper.style.top = popper.getAttribute('x-placement') === 'top' ? '20px' : '10px';
+        popper.style.left = '10px';
+        popper.style.position = 'fixed';
+        const arrow = popper.getElementsByClassName('tippy-roundarrow').item(0) as HTMLElement;
+        arrow.style.display = 'none';
+      } catch { }
     };
     // A very crude way of correcting the position, but Popper seems to set it several times
     setTimeout(adjustPos, 0);
@@ -192,6 +195,13 @@ export class Blinx {
    * @param ref bcv_parser reference object
    */
   private handleReferencesFoundInText(node: Text, refs: BCV.OsisAndIndices[]): void {
+    let explicitContextRef: BCV.OsisAndIndices | null = null;
+    const explicitContext = node.parentNode &&
+      u(node.parentNode).closest('[data-bx-context]').attr('data-bx-context');
+    if (explicitContext) {
+      this.parser.bcv.parse(explicitContext);
+      explicitContextRef = this.parser.bcv.osis_and_indices()[0];
+    }
     for (let i = refs.length - 1; i >= 0; i--) {
       const ref = refs[i];
       const remainder = node.splitText(ref.indices[1]);
@@ -199,7 +209,12 @@ export class Blinx {
       if (passage) { // Always true in this case
         this.addLink(passage, ref);
       }
-      this.parsePartialReferencesInText(remainder, this.convertOsisToContext(ref.osis));
+      const contextRef = explicitContextRef || ref;
+      this.parsePartialReferencesInText(remainder, this.convertOsisToContext(contextRef.osis));
+    }
+    // If an explicit context was provided, check for partial references _preceding_ the first recognised ref
+    if (node.textContent && explicitContextRef) {
+      this.parsePartialReferencesInText(node, this.convertOsisToContext(explicitContextRef.osis));
     }
   }
 
