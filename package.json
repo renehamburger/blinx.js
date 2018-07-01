@@ -8,7 +8,10 @@
     "build": "webpack --config webpack.config.js -p",
     "test": "karma start karma.config.js",
     "test.chrome": "npm run test -- --browsers Chrome",
+    "test.ie9": "npm run test -- --browsers win7_ie9",
     "test.watch": "npm run test -- --no-single-run",
+    "test.chrome.watch": "npm run test.chrome -- --no-single-run",
+    "test.ie9.watch": "npm run test.ie9 -- --no-single-run",
     "test.debug": "npm run test.watch -- --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999"
   },
   "keywords": [

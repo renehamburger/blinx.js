@@ -137,15 +137,18 @@ export class Blinx {
       });
   }
 
-  /** Fiy positon of Popper for polyfilled browsers, as Popper won't position them. */
+  /** Fix positon of Popper for polyfilled browsers, as Popper won't position them. */
   private fixPopperPosition(tippyInstance: Tippy.Instance) {
     const popper = tippyInstance.popper as HTMLElement;
     const adjustPos = () => {
-      popper.style.top = popper.getAttribute('x-placement') === 'top' ? '20px' : '10px';
-      popper.style.left = '10px';
-      popper.style.position = 'fixed';
-      const arrow = popper.getElementsByClassName('tippy-roundarrow').item(0) as HTMLElement;
-      arrow.style.display = 'none';
+      // Suppress errors for the sake of IE9 test
+      try {
+        popper.style.top = popper.getAttribute('x-placement') === 'top' ? '20px' : '10px';
+        popper.style.left = '10px';
+        popper.style.position = 'fixed';
+        const arrow = popper.getElementsByClassName('tippy-roundarrow').item(0) as HTMLElement;
+        arrow.style.display = 'none';
+      } catch { }
     };
     // A very crude way of correcting the position, but Popper seems to set it several times
     setTimeout(adjustPos, 0);
