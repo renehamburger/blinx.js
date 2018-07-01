@@ -16,14 +16,14 @@ That is why I decided to create this library which will hopefully one day tick a
 
 This library is __work in progress__: see the [preliminary roadmap](../projects/1). I am looking for one or two developers to join this project.
 
-## Usage
+## Activation
 
 For now, the script can be included directly from GitHub via RawGit, either through a script tag or dynamically.
 
 ### Script tag
 
 ```html
-<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.1.4/dist/blinx.js" defer data-blinx="{
+<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.1.5/dist/blinx.js" defer data-blinx="{
   language: 'de'
 }"></script>
 ```
@@ -34,7 +34,7 @@ blinx.js loads several resources it requires dynamically and asynchronously. To 
 
 ```html
 <script src="https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/<LANGUAGE_CODE>_bcv_parser.js" defer></script>
-<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.1.4/dist/blinx.js" defer></script>
+<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.1.5/dist/blinx.js" defer></script>
 ```
 
 The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determine the language for blinx.js. ('537560a7' is the current [latest commit of the Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser/commits/master) and may need to be updated at a later stage.
@@ -44,12 +44,28 @@ The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determin
 ```js
 var blinxScript = document.createElement("script");
 blinxScript.type = 'text/javascript';
-blinxScript.src = 'https://cdn.rawgit.com/renehamburger/blinx.js/v0.1.4/dist/blinx.js';
+blinxScript.src = 'https://cdn.rawgit.com/renehamburger/blinx.js/v0.1.5/dist/blinx.js';
 document.documentElement.appendChild(blinxScript);
 blinxScript.setAttribute('data-blinx', '{ language: "de" }');
 ```
 
 You can add the dynamic version as a bookmarklet to load and start the script on any page with Bible references. But note, that this may not work for websites with restrictive [Content Security Policies](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP).
+
+## Usage
+
+If the chosen language is supported by the passage parser (see [below](#the-underlying-bible-passage-parser)), most __complete Bible references__ should be recognised automatically.
+
+__Partial references__, e.g. '3:16' or 'verse 17', are currently only recognised automatically, if they are preceded by a complete passage _within the same HTML element_. In order to enable the recognition of all other partial references, the attribute `data-bx-context` can be attached to any of the element's ancestors, in order to provide the passage context for the interpretation of partial references. The context will be parsed according to the set language, but OSIS references will always work. For now, this attribute will always trump any preceding complete references, no matter how close they are. Wrapper with the `data-bx-context`-attribute can be nested to ensure correct parsing of all partial references.
+
+Here's an example paragraph taken from the demo chapter of the [PTC course](https://elearning.moore.edu.au/mod/page/view.php?id=707) to illustrate this:
+
+```html
+<p data-bx-context="Luke 2">
+  In these chapters Luke introduces us to a number of godly Israelites, looking for the 'consolation' or 'redemption' of Israel (verses 25 and 38). In other words, these people were still waiting for the end of the exile (compare Isa 40:1; <span data-bx-context="Isa">52:9</span>). God reveals to them the presence of the Saviour in the person of the baby Jesus. His coming will mean salvation and glory for Israel and 'a light for revelation to the Gentiles' (verses 29-32)
+</p>
+```
+
+This paragraph contains mostly partial references within Luke chapter 2, which is provided as the overall context on the p-element. But in order to recognise 52:9 correctly as a chapter in Isaiah, another wrapper was introduced around it.
 
 ## The underlying Bible passage parser
 
