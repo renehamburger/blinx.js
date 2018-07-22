@@ -306,9 +306,8 @@ export class Blinx {
     const truncatedOsis = truncateMultiBookOsis(osis);
     let info = '';
     if (osis !== truncatedOsis) {
-      // TODO: Provide internationalisation
       info = 'Bible references stretching across several books are not yet supported.' +
-        ' Only the verses from the first chapter of this reference was displayed above.';
+        ' Only the verses from the first book are displayed above.';
     }
     return this.bibleApi.getPassage(truncatedOsis, versionCode)
       .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`)
