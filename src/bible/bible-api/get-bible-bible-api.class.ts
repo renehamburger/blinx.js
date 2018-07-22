@@ -2,7 +2,7 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { BibleVersionCode } from 'src/bible/models/bible-versions.const';
 import { executeJsonp } from 'src/helpers/jsonp';
 import { BibleVersionMap } from 'src/bible/bible.class';
-import { transformOsis, BookNameMap } from 'src/helpers/osis';
+import { transformOsis, BookNameMap, parseOsis } from 'src/helpers/osis';
 
 interface VerseResponse {
   type: 'verse';
@@ -170,9 +170,8 @@ export class GetBibleBibleApi extends BibleApi {
   };
 
   public getPassage(osis: string, bibleVersion: BibleVersionCode): Promise<string> {
-    osis = transformOsis(osis, { bookNameMap: this.bookNameMap });
     return executeJsonp<Response>(
-      `https://getbible.net/json?p=${osis}&v=${this.bibleVersionMap[bibleVersion]}`, 'getbible'
+      `https://getbible.net/json?p=${this.getPassageFromOsis(osis)}&v=${this.bibleVersionMap[bibleVersion]}`, 'getbible'
     ).then(result => {
       let output = '';
       let chapterObject: ChapterResponse['chapter'] | undefined = undefined;
@@ -200,5 +199,31 @@ export class GetBibleBibleApi extends BibleApi {
       }
       return output;
     });
+  }
+
+  private getPassageFromOsis(osis: string): string {
+    const ref = parseOsis(osis);
+    let passageString: string;
+    if (ref.end && ref.start.chapter !== ref.end.chapter) {
+      const book = ref.start.book;
+      passageString = this.getSinglePassageFromOsis(
+        `${book}.${ref.start.chapter}.${ref.start.verse || 1}-${book}.${ref.start.chapter}.999`
+      );
+      for (let chapter = ref.start.chapter + 1; chapter < ref.end.chapter; chapter++) {
+        passageString += ';' + this.getSinglePassageFromOsis(
+          `${book}.${chapter}.1-${book}.${chapter}.999`
+        );
+      }
+      passageString += ';' + this.getSinglePassageFromOsis(
+        `${book}.${ref.end.chapter}.1-${book}.${ref.end.chapter}.${ref.end.verse || 999}`
+      );
+    } else {
+      passageString = this.getSinglePassageFromOsis(osis);
+    }
+    return passageString;
+  }
+
+  private getSinglePassageFromOsis(osis: string): string {
+    return transformOsis(osis, { bookNameMap: this.bookNameMap });
   }
 }
