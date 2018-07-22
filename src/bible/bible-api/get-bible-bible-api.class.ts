@@ -1,8 +1,8 @@
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';
-import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
+import { BibleVersionCode } from 'src/bible/models/bible-versions.const';
 import { executeJsonp } from 'src/helpers/jsonp';
 import { BibleVersionMap } from 'src/bible/bible.class';
-import { transformOsis, BookNameMap } from 'src/helpers/osis';
+import { transformOsis, BookNameMap, parseOsis } from 'src/helpers/osis';
 
 interface VerseResponse {
   type: 'verse';
@@ -170,35 +170,70 @@ export class GetBibleBibleApi extends BibleApi {
   };
 
   public getPassage(osis: string, bibleVersion: BibleVersionCode): Promise<string> {
-    osis = transformOsis(osis, { bookNameMap: this.bookNameMap });
     return executeJsonp<Response>(
-      `https://getbible.net/json?p=${osis}&v=${this.bibleVersionMap[bibleVersion]}`, 'getbible'
+      `https://getbible.net/json?p=${this.getPassageFromOsis(osis)}&v=${this.bibleVersionMap[bibleVersion]}`, 'getbible'
     ).then(result => {
       let output = '';
-      let chapterObject: ChapterResponse['chapter'] | undefined = undefined;
       if (result.type === 'verse') {
-        if (result.book.length !== 1) {
-          throw new Error('GetBibleBibleApi::getPassage() - Multiple books not supported');
-        }
-        chapterObject = result.book[0].chapter;
-      } else if (result.type === 'chapter') {
-        chapterObject = result.chapter;
-      }
-      if (chapterObject) {
-        for (const chapterIndex in chapterObject) {
-          if (chapterObject.hasOwnProperty(chapterIndex)) {
-            const chapter = chapterObject[chapterIndex];
+        for (let bookObject of result.book) {
+          if (bookObject.chapter) {
+            const chapterOutput = this.getOutputForChapter(bookObject.chapter);
             output += `
-<span class="bxVerse">
-  <span class="bxVerseNumber">
-    ${chapter.verse_nr}
+<span class="bxChapter">
+  <span class="bxChapterNumber">
+    ${bookObject.chapter_nr}
   </span>
-  ${chapter.verse.trim()}
+  ${chapterOutput.trim()}
 </span>`;
           }
         }
+      } else if (result.type === 'chapter' && result.chapter) {
+        output = this.getOutputForChapter(result.chapter);
       }
       return output;
     });
+  }
+
+  private getOutputForChapter(chapterObject: ChapterResponse['chapter']): string {
+    let output = '';
+    for (const verseIndex in chapterObject) {
+      if (chapterObject.hasOwnProperty(verseIndex)) {
+        const verseObject = chapterObject[verseIndex];
+        output += `
+<span class="bxVerse">
+  <span class="bxVerseNumber">
+    ${verseObject.verse_nr}
+  </span>
+  ${verseObject.verse.trim()}
+</span>`;
+      }
+    }
+    return output;
+  }
+
+  private getPassageFromOsis(osis: string): string {
+    const ref = parseOsis(osis);
+    let passageString: string;
+    if (ref.end && ref.start.chapter !== ref.end.chapter) {
+      const book = ref.start.book;
+      passageString = this.getSinglePassageFromOsis(
+        `${book}.${ref.start.chapter}.${ref.start.verse || 1}-${book}.${ref.start.chapter}.999`
+      );
+      for (let chapter = ref.start.chapter + 1; chapter < ref.end.chapter; chapter++) {
+        passageString += ';' + this.getSinglePassageFromOsis(
+          `${book}.${chapter}.1-${book}.${chapter}.999`
+        );
+      }
+      passageString += ';' + this.getSinglePassageFromOsis(
+        `${book}.${ref.end.chapter}.1-${book}.${ref.end.chapter}.${ref.end.verse || 999}`
+      );
+    } else {
+      passageString = this.getSinglePassageFromOsis(osis);
+    }
+    return passageString;
+  }
+
+  private getSinglePassageFromOsis(osis: string): string {
+    return transformOsis(osis, { bookNameMap: this.bookNameMap });
   }
 }

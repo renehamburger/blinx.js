@@ -1,4 +1,4 @@
-import { BibleVersion, BibleSection } from 'src/bible/versions//bible-version.interface';
+import { BibleVersion, BibleSection } from 'src/bible/models/bible-version.interface';
 
 // tslint:disable:max-line-length
 export type BibleVersionCode = keyof BibleVersions;
@@ -287,3 +287,5 @@ export class BibleVersions implements BibleVersionsInterface {
   'za.CNS' = { title: 'NCV Simplified', languageCode: 'za', availableSections: ['OT', 'NT'] as BibleSection[] };
   'za.CUT' = { title: 'Union Traditional', languageCode: 'za', availableSections: ['OT', 'NT'] as BibleSection[] };
 }
+
+export const bibleVersions = new BibleVersions();

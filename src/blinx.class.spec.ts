@@ -32,7 +32,7 @@ describe('Blinx', () => {
         // Wait until passage is displayed & checked displayed passage
         testability.passageDisplayed = () => {
           const text = u('.bxPassageText').text().trim().replace(/\s+/g, ' ');
-          expect(text).toBe('3 God said, "Let there be light," and there was light. World English Bible');
+          expect(text).toBe('1 3 God said, "Let there be light," and there was light. World English Bible');
           done();
         };
       };

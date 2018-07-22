@@ -19,6 +19,15 @@
   overflow: auto;
   margin: 5px;
 }
+.bxChapter {
+  display: block;
+}
+.bxChapter:not(:first-child) {
+  margin-top: 10px;
+}
+.bxChapterNumber {
+  font-weight: bold;
+}
 .bxVerseNumber {
   position: relative;
   font-size: 75%;
@@ -34,7 +43,11 @@
   margin-left: 15px;
 }
 .tippy-tooltip.dark-theme .bxPassageVersion {
-  color: hsl(0, 0%, 40%);
+  color: hsl(0, 0%, 50%);
+}
+.bxInfo {
+  font-style: italic;
+  margin-top: 20px;
 }
 .bxTippyFooter {
   background: hsl(0, 0%, 95%);

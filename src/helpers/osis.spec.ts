@@ -1,4 +1,4 @@
-import { parseOsis, transformOsis } from 'src/helpers/osis';
+import { parseOsis, transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 
 describe('Osis helpers - ', () => {
 
@@ -34,12 +34,26 @@ describe('Osis helpers - ', () => {
   describe('transformOsis()', () => {
 
     it('removes superfluous elements and replaces separators', () => {
-      expect(transformOsis('Gen.1')).toEqual('Gen1');
-      expect(transformOsis('Gen.1.2')).toEqual('Gen1:2');
-      expect(transformOsis('Gen.1.2-Gen.1.3')).toEqual('Gen1:2-3');
-      expect(transformOsis('Gen.2-Gen.3')).toEqual('Gen2-3');
-      expect(transformOsis('Gen.2.1-Gen.3.4')).toEqual('Gen2:1-3:4');
-      expect(transformOsis('Gen.50.2-Exod.1.3')).toEqual('Gen50:2-Exod1:3');
+      expect(transformOsis('Gen.1')).toBe('Gen1');
+      expect(transformOsis('Gen.1.2')).toBe('Gen1:2');
+      expect(transformOsis('Gen.1.2-Gen.1.3')).toBe('Gen1:2-3');
+      expect(transformOsis('Gen.2-Gen.3')).toBe('Gen2-3');
+      expect(transformOsis('Gen.2.1-Gen.3.4')).toBe('Gen2:1-3:4');
+      expect(transformOsis('Gen.50.2-Exod.1.3')).toBe('Gen50:2-Exod1:3');
+    });
+
+  });
+
+  describe('truncateMultiBookOsis()', () => {
+
+    it('does not change single-book references', () => {
+      expect(truncateMultiBookOsis('Gen.1')).toBe('Gen.1');
+      expect(truncateMultiBookOsis('Gen.1.2')).toBe('Gen.1.2');
+      expect(truncateMultiBookOsis('Gen.1.2-Gen.3.4')).toBe('Gen.1.2-Gen.3.4');
+    });
+
+    it('truncates multi-book references', () => {
+      expect(truncateMultiBookOsis('Gen.1.2-Ex.3.4')).toBe('Gen.1.2-Gen.50.999');
     });
 
   });

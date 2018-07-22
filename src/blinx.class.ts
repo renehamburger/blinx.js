@@ -4,16 +4,14 @@ import { u } from 'src/lib/u.js';
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
 import isString = require('lodash/isString');
 import { getOnlineBible } from 'src/bible/online-bible/online-bible-overview';
-import { BibleVersionCode, BibleVersions } from 'src/bible/versions/bible-versions.const';
+import { BibleVersionCode, bibleVersions } from 'src/bible/models/bible-versions.const';
 import { loadScript, loadCSS } from 'src/helpers/dom';
 import { Deferred } from 'src/helpers/deferred.class';
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
-import { transformOsis } from 'src/helpers/osis';
+import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 import './css/blinx.css';
-
-const bibleVersions = new BibleVersions();
 
 export interface Testability {
   u: typeof u;
@@ -305,8 +303,15 @@ export class Blinx {
 
   private getTooltipContent(osis: string): Promise<string> {
     const versionCode = this.getVersionCode(this.bibleApi);
-    return this.bibleApi.getPassage(osis, versionCode)
-      .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`);
+    const truncatedOsis = truncateMultiBookOsis(osis);
+    let info = '';
+    if (osis !== truncatedOsis) {
+      info = 'Bible references stretching across several books are not yet supported.' +
+        ' Only the verses from the first book are displayed above.';
+    }
+    return this.bibleApi.getPassage(truncatedOsis, versionCode)
+      .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`)
+      .then(text => info ? `${text} <div class="bxInfo">${info}</i>` : text);
   }
 
   private async loadTippy(): Promise<any> {
