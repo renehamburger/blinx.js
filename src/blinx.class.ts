@@ -4,7 +4,7 @@ import { u } from 'src/lib/u.js';
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
 import isString = require('lodash/isString');
 import { getOnlineBible } from 'src/bible/online-bible/online-bible-overview';
-import { BibleVersionCode, BibleVersions } from 'src/bible/versions/bible-versions.const';
+import { BibleVersionCode, BibleVersions } from 'src/bible/models/bible-versions.const';
 import { loadScript, loadCSS } from 'src/helpers/dom';
 import { Deferred } from 'src/helpers/deferred.class';
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';

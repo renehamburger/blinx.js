@@ -1,4 +1,4 @@
-import { BibleVersions, BibleVersionCode, BibleVersionsInterface } from 'src/bible/versions/bible-versions.const';
+import { BibleVersions, BibleVersionCode, BibleVersionsInterface } from 'src/bible/models/bible-versions.const';
 import { LanguageCode } from 'src/options/languages';
 
 export type BibleVersionMap = {

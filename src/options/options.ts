@@ -1,7 +1,7 @@
 import { u } from 'src/lib/u.js';
 import { Languages } from 'src/options/languages';
 import { Parser } from 'src/parser/parser.class';
-import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
+import { BibleVersionCode } from 'src/bible/models/bible-versions.const';
 import { OnlineBibleName } from 'src/bible/online-bible/online-bible-overview';
 import { BibleApiName } from 'src/bible/bible-api/bible-api-overview';
 

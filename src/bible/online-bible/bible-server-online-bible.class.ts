@@ -1,5 +1,5 @@
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
-import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
+import { BibleVersionCode } from 'src/bible/models/bible-versions.const';
 import { transformOsis } from 'src/helpers/osis';
 
 export class BibleServerOnlineBible extends OnlineBible {

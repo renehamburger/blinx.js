@@ -1,5 +1,5 @@
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';
-import { BibleVersionCode } from 'src/bible/versions/bible-versions.const';
+import { BibleVersionCode } from 'src/bible/models/bible-versions.const';
 import { executeJsonp } from 'src/helpers/jsonp';
 import { BibleVersionMap } from 'src/bible/bible.class';
 import { transformOsis, BookNameMap } from 'src/helpers/osis';

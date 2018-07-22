@@ -1,4 +1,4 @@
-import { BibleVersion, BibleSection } from 'src/bible/versions//bible-version.interface';
+import { BibleVersion, BibleSection } from 'src/bible/models/bible-version.interface';
 
 // tslint:disable:max-line-length
 export type BibleVersionCode = keyof BibleVersions;
