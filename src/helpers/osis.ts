@@ -1,4 +1,4 @@
-import { BibleBook } from 'src/bible/models/bible-book.interface';
+import { BibleBook } from 'src/bible/models/bible-books.const';
 
 export interface BibleReferencePoint {
   book: BibleBook;
