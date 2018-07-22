@@ -174,17 +174,21 @@ export class GetBibleBibleApi extends BibleApi {
       `https://getbible.net/json?p=${this.getPassageFromOsis(osis)}&v=${this.bibleVersionMap[bibleVersion]}`, 'getbible'
     ).then(result => {
       let output = '';
-      let chapterObject: ChapterResponse['chapter'] | undefined = undefined;
       if (result.type === 'verse') {
-        if (result.book.length !== 1) {
-          throw new Error('GetBibleBibleApi::getPassage() - Multiple books not supported');
+        for (let bookObject of result.book) {
+          if (bookObject.chapter) {
+            const chapterOutput = this.getOutputForChapter(bookObject.chapter);
+            output += `
+<span class="bxChapter">
+  <span class="bxChapterNumber">
+    ${bookObject.chapter_nr}
+  </span>
+  ${chapterOutput.trim()}
+</span>`;
+          }
         }
-        chapterObject = result.book[0].chapter;
-      } else if (result.type === 'chapter') {
-        chapterObject = result.chapter;
-      }
-      if (chapterObject) {
-        output += this.getOutputForChapter(chapterObject);
+      } else if (result.type === 'chapter' && result.chapter) {
+        output = this.getOutputForChapter(result.chapter);
       }
       return output;
     });
