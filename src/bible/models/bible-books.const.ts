@@ -76,3 +76,5 @@ export class BibleBooks implements BibleBooksInterface {
   'Jude' = { chapters: 1 };
   'Rev' = { chapters: 22 };
 }
+
+export const bibleBooks = new BibleBooks();

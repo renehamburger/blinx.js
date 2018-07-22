@@ -287,3 +287,5 @@ export class BibleVersions implements BibleVersionsInterface {
   'za.CNS' = { title: 'NCV Simplified', languageCode: 'za', availableSections: ['OT', 'NT'] as BibleSection[] };
   'za.CUT' = { title: 'Union Traditional', languageCode: 'za', availableSections: ['OT', 'NT'] as BibleSection[] };
 }
+
+export const bibleVersions = new BibleVersions();
