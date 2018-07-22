@@ -10,7 +10,7 @@ import { Deferred } from 'src/helpers/deferred.class';
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
-import { transformOsis } from 'src/helpers/osis';
+import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 import './css/blinx.css';
 
 export interface Testability {
@@ -303,8 +303,16 @@ export class Blinx {
 
   private getTooltipContent(osis: string): Promise<string> {
     const versionCode = this.getVersionCode(this.bibleApi);
-    return this.bibleApi.getPassage(osis, versionCode)
-      .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`);
+    const truncatedOsis = truncateMultiBookOsis(osis);
+    let info = '';
+    if (osis !== truncatedOsis) {
+      // TODO: Provide internationalisation
+      info = 'Bible references stretching across several books are not yet supported.' +
+        ' Only the verses from the first chapter of this reference was displayed above.';
+    }
+    return this.bibleApi.getPassage(truncatedOsis, versionCode)
+      .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`)
+      .then(text => info ? `${text} <div class="bxInfo">${info}</i>` : text);
   }
 
   private async loadTippy(): Promise<any> {

@@ -1,4 +1,4 @@
-import { BibleBook } from 'src/bible/models/bible-books.const';
+import { BibleBook, bibleBooks } from 'src/bible/models/bible-books.const';
 
 export interface BibleReferencePoint {
   book: BibleBook;
@@ -83,4 +83,16 @@ export function transformOsis(osis: string, options: Partial<TransformOsisOption
     }
   }
   return transformed;
+}
+
+// Truncate multi-book osis string and only return part of first book
+export function truncateMultiBookOsis(osis: string): string {
+  const ref = parseOsis(osis);
+  // Truncate references across several books
+  // until infinite scroll is implemented
+  if (ref.end && ref.start.book !== ref.end.book) {
+    const numberOfChapters = bibleBooks[ref.start.book].chapters;
+    return `${ref.start.book}.${ref.start.chapter}.${ref.start.verse}-${ref.start.book}.${numberOfChapters}.999`;
+  }
+  return osis;
 }

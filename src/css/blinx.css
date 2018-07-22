@@ -36,6 +36,10 @@
 .tippy-tooltip.dark-theme .bxPassageVersion {
   color: hsl(0, 0%, 40%);
 }
+.bxInfo {
+  font-style: italic;
+  margin-top: 20px;
+}
 .bxTippyFooter {
   background: hsl(0, 0%, 95%);
   margin: 0 -9px -5px; /* Reach to tippy border */
