@@ -184,21 +184,27 @@ export class GetBibleBibleApi extends BibleApi {
         chapterObject = result.chapter;
       }
       if (chapterObject) {
-        for (const chapterIndex in chapterObject) {
-          if (chapterObject.hasOwnProperty(chapterIndex)) {
-            const chapter = chapterObject[chapterIndex];
-            output += `
-<span class="bxVerse">
-  <span class="bxVerseNumber">
-    ${chapter.verse_nr}
-  </span>
-  ${chapter.verse.trim()}
-</span>`;
-          }
-        }
+        output += this.getOutputForChapter(chapterObject);
       }
       return output;
     });
+  }
+
+  private getOutputForChapter(chapterObject: ChapterResponse['chapter']): string {
+    let output = '';
+    for (const verseIndex in chapterObject) {
+      if (chapterObject.hasOwnProperty(verseIndex)) {
+        const verseObject = chapterObject[verseIndex];
+        output += `
+<span class="bxVerse">
+  <span class="bxVerseNumber">
+    ${verseObject.verse_nr}
+  </span>
+  ${verseObject.verse.trim()}
+</span>`;
+      }
+    }
+    return output;
   }
 
   private getPassageFromOsis(osis: string): string {
