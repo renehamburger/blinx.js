@@ -252,11 +252,12 @@ export class Blinx {
       if (possibleReferenceWithPrefix) {
         this.parser.bcv.parse_with_context(possibleReferenceWithPrefix, previousPassage);
       }
-      // If none available or unsuccessful, check for possible reference starting with number(s)
-      if (!possibleReferenceWithPrefix || !this.parser.bcv.osis()) {
-        this.parser.bcv.parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
-        offset = match.index;
-      }
+      // Deactivate recognition of simple numbers for now, as this leads to too many false positives
+      // // If none available or unsuccessful, check for possible reference starting with number(s)
+      // if (!possibleReferenceWithPrefix || !this.parser.bcv.osis()) {
+      //   this.parser.bcv.parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
+      //   offset = match.index;
+      // }
       // If either successful, adjust the indices due to the slice above and handle the reference
       const refs = this.parser.bcv.osis_and_indices();
       if (refs.length) {
