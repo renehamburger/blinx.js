@@ -30,6 +30,9 @@ declare namespace BCV {
 
     /** This function returns an object of data about the requested translation. You can use this data to determine, for example, the previous and next chapters for a given chapter, even when the given chapter is at the beginning or end of a book. */
     translation_info(translation: string): TranslationInfo;
+
+    /** Undocumented as mostly used internally: reset all results */
+    reset(): void;
   }
 
   class Options {

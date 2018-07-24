@@ -236,6 +236,7 @@ export class Blinx {
     const match = text.match(/\d/);
     // TODO: Check support of match.index
     if (match && typeof match.index !== 'undefined') {
+      this.parser.bcv.reset();
       let possibleReferenceWithPrefix: string = '';
       const possibleReferenceWithoutPrefix = text.slice(match.index);
       let offset = 0;
