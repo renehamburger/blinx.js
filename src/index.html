@@ -1,135 +1,24 @@
 <html>
 
 <head>
-  <base target="_blank">
-  <script>
-    window.openAllLinks = function (cls) {
-      document.querySelectorAll('ul.' + cls + ' a').forEach(function (link) { link.click(); })
-    }
-  </script>
-  <script src="https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/de_bcv_parser.js" defer></script>
-  <script src="/blinx.js" defer data-blinx="{
-    language: 'de',
-    bibleVersion: 'de.EU',
-    parserOptions: {
-      include_apocrypha: true
-    },
-    theme: 'dark'
-  }"></script>
+  <title>Blinx.js demos</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
 <body>
-  <h1>Complete set of passages for testing</h1>
-  <p>
-    <i>
-      The book names are the standard OSIS book names and should be recognised by the parser independent of the language. But the
-      chapter-verse separator `,` needs to be changed to `:` for some languages.
-    </i>
-  </p>
-  <h4>First verse of each Biblical book &mdash;
-    <button onclick="openAllLinks('books')">Open all</button>
-  </h4>
-  <ul class="books">
-    <li>Gen 1,1</li>
-    <li>Exod 1,1</li>
-    <li>Lev 1,1</li>
-    <li>Num 1,1</li>
-    <li>Deut 1,1</li>
-    <li>Josh 1,1</li>
-    <li>Judg 1,1</li>
-    <li>Ruth 1,1</li>
-    <li>1Sam 1,1</li>
-    <li>2Sam 1,1</li>
-    <li>1Kgs 1,1</li>
-    <li>2Kgs 1,1</li>
-    <li>1Chr 1,1</li>
-    <li>2Chr 1,1</li>
-    <li>Ezra 1,1</li>
-    <li>Neh 1,1</li>
-    <li>Esth 1,1</li>
-    <li>Job 1,1</li>
-    <li>Ps 1,1</li>
-    <li>Prov 1,1</li>
-    <li>Eccl 1,1</li>
-    <li>Song 1,1</li>
-    <li>Isa 1,1</li>
-    <li>Jer 1,1</li>
-    <li>Lam 1,1</li>
-    <li>Ezek 1,1</li>
-    <li>Dan 1,1</li>
-    <li>Hos 1,1</li>
-    <li>Joel 1,1</li>
-    <li>Amos 1,1</li>
-    <li>Obad 1,1</li>
-    <li>Jonah 1,1</li>
-    <li>Mic 1,1</li>
-    <li>Nah 1,1</li>
-    <li>Hab 1,1</li>
-    <li>Zeph 1,1</li>
-    <li>Hag 1,1</li>
-    <li>Zech 1,1</li>
-    <li>Mal 1,1</li>
-    <li>Matt 1,1</li>
-    <li>Mark 1,1</li>
-    <li>Luke 1,1</li>
-    <li>John 1,1</li>
-    <li>Acts 1,1</li>
-    <li>Rom 1,1</li>
-    <li>1Cor 1,1</li>
-    <li>2Cor 1,1</li>
-    <li>Gal 1,1</li>
-    <li>Eph 1,1</li>
-    <li>Phil 1,1</li>
-    <li>Col 1,1</li>
-    <li>1Thess 1,1</li>
-    <li>2Thess 1,1</li>
-    <li>1Tim 1,1</li>
-    <li>2Tim 1,1</li>
-    <li>Titus 1,1</li>
-    <li>Phlm 1,1</li>
-    <li>Heb 1,1</li>
-    <li>Jas 1,1</li>
-    <li>1Pet 1,1</li>
-    <li>2Pet 1,1</li>
-    <li>1John 1,1</li>
-    <li>2John 1,1</li>
-    <li>3John 1,1</li>
-    <li>Jude 1,1</li>
-    <li>Rev 1,1</li>
-  </ul>
-  <h4>Sequences &mdash;
-    <button onclick="openAllLinks('sequences')">Open all</button>
-  </h4>
-  <ul class="sequences">
-    <li>Gen 1,1-2</li>
-    <li>Gen 1-2</li>
-    <li>Gen 1,2-2,3</li>
-    <li>Gen 49-Exod 1,1</li>
-  </ul>
-  <h4>First verse of each apocryphal book &mdash;
-    <button onclick="openAllLinks('apocrypha')">Open all</button>
-  </h4>
-  <ul class="apocrypha">
-    <li>Tob 1,1</li>
-    <li>Jdt 1,1</li>
-    <li>GkEsth 1,1</li>
-    <li>Wis 1,1</li>
-    <li>Sir 1,1</li>
-    <li>Bar 1,1</li>
-    <li>PrAzar 1,1</li>
-    <li>Sus 1,1</li>
-    <li>Bel 1,1</li>
-    <li>SgThree 1,1</li>
-    <li>EpJer 1,1</li>
-    <li>1Macc 1,1</li>
-    <li>2Macc 1,1</li>
-    <li>3Macc 1,1</li>
-    <li>4Macc 1,1</li>
-    <li>1Esd 1,1</li>
-    <li>2Esd 1,1</li>
-    <li>PrMan 1,1</li>
-    <li>Ps151 1,1</li>
-  </ul>
+  <div class="tabs">
+
+    <div class="tab">
+      <input class="tab-radio" type="radio" id="tab-1" name="tab-group-1" checked>
+      <label class="tab-label" for="tab-1">API-test</label>
+      <div class="tab-panel">
+        <div class="tab-content">
+          <iframe src="/fixtures/API-test.html"></iframe>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </body>
 
 </html>
