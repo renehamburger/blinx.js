@@ -14,7 +14,6 @@ import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 import './css/blinx.css';
 
 export interface Testability {
-  u: typeof u;
   linksApplied?: () => void;
   passageDisplayed?: () => void;
 }
@@ -28,7 +27,7 @@ export class Blinx {
   private tippyObjects: Tippy.Object[] = [];
   private tippyLoaded = new Deferred<void>();
   private touchStarted = false;
-  private testability: Testability = { u };
+  private testability: Testability = {};
   private tippyPolyfills = false;
   private tippyPolyfillInterval = 0;
 

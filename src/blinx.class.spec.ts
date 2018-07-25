@@ -1,5 +1,6 @@
-import { Testability } from './blinx.class';
-import { loadBlinx } from './main';
+import { Testability } from 'src/blinx.class';
+import { loadBlinx } from 'src/main';
+import { u } from 'src/lib/u.js';
 
 describe('Blinx', () => {
 
@@ -16,7 +17,6 @@ describe('Blinx', () => {
     it('links single passage & shows tooltip', done => {
       loadBlinx();
       const testability: Testability = window.blinx.testability;
-      const u = testability.u;
       // Wait until links & tooltips are applied & check linked passages
       testability.linksApplied = () => {
         const links: Umbrella.Instance = u('[data-osis]');
@@ -52,7 +52,6 @@ describe('Blinx', () => {
     it('recognises partial references correctly', done => {
       loadBlinx();
       const testability: Testability = window.blinx.testability;
-      const u = testability.u;
       // Wait until links & tooltips are applied & check linked passages
       testability.linksApplied = () => {
         const links: Umbrella.Instance = u('[data-osis]');
