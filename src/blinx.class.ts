@@ -1,4 +1,4 @@
-import { Options, applyScriptTagOptions } from 'src/options/options';
+import { Options, getScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
 import { u } from 'src/lib/u.js';
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
@@ -32,12 +32,17 @@ export class Blinx {
   private tippyPolyfillInterval = 0;
 
   /** Initialise blinx. */
-  constructor() {
+  constructor(customOptions: Partial<Options> = getScriptTagOptions()) {
+    // Apply customOptions
+    for (const key in customOptions) {
+      if (customOptions.hasOwnProperty(key)) {
+        this.options[key] = customOptions[key];
+      }
+    }
     // Identify touch devices
     window.addEventListener('touchstart', () => {
       this.touchStarted = true;
     });
-    applyScriptTagOptions(this.options);
     this.onlineBible = getOnlineBible(this.options.onlineBible);
     // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
     this.bibleApi = getBibleApi(this.options.bibleApi);

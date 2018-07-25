@@ -1,5 +1,6 @@
 import { Blinx } from 'src/blinx.class';
 import * as PromisePolyfill from 'src/lib/promise.js';
+import { Options } from 'src/options/options';
 
 if (!('Promise' in window)) {
   (window as any).Promise = PromisePolyfill;
@@ -11,6 +12,6 @@ if (!('__karma__' in window)) {
 }
 
 // Export function for specs
-export function loadBlinx() {
-  window.blinx = new Blinx();
+export function loadBlinx(customOptions?: Partial<Options>) {
+  window.blinx = new Blinx(customOptions);
 }
