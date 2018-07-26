@@ -88,6 +88,48 @@ describe('Blinx', () => {
       )
     );
 
+    it('works for article-with-potential-false-positives', () =>
+      testRecognition(
+        getBodyHtml(require('./fixtures/article-with-potential-false-positives.html')),
+        [
+          'Genesis 1', 'Genesis 1', 'Genesis 1', 'Genesis 1 und 2', 'Genesis 1', 'Genesis 2', 'Genesis 1', 'Genesis 1',
+          '1. Korinther 15,21-22'
+        ],
+        [
+          'Gen.1', 'Gen.1', 'Gen.1', 'Gen.1-Gen.2', 'Gen.1', 'Gen.2', 'Gen.1', 'Gen.1',
+          '1Cor.15.21-1Cor.15.22'
+        ],
+        {
+          language: 'de'
+        }
+      )
+    );
+
+    it('works for article-with-many-partial-references', () =>
+      testRecognition(
+        getBodyHtml(require('./fixtures/article-with-many-partial-references.html')),
+        [
+          // The following passages are those recognised automatically.
+          // Many more partial passages are not recognised yet.
+          // Largely, because the preceeding recognised reference was in a previous text node
+          // or paragraph. The latter may not be good to recognise automatically.
+          'Römer 7', 'Römer 7', 'Verse\n    7', '12', 'Vers 4', 'Vers 6', 'Römer 7', 'Römer 7', 'Römer 2', 'Römer 7',
+          'Römer 7', 'Vers 14a', 'Römer 7', 'Phil 3,9', 'Römer 7', 'Römer 7', 'Phil 3,21', 'Röm 4,18-25',
+          '6,12', '19', '7,14-25', '8,10-11, 23', '25', 'Römer 7', 'Römer 7', 'Römer\n    7',
+          'Römer 8'
+        ],
+        [
+          'Rom.7', 'Rom.7', 'Rom.7.7', 'Rom.7.12', 'Rom.7.4', 'Rom.7.6', 'Rom.7', 'Rom.7', 'Rom.2', 'Rom.7',
+          'Rom.7', 'Rom.7.14', 'Rom.7', 'Phil.3.9', 'Rom.7', 'Rom.7', 'Phil.3.21', 'Rom.4.18-Rom.4.25',
+          'Rom.6.12', 'Rom.6.19', 'Rom.7.14-Rom.7.25', 'Rom.8.10-Rom.11.23', 'Rom.11.25', 'Rom.7', 'Rom.7', 'Rom.7',
+          'Rom.8'
+        ],
+        {
+          language: 'de'
+        }
+      )
+    );
+
   });
 });
 
