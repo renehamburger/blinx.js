@@ -55,7 +55,9 @@ export class Blinx {
   /** Execute a parse for the given options. */
   public execute(): void {
     // Search within all whitelisted selectors
-    u(this.options.whitelist.length ? `${this.options.whitelist.join(' *, ')} *` : 'body')
+    const whitelist = this.options.whitelist || ['body'];
+    const whitelistSelectors = whitelist.map(selector => `${selector}, ${selector} *`).join(', ');
+    u(whitelistSelectors)
       // Exclude blacklisted selectors
       .not(this.options.blacklist.join(', '))
       .not(this.options.blacklist.length ? `${this.options.blacklist.join(' *, ')} *` : '')
