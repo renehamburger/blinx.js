@@ -13,7 +13,7 @@ describe('Blinx', () => {
 
     it('links passages & shows tooltip for simple example', () =>
       testRecognition(
-        '<p>Check out Gen 1:3, II Cor 4:5, and then verse 6.</p>',
+        'Check out Gen 1:3, II Cor 4:5, and then verse 6.',
         ['Gen 1:3', 'II Cor 4:5', 'verse 6'],
         ['Gen.1.3', '2Cor.4.5', '2Cor.4.6']
       ).then((links) => {
@@ -82,9 +82,7 @@ describe('Blinx', () => {
           'John.11.51-John.11.52', 'John.12.32', 'Rev.5.9', 'John.3.16-John.3.17', '1John.2.1-1John.2.2',
           'John.3.16-John.3.17', 'John.17.20', '1Tim.2.4-1Tim.2.6', '1Tim.2.1'
         ],
-        {
-          language: 'de'
-        }
+        { language: 'de' }
       )
     );
 
@@ -99,9 +97,7 @@ describe('Blinx', () => {
           'Gen.1', 'Gen.1', 'Gen.1', 'Gen.1-Gen.2', 'Gen.1', 'Gen.2', 'Gen.1', 'Gen.1',
           '1Cor.15.21-1Cor.15.22'
         ],
-        {
-          language: 'de'
-        }
+        { language: 'de' }
       )
     );
 
@@ -124,9 +120,7 @@ describe('Blinx', () => {
           'Rom.6.12', 'Rom.6.19', 'Rom.7.14-Rom.7.25', 'Rom.8.10-Rom.11.23', 'Rom.11.25', 'Rom.7', 'Rom.7', 'Rom.7',
           'Rom.8'
         ],
-        {
-          language: 'de'
-        }
+        { language: 'de' }
       )
     );
 
@@ -165,7 +159,9 @@ function getBodyHtml(html: string): string {
 }
 
 function testRecognition(
-  html: string, expectedLinkLabels: string[], expectedOsisPassages: string[], options?: Partial<Options>
+  html: string, expectedLinkLabels: string[], expectedOsisPassages: string[],
+  // Specify default options, as parser is not always destroyed between tests and can lead to wrong language
+  options: Partial<Options> = new Options()
 ): Promise<Umbrella.Instance> {
   document.body.innerHTML = html;
   loadBlinx(options);
