@@ -186,8 +186,7 @@ export class Blinx {
     for (const childNode of childNodes) {
       if (this.isTextNode(childNode)) {
         // Look for all complete Bible references
-        this.parser.bcv.parse(childNode.textContent || '');
-        const refs = this.parser.bcv.osis_and_indices();
+        const refs = this.parser.parse(childNode.textContent || '');
         this.handleReferencesFoundInText(childNode, refs);
       }
     }
@@ -203,8 +202,7 @@ export class Blinx {
     const explicitContext = node.parentNode &&
       u(node.parentNode).closest('[data-bx-context]').attr('data-bx-context');
     if (explicitContext) {
-      this.parser.bcv.parse(explicitContext);
-      explicitContextRef = this.parser.bcv.osis_and_indices()[0];
+      explicitContextRef = this.parser.parse(explicitContext)[0];
     }
     for (let i = refs.length - 1; i >= 0; i--) {
       const ref = refs[i];
@@ -242,7 +240,7 @@ export class Blinx {
     const match = text.match(/\d/);
     // TODO: Check support of match.index
     if (match && typeof match.index !== 'undefined') {
-      this.parser.bcv.reset();
+      this.parser.reset();
       let possibleReferenceWithPrefix: string = '';
       const possibleReferenceWithoutPrefix = text.slice(match.index);
       let offset = 0;
@@ -255,9 +253,10 @@ export class Blinx {
           offset = match.index - matchPrefix[0].length;
         }
       }
+      let refs: BCV.OsisAndIndices[] = [];
       // Check for possible reference with prefix first
       if (possibleReferenceWithPrefix) {
-        this.parser.bcv.parse_with_context(possibleReferenceWithPrefix, previousPassage);
+        refs = this.parser.parse_with_context(possibleReferenceWithPrefix, previousPassage);
       }
       // Deactivate recognition of simple numbers for now, as this leads to too many false positives
       // // If none available or unsuccessful, check for possible reference starting with number(s)
@@ -266,7 +265,6 @@ export class Blinx {
       //   offset = match.index;
       // }
       // If either successful, adjust the indices due to the slice above and handle the reference
-      const refs = this.parser.bcv.osis_and_indices();
       if (refs.length) {
         for (const ref of refs) {
           ref.indices[0] += offset;
