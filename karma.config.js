@@ -1,4 +1,4 @@
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     singleRun: true,
 
@@ -17,7 +17,7 @@ module.exports = function(config) {
     customLaunchers: {
       ChromeDebugging: {
         base: 'Chrome',
-        flags: [ '--remote-debugging-port=9333' ]
+        flags: ['--remote-debugging-port=9333']
       },
       winxp_chrome: {
         base: 'BrowserStack',
@@ -144,7 +144,7 @@ module.exports = function(config) {
     },
 
     reporters: [
-      'dots',
+      'spec',
       'BrowserStack',
       'karma-typescript'
     ],

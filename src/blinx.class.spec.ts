@@ -1,4 +1,4 @@
-import { Testability } from 'src/blinx.class';
+import { Testability, Blinx } from 'src/blinx.class';
 import { loadBlinx } from 'src/main';
 import { u } from 'src/lib/u.js';
 import { Options } from 'src/options/options';
@@ -9,62 +9,105 @@ describe('Blinx', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
 
-  describe('without further attributes', () => {
+  describe('node iteration', () => {
 
-    it('links passages & shows tooltip for simple example', () =>
-      testRecognition(
-        'Check out Gen 1:3, II Cor 4:5, and then verse 6.',
-        ['Gen 1:3', 'II Cor 4:5', 'verse 6'],
-        ['Gen.1.3', '2Cor.4.5', '2Cor.4.6']
-      ).then((links) => {
-        // if (!(window as any).tippy.browser.supported) {
-        //   console.warn('Browser does not support tippy. Skipping second part of test');
-        //   return done();
-        // }
-        u(links.first() as Node).trigger('mouseenter');
-        return new Promise(resolve => {
-          // Wait until passage is displayed & checked displayed passage
-          const testability: Testability = window.blinx.testability;
-          testability.passageDisplayed = () => {
-            const text = u('.bxPassageText').text().trim().replace(/\s+/g, ' ');
-            expect(text).toBe('1 3 God said, "Let there be light," and there was light. World English Bible');
-            resolve();
-          };
-        });
-      })
-    );
+    it('uses whitelist & blacklist correctly', () => {
+      document.body.innerHTML = `
+        ...
+        <div>1</div>
+        <span>
+          ...
+          <div>2</div>
+        </span>
+        <div class="skip">
+          <div>...</div>
+        </div>
+        <span class="skip">
+          <div>...</div>
+        </span>
+      `;
+      const blinx = new Blinx({ parseAutomatically: false, whitelist: ['div'], blacklist: ['.skip'] });
+      const textContents: string[] = [];
+      spyOn(blinx, 'parseReferencesInTextNode' as any).and.callFake((node: Node) => {
+        textContents.push(node.textContent || '');
+      });
+      blinx.execute();
+      expect(textContents).toEqual(['1', '2']);
+    });
 
-  });
-
-  describe('workarounds for parser', () => {
-
-    describe('spaces around chapter-verse separator', () => {
-
-      it('are interpreted correctly for comma', () =>
-        testRecognition(
-          'Mt 1 &nbsp;, 3 | Verse 4, 5',
-          ['Mt 1', '3', 'Verse 4, 5'],
-          ['Matt.1', 'Matt.3', 'Matt.3.4-Matt.3.5'],
-          { language: 'de' }
-        )
-      );
-
+    it('iterates through elements in DOM-order', () => {
+      document.body.innerHTML = '<div>a<i>b<u>c<br>d<b>e</b>f</u>g</i></div>...<div>h</div>';
+      const blinx = new Blinx({ parseAutomatically: false, whitelist: ['div'] });
+      const textContents: string[] = [];
+      spyOn(blinx, 'parseReferencesInTextNode' as any).and.callFake((node: Node) => {
+        textContents.push(node.textContent || '');
+      });
+      blinx.execute();
+      expect(textContents).toEqual(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']);
     });
 
   });
 
-  describe('with data-bx-context attribute', () => {
+  describe('intra-node parsing', () => {
 
-    it('recognises partial references correctly', () =>
-      testRecognition(
-        `<p data-bx-context="Matt 6">
-          Check out verse 9 and then verse 10 (cf. Luke 11:2 and <span data-bx-context="Lk 11">verse 3</span>)
-          and verse 11.
-        </p>`,
-        ['verse 9', 'verse 10', 'Luke 11:2', 'verse 3', 'verse 11'],
-        ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Luke.11.3', 'Matt.6.11']
-      )
-    );
+    describe('without further attributes', () => {
+
+      it('links passages & shows tooltip for simple example', () =>
+        testRecognition(
+          'Check out Gen 1:3, II Cor 4:5, and then verse 6.',
+          ['Gen 1:3', 'II Cor 4:5', 'verse 6'],
+          ['Gen.1.3', '2Cor.4.5', '2Cor.4.6']
+        ).then((links) => {
+          // if (!(window as any).tippy.browser.supported) {
+          //   console.warn('Browser does not support tippy. Skipping second part of test');
+          //   return done();
+          // }
+          u(links.first() as Node).trigger('mouseenter');
+          return new Promise(resolve => {
+            // Wait until passage is displayed & checked displayed passage
+            const testability: Testability = window.blinx.testability;
+            testability.passageDisplayed = () => {
+              const text = u('.bxPassageText').text().trim().replace(/\s+/g, ' ');
+              expect(text).toBe('1 3 God said, "Let there be light," and there was light. World English Bible');
+              resolve();
+            };
+          });
+        })
+      );
+
+    });
+
+    describe('workarounds for parser', () => {
+
+      describe('spaces around chapter-verse separator', () => {
+
+        it('are interpreted correctly for comma', () =>
+          testRecognition(
+            'Mt 1 &nbsp;, 3 | Verse 4, 5',
+            ['Mt 1', '3', 'Verse 4, 5'],
+            ['Matt.1', 'Matt.3', 'Matt.3.4-Matt.3.5'],
+            { language: 'de' }
+          )
+        );
+
+      });
+
+    });
+
+    describe('with data-bx-context attribute', () => {
+
+      it('recognises partial references correctly', () =>
+        testRecognition(
+          `<p data-bx-context="Matt 6">
+            Check out verse 9 and then verse 10 (cf. Luke 11:2 and <span data-bx-context="Lk 11">verse 3</span>)
+            and verse 11.
+          </p>`,
+          ['verse 9', 'verse 10', 'Luke 11:2', 'verse 3', 'verse 11'],
+          ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Luke.11.3', 'Matt.6.11']
+        )
+      );
+
+    });
 
   });
 
@@ -170,6 +213,7 @@ describe('Blinx', () => {
     });
 
   });
+
 });
 
 function getBodyHtml(html: string): string {

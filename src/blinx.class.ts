@@ -56,14 +56,15 @@ export class Blinx {
   public execute(): void {
     // Search within all whitelisted selectors
     const whitelist = this.options.whitelist || ['body'];
-    const whitelistSelectors = whitelist.map(selector => `${selector}, ${selector} *`).join(', ');
-    u(whitelistSelectors)
+    const nodes = u(whitelist.join(','))
       // Exclude blacklisted selectors
       .not(this.options.blacklist.join(', '))
       .not(this.options.blacklist.length ? `${this.options.blacklist.join(' *, ')} *` : '')
-      // Go one level deeper to get text nodes; NB: This does not keep the order or nodes
-      // .map(node => node.hasChildNodes() && Array.prototype.slice.call(node.childNodes))
-      .each(node => this.parseReferencesInNode(node));
+      .nodes;
+    const textNodes = extractOrderedTextNodesFromNodes(nodes);
+    for (const textNode of textNodes) {
+      this.parseReferencesInTextNode(textNode);
+    }
     // Once tippy.js is loaded, add tooltips
     this.tippyLoaded.promise
       .then(() => {
@@ -178,18 +179,13 @@ export class Blinx {
   }
 
   /**
-   * Look for and link all references found in the text node children of the given node.
-   * @param node Any
+   * Look for and link all references found in the given text node.
+   * @param textNode
    */
-  private parseReferencesInNode(node: Node): void {
-    const childNodes = Array.prototype.slice.call(node.childNodes);
-    for (const childNode of childNodes) {
-      if (this.isTextNode(childNode)) {
-        // Look for all complete Bible references
-        const refs = this.parser.parse(childNode.textContent || '');
-        this.handleReferencesFoundInText(childNode, refs);
-      }
-    }
+  private parseReferencesInTextNode(textNode: Text): void {
+    // Look for all complete Bible references
+    const refs = this.parser.parse(textNode.textContent || '');
+    this.handleReferencesFoundInText(textNode, refs);
   }
 
   /**
@@ -275,10 +271,6 @@ export class Blinx {
     }
   }
 
-  private isTextNode(node: Node): node is Text {
-    return node.nodeType === node.TEXT_NODE;
-  }
-
   private addLink(node: Node, ref: BCV.OsisAndIndices): void {
     const versionCode = this.getVersionCode(this.onlineBible);
     u(node)
@@ -352,3 +344,32 @@ export class Blinx {
   }
 
 }
+
+//#region: Pure/stateless helper functions
+
+function extractOrderedTextNodesFromNodes(nodes: Node[]): Text[] {
+  let textNodes: Text[] = [];
+  for (const node of nodes) {
+    textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(node));
+  }
+  return textNodes;
+}
+
+function extractOrderedTextNodesFromSingleNode(node: Node): Text[] {
+  let textNodes: Text[] = [];
+  for (const childNode of [].slice.call(node.childNodes)) {
+    if (isTextNode(childNode)) {
+      textNodes.push(childNode);
+    } else {
+      textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(childNode));
+    }
+  }
+  return textNodes;
+}
+
+
+function isTextNode(node: Node): node is Text {
+  return node.nodeType === node.TEXT_NODE;
+}
+
+//#endregion
