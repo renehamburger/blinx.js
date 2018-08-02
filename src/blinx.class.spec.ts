@@ -54,7 +54,15 @@ describe('Blinx', () => {
 
       describe('without further attributes', () => {
 
-        it('links passages & shows tooltip for simple example', () =>
+        it('skips pure numbers', () =>
+          testRecognition(
+            'Gen 1 and 3 are 2 of those.',
+            ['Gen 1', '3'],
+            ['Gen.1', 'Gen.3']
+          )
+        );
+
+        it('links passages for simple example', () =>
           testRecognition(
             'Check out Gen 1:3, II Cor 4:5, and then verse 6.',
             ['Gen 1:3', 'II Cor 4:5', 'verse 6'],
@@ -98,6 +106,35 @@ describe('Blinx', () => {
 
     });
 
+    describe('across nodes', () => {
+
+      xit('works for node siblings', () =>
+        testRecognition(
+          'Gen 1:2 <i>and</i> verse 3.',
+          ['Gen 1:2', 'verse 3'],
+          ['Gen.1.2', 'Gen.1.3']
+        )
+      );
+
+      xit('works for higher level nodes', () =>
+        testRecognition(
+          '<b><i>Gen 1:2</i></b> 3:4.',
+          ['Gen 1:2', '3:4'],
+          ['Gen.1.2', 'Gen.3.4']
+        )
+      );
+
+      it('skips pure numbers', () =>
+        // This one would be nice to have, as 'Gen 1:2; 3' is recognised, but difficult to implement
+        testRecognition(
+          '<i>Gen 1:2</i>; 3.',
+          ['Gen 1:2'],
+          ['Gen.1.2']
+        )
+      );
+
+    });
+
     describe('for example articles', () => {
 
       if (isIE9()) {
@@ -137,12 +174,12 @@ describe('Blinx', () => {
         testRecognition(
           getBodyHtml(require('./fixtures/article-with-potential-false-positives.html')),
           [
-            'Genesis 1', 'Genesis 1', 'Genesis 1', 'Genesis 1 und 2', 'Genesis 1', 'Genesis 2', 'Genesis 1', 'Genesis 1',
-            '1. Korinther 15,21-22'
+            'Genesis 1', 'Genesis 1', 'Genesis 1', 'Genesis 1 und 2', 'Genesis 1', 'Genesis 2',
+            'Genesis 1', 'Genesis 1', '1. Korinther 15,21-22'
           ],
           [
-            'Gen.1', 'Gen.1', 'Gen.1', 'Gen.1-Gen.2', 'Gen.1', 'Gen.2', 'Gen.1', 'Gen.1',
-            '1Cor.15.21-1Cor.15.22'
+            'Gen.1', 'Gen.1', 'Gen.1', 'Gen.1-Gen.2', 'Gen.1', 'Gen.2',
+            'Gen.1', 'Gen.1', '1Cor.15.21-1Cor.15.22'
           ],
           { language: 'de' }
         )

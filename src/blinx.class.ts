@@ -367,7 +367,6 @@ function extractOrderedTextNodesFromSingleNode(node: Node): Text[] {
   return textNodes;
 }
 
-
 function isTextNode(node: Node): node is Text {
   return node.nodeType === node.TEXT_NODE;
 }
