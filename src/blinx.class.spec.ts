@@ -108,7 +108,7 @@ describe('Blinx', () => {
 
     describe('across nodes', () => {
 
-      xit('works for node siblings', () =>
+      it('works for node siblings with prefixed partial reference', () =>
         testRecognition(
           'Gen 1:2 <i>and</i> verse 3.',
           ['Gen 1:2', 'verse 3'],
@@ -116,9 +116,9 @@ describe('Blinx', () => {
         )
       );
 
-      xit('works for higher level nodes', () =>
+      it('works for higher level nodes with chapter-verse partial reference', () =>
         testRecognition(
-          '<b><i>Gen 1:2</i></b> 3:4.',
+          '<b><i>Gen 1:2</i></b> and 3:4.',
           ['Gen 1:2', '3:4'],
           ['Gen.1.2', 'Gen.3.4']
         )

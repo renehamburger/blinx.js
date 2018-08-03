@@ -244,34 +244,31 @@ export class Blinx {
   private parsePartialReferencesInText(node: Text, previousPassage: string): void {
     const text = node.textContent || '';
     // Search for first number
-    const match = text.match(/\d/);
-    // TODO: Check support of match.index
+    const match = text.match(/\d+/);
     if (match && typeof match.index !== 'undefined') {
       this.parser.reset();
-      let possibleReferenceWithPrefix: string = '';
-      const possibleReferenceWithoutPrefix = text.slice(match.index);
       let offset = 0;
-      if (match.index > 0) {
-        // Check if it is preceded by a prefix (which could be 'chapter ' or 'vs.' etc.)
-        const preceding = text.slice(0, match.index);
-        const matchPrefix = preceding.match(/\w+\.?\s*$/);
-        if (matchPrefix) {
-          possibleReferenceWithPrefix = matchPrefix[0] + possibleReferenceWithoutPrefix;
-          offset = match.index - matchPrefix[0].length;
+      let refs: BCV.OsisAndIndices[] = [];
+      const beforeMatch = text.slice(0, match.index);
+      const fromMatchOnwards = text.slice(match.index);
+      // Check for partial chapter-verse partial references first (e.g. '5:12')
+      if (match.index < text.length) {
+        const chapterVerseSeparator = this.parser.getChapterVerseSeparator();
+        const regex = new RegExp(`^\\d+${chapterVerseSeparator}\\d+`);
+        const verseMatch = fromMatchOnwards.match(regex);
+        if (verseMatch) {
+          offset = match.index;
+          refs = this.parser.parse_with_context(fromMatchOnwards, previousPassage);
+        }
+      }      // Check for prefixed partial reference next (e.g. 'verse 3')
+      if (!refs.length && match.index > 0) {
+        const prefixMatch = beforeMatch.match(/\w+\.?\s*$/);
+        if (prefixMatch) {
+          const possibleReferenceWithPrefix = prefixMatch[0] + fromMatchOnwards;
+          offset = match.index - prefixMatch[0].length;
+          refs = this.parser.parse_with_context(possibleReferenceWithPrefix, previousPassage);
         }
       }
-      let refs: BCV.OsisAndIndices[] = [];
-      // Check for possible reference with prefix first
-      if (possibleReferenceWithPrefix) {
-        refs = this.parser.parse_with_context(possibleReferenceWithPrefix, previousPassage);
-      }
-      // Deactivate recognition of simple numbers for now, as this leads to too many false positives
-      // // If none available or unsuccessful, check for possible reference starting with number(s)
-      // if (!possibleReferenceWithPrefix || !this.parser.bcv.osis()) {
-      //   this.parser.bcv.parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
-      //   offset = match.index;
-      // }
-      // If either successful, adjust the indices due to the slice above and handle the reference
       if (refs.length) {
         for (const ref of refs) {
           ref.indices[0] += offset;
