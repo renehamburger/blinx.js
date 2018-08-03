@@ -30,6 +30,8 @@ export class Blinx {
   private testability: Testability = {};
   private tippyPolyfills = false;
   private tippyPolyfillInterval = 0;
+  /** Last recognised passage during the DOM traversal. Later on, a threshhold on nodeDistances might make sense. */
+  private previousPassage: { ref: BCV.OsisAndIndices, nodeDistance: number } | null = null;
 
   /** Initialise blinx. */
   constructor(customOptions: Partial<Options> = getScriptTagOptions()) {
@@ -62,6 +64,7 @@ export class Blinx {
       .not(this.options.blacklist.length ? `${this.options.blacklist.join(' *, ')} *` : '')
       .nodes;
     const textNodes = extractOrderedTextNodesFromNodes(nodes);
+    this.previousPassage = null;
     for (const textNode of textNodes) {
       this.parseReferencesInTextNode(textNode);
     }
@@ -194,11 +197,14 @@ export class Blinx {
    * @param ref bcv_parser reference object
    */
   private handleReferencesFoundInText(node: Text, refs: BCV.OsisAndIndices[]): void {
-    let explicitContextRef: BCV.OsisAndIndices | null = null;
-    const explicitContext = node.parentNode &&
+    // Check for context
+    let contextRef: BCV.OsisAndIndices | null = null;
+    const attributeContext = node.parentNode &&
       u(node.parentNode).closest('[data-bx-context]').attr('data-bx-context');
-    if (explicitContext) {
-      explicitContextRef = this.parser.parse(explicitContext)[0];
+    if (attributeContext) {
+      contextRef = this.parser.parse(attributeContext)[0];
+    } else if (this.previousPassage) {
+      contextRef = this.previousPassage.ref;
     }
     for (let i = refs.length - 1; i >= 0; i--) {
       const ref = refs[i];
@@ -207,12 +213,17 @@ export class Blinx {
       if (passage) { // Always true in this case
         this.addLink(passage, ref);
       }
-      const contextRef = explicitContextRef || ref;
-      this.parsePartialReferencesInText(remainder, this.convertOsisToContext(contextRef.osis));
+      const effectiveContextRef = attributeContext && contextRef ? contextRef : ref;
+      this.parsePartialReferencesInText(remainder, this.convertOsisToContext(effectiveContextRef.osis));
+    }
+    if (refs.length) {
+      this.previousPassage = { ref: refs[refs.length - 1], nodeDistance: 0 };
+    } else if (this.previousPassage) {
+      this.previousPassage.nodeDistance++;
     }
     // If an explicit context was provided, check for partial references _preceding_ the first recognised ref
-    if (node.textContent && explicitContextRef) {
-      this.parsePartialReferencesInText(node, this.convertOsisToContext(explicitContextRef.osis));
+    if (node.textContent && contextRef) {
+      this.parsePartialReferencesInText(node, this.convertOsisToContext(contextRef.osis));
     }
   }
 
