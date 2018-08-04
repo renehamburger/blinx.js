@@ -1,7 +1,6 @@
 {
   "typescript.tsdk": "./node_modules/typescript/lib",
-  "files.exclude": {
-  },
+  "files.exclude": {},
   "search.exclude": {
     "dist": true
   },
@@ -17,6 +16,11 @@
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true
   },
+  "[html]": {
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false
+  },
+  "html.format.wrapLineLength": 0,
   "typescript.format.enable": true,
   "typescript.format.insertSpaceAfterCommaDelimiter": true,
   "typescript.format.insertSpaceAfterConstructor": false,
@@ -33,7 +37,6 @@
   "typescript.format.insertSpaceBeforeFunctionParenthesis": false,
   "typescript.format.placeOpenBraceOnNewLineForControlBlocks": false,
   "typescript.format.placeOpenBraceOnNewLineForFunctions": false,
-  "json.format.enable": true,
   //-- Extensions
   // Settings for wayou.vscode-todo-highlight (region & TODO highlighting)
   "todohighlight.keywords": [

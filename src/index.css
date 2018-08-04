@@ -1,0 +1,192 @@
+/*
+===================================================================
+CSS tabs (taken from https://codepen.io/Merri/pen/bytea/)
+===================================================================
+*/
+
+.tabs {
+  font-size: 0;
+  margin: 25px 0;
+}
+
+.tabs:after {
+  clear: both;
+  content: '';
+  display: table;
+}
+
+.tabs .tab {
+  display: inline;
+}
+
+.tabs .tab-label {
+  background: #eee;
+  border: 1px solid #ccc;
+  display: inline-block;
+  font-size: 16px;
+  font-size: 1rem;
+  left: 1px;
+  margin-left: -1px;
+  padding: 10px;
+  position: relative;
+  vertical-align: bottom;
+}
+
+.tabs .tab > [type="radio"] {
+  clip: rect(0 0 0 0);
+  height: 1px;
+  opacity: 0;
+  position: fixed;
+  width: 1px;
+  z-index: -1;
+}
+
+.tabs .tab-panel {
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+  height: 0;
+  width: 0;
+}
+
+.tabs .tab-content {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: block;
+  background: white;
+  padding: 0 20px;
+  border: 1px solid #ccc;
+  float: left;
+  font-size: 16px;
+  font-size: 1rem;
+  margin-top: -1px;
+  width: 100%;
+}
+
+.tabs .tab [type="radio"]:checked + .tab-label {
+  background: white;
+  border-bottom-width: 0;
+  padding-bottom: 11px;
+  z-index: 1;
+}
+
+.tabs .tab [type="radio"]:checked ~ .tab-panel {
+  display: inline;
+}
+
+
+/* UNIMPORTANT STYLES BEGIN HERE */
+
+html {
+  background: #333;
+  color: #DDD;
+  padding: 1em;
+}
+
+a:link,a:visited,a:hover,a:focus,a:active {
+  color: #58C;
+}
+
+label {
+  cursor: pointer;
+}
+
+.tabs {
+  color: #222;
+}
+
+.tabs a:link,.tabs a:visited,.tabs a:hover,.tabs a:focus,.tabs a:active {
+  color: #36A;
+}
+
+body > h3 {
+  font-variant: small-caps;
+  letter-spacing: .0625em;
+}
+
+p {
+  line-height: 1.5;
+  max-width: 50em;
+}
+
+code,pre {
+  font-family: 'Lucida Console', monospace;
+}
+
+pre {
+  background: #191919;
+  color: #8DA;
+  overflow-x: auto;
+  padding: 1em;
+}
+
+p > code {
+  background: #DED;
+  margin: -2px;
+  padding: 2px;
+}
+
+.for {
+  display: inline-block;
+  position: relative;
+}
+
+.for:after {
+  background: #DDD;
+  bottom: 150%;
+  color: #222;
+  font-family: sans-serif;
+  font-size: 12px;
+  opacity: 0;
+  padding: .5em;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  -webkit-transition: opacity .2s ease-in-out;
+  transition: opacity .2s ease-in-out;
+  white-space: nowrap;
+}
+
+.for:hover:after {
+  opacity: 1;
+}
+
+.for.default-tab {
+  color: #8AD;
+}
+
+.for.default-tab:after {
+  content: 'For default tab';
+}
+
+/* and just for fun... */
+@media only screen and (max-width: 43em) {
+  .tabs .tab > label {
+    background: #BBB;
+    border-color: #999;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .tabs .tab [type="radio"]:checked + .tab-label {
+    background: #222;
+    border-color: #444;
+    color: #DDD;
+  }
+}
+
+/*
+===================================================================
+Other styles
+===================================================================
+*/
+
+iframe {
+  width: 100%;
+  height: calc(100% - 200px);
+  border: none;
+  margin: 30px 0;
+}

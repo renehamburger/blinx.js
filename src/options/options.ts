@@ -33,7 +33,7 @@ export class Options {
   theme: 'dark' | 'light' = 'light';
 }
 
-export function applyScriptTagOptions(options: Options): void {
+export function getScriptTagOptions(): Partial<Options> {
   // Parse options object from data-blinx attribute on script tag
   const tagOptionsString = u('script[data-blinx]').data('blinx') || '{}';
   let opts: Partial<Options> = {};
@@ -56,9 +56,5 @@ export function applyScriptTagOptions(options: Options): void {
       opts.language = language;
     }
   }
-  for (const key in opts) {
-    if (opts.hasOwnProperty(key)) {
-      options[key] = opts[key];
-    }
-  }
+  return opts;
 }

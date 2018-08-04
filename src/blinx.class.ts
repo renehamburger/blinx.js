@@ -1,4 +1,4 @@
-import { Options, applyScriptTagOptions } from 'src/options/options';
+import { Options, getScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
 import { u } from 'src/lib/u.js';
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
@@ -14,13 +14,15 @@ import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 import './css/blinx.css';
 
 export interface Testability {
-  u: typeof u;
-  linksApplied?: () => void;
-  passageDisplayed?: () => void;
+  linksApplied: Promise<void>;
+  passageDisplayed: Promise<void>;
 }
 
 export class Blinx {
 
+  public readonly testability: Testability;
+  private linksAppliedDeferred = new Deferred<void>();
+  private passageDisplayedDeferred = new Deferred<void>();
   private options = new Options();
   private parser = new Parser();
   private onlineBible: OnlineBible;
@@ -28,17 +30,27 @@ export class Blinx {
   private tippyObjects: Tippy.Object[] = [];
   private tippyLoaded = new Deferred<void>();
   private touchStarted = false;
-  private testability: Testability = { u };
   private tippyPolyfills = false;
   private tippyPolyfillInterval = 0;
+  /** Last recognised passage during the DOM traversal. Later on, a threshhold on nodeDistances might make sense. */
+  private previousPassage: { ref: BCV.OsisAndIndices, nodeDistance: number } | null = null;
 
   /** Initialise blinx. */
-  constructor() {
+  constructor(customOptions: Partial<Options> = getScriptTagOptions()) {
+    this.testability = {
+      linksApplied: this.linksAppliedDeferred.promise,
+      passageDisplayed: this.passageDisplayedDeferred.promise
+    };
+    // Apply customOptions
+    for (const key in customOptions) {
+      if (customOptions.hasOwnProperty(key)) {
+        this.options[key] = customOptions[key];
+      }
+    }
     // Identify touch devices
     window.addEventListener('touchstart', () => {
       this.touchStarted = true;
     });
-    applyScriptTagOptions(this.options);
     this.onlineBible = getOnlineBible(this.options.onlineBible);
     // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
     this.bibleApi = getBibleApi(this.options.bibleApi);
@@ -51,20 +63,22 @@ export class Blinx {
   /** Execute a parse for the given options. */
   public execute(): void {
     // Search within all whitelisted selectors
-    u(this.options.whitelist.length ? `${this.options.whitelist.join(' *, ')} *` : 'body')
+    const whitelist = this.options.whitelist || ['body'];
+    const nodes = u(whitelist.join(','))
       // Exclude blacklisted selectors
       .not(this.options.blacklist.join(', '))
       .not(this.options.blacklist.length ? `${this.options.blacklist.join(' *, ')} *` : '')
-      // Go one level deeper to get text nodes; NB: This does not keep the order or nodes
-      // .map(node => node.hasChildNodes() && Array.prototype.slice.call(node.childNodes))
-      .each(node => this.parseReferencesInNode(node));
+      .nodes;
+    const textNodes = extractOrderedTextNodesFromNodes(nodes);
+    this.previousPassage = null;
+    for (const textNode of textNodes) {
+      this.parseReferencesInTextNode(textNode);
+    }
     // Once tippy.js is loaded, add tooltips
     this.tippyLoaded.promise
       .then(() => {
         this.addTooltips();
-        if (this.testability.linksApplied) {
-          this.testability.linksApplied();
-        }
+        this.linksAppliedDeferred.resolve();
       });
   }
 
@@ -110,9 +124,7 @@ export class Blinx {
               this.getTooltipContent(osis)
                 .then((text: string) => {
                   u(template).find('.bxPassageText').html(text);
-                  if (this.testability.passageDisplayed) {
-                    this.testability.passageDisplayed();
-                  }
+                  this.passageDisplayedDeferred.resolve();
                 });
             },
             onHide: (tippyInstance) => {
@@ -172,19 +184,13 @@ export class Blinx {
   }
 
   /**
-   * Look for and link all references found in the text node children of the given node.
-   * @param node Any
+   * Look for and link all references found in the given text node.
+   * @param textNode
    */
-  private parseReferencesInNode(node: Node): void {
-    const childNodes = Array.prototype.slice.call(node.childNodes);
-    for (const childNode of childNodes) {
-      if (this.isTextNode(childNode)) {
-        // Look for all complete Bible references
-        this.parser.bcv.parse(childNode.textContent || '');
-        const refs = this.parser.bcv.osis_and_indices();
-        this.handleReferencesFoundInText(childNode, refs);
-      }
-    }
+  private parseReferencesInTextNode(textNode: Text): void {
+    // Look for all complete Bible references
+    const refs = this.parser.parse(textNode.textContent || '');
+    this.handleReferencesFoundInText(textNode, refs);
   }
 
   /**
@@ -193,12 +199,14 @@ export class Blinx {
    * @param ref bcv_parser reference object
    */
   private handleReferencesFoundInText(node: Text, refs: BCV.OsisAndIndices[]): void {
-    let explicitContextRef: BCV.OsisAndIndices | null = null;
-    const explicitContext = node.parentNode &&
+    // Check for context
+    let contextRef: BCV.OsisAndIndices | null = null;
+    const attributeContext = node.parentNode &&
       u(node.parentNode).closest('[data-bx-context]').attr('data-bx-context');
-    if (explicitContext) {
-      this.parser.bcv.parse(explicitContext);
-      explicitContextRef = this.parser.bcv.osis_and_indices()[0];
+    if (attributeContext) {
+      contextRef = this.parser.parse(attributeContext)[0];
+    } else if (this.previousPassage) {
+      contextRef = this.previousPassage.ref;
     }
     for (let i = refs.length - 1; i >= 0; i--) {
       const ref = refs[i];
@@ -207,12 +215,17 @@ export class Blinx {
       if (passage) { // Always true in this case
         this.addLink(passage, ref);
       }
-      const contextRef = explicitContextRef || ref;
-      this.parsePartialReferencesInText(remainder, this.convertOsisToContext(contextRef.osis));
+      const effectiveContextRef = attributeContext && contextRef ? contextRef : ref;
+      this.parsePartialReferencesInText(remainder, this.convertOsisToContext(effectiveContextRef.osis));
+    }
+    if (refs.length) {
+      this.previousPassage = { ref: refs[refs.length - 1], nodeDistance: 0 };
+    } else if (this.previousPassage) {
+      this.previousPassage.nodeDistance++;
     }
     // If an explicit context was provided, check for partial references _preceding_ the first recognised ref
-    if (node.textContent && explicitContextRef) {
-      this.parsePartialReferencesInText(node, this.convertOsisToContext(explicitContextRef.osis));
+    if (node.textContent && contextRef) {
+      this.parsePartialReferencesInText(node, this.convertOsisToContext(contextRef.osis));
     }
   }
 
@@ -233,34 +246,31 @@ export class Blinx {
   private parsePartialReferencesInText(node: Text, previousPassage: string): void {
     const text = node.textContent || '';
     // Search for first number
-    const match = text.match(/\d/);
-    // TODO: Check support of match.index
+    const match = text.match(/\d+/);
     if (match && typeof match.index !== 'undefined') {
-      this.parser.bcv.reset();
-      let possibleReferenceWithPrefix: string = '';
-      const possibleReferenceWithoutPrefix = text.slice(match.index);
+      this.parser.reset();
       let offset = 0;
-      if (match.index > 0) {
-        // Check if it is preceded by a prefix (which could be 'chapter ' or 'vs.' etc.)
-        const preceding = text.slice(0, match.index);
-        const matchPrefix = preceding.match(/\w+\.?\s*$/);
-        if (matchPrefix) {
-          possibleReferenceWithPrefix = matchPrefix[0] + possibleReferenceWithoutPrefix;
-          offset = match.index - matchPrefix[0].length;
+      let refs: BCV.OsisAndIndices[] = [];
+      const beforeMatch = text.slice(0, match.index);
+      const fromMatchOnwards = text.slice(match.index);
+      // Check for partial chapter-verse partial references first (e.g. '5:12')
+      if (match.index < text.length) {
+        const chapterVerseSeparator = this.parser.getChapterVerseSeparator();
+        const regex = new RegExp(`^\\d+${chapterVerseSeparator}\\d+`);
+        const verseMatch = fromMatchOnwards.match(regex);
+        if (verseMatch) {
+          offset = match.index;
+          refs = this.parser.parse_with_context(fromMatchOnwards, previousPassage);
+        }
+      }      // Check for prefixed partial reference next (e.g. 'verse 3')
+      if (!refs.length && match.index > 0) {
+        const prefixMatch = beforeMatch.match(/\w+\.?\s*$/);
+        if (prefixMatch) {
+          const possibleReferenceWithPrefix = prefixMatch[0] + fromMatchOnwards;
+          offset = match.index - prefixMatch[0].length;
+          refs = this.parser.parse_with_context(possibleReferenceWithPrefix, previousPassage);
         }
       }
-      // Check for possible reference with prefix first
-      if (possibleReferenceWithPrefix) {
-        this.parser.bcv.parse_with_context(possibleReferenceWithPrefix, previousPassage);
-      }
-      // Deactivate recognition of simple numbers for now, as this leads to too many false positives
-      // // If none available or unsuccessful, check for possible reference starting with number(s)
-      // if (!possibleReferenceWithPrefix || !this.parser.bcv.osis()) {
-      //   this.parser.bcv.parse_with_context(possibleReferenceWithoutPrefix, previousPassage);
-      //   offset = match.index;
-      // }
-      // If either successful, adjust the indices due to the slice above and handle the reference
-      const refs = this.parser.bcv.osis_and_indices();
       if (refs.length) {
         for (const ref of refs) {
           ref.indices[0] += offset;
@@ -269,10 +279,6 @@ export class Blinx {
         this.handleReferencesFoundInText(node, refs);
       }
     }
-  }
-
-  private isTextNode(node: Node): node is Text {
-    return node.nodeType === node.TEXT_NODE;
   }
 
   private addLink(node: Node, ref: BCV.OsisAndIndices): void {
@@ -348,3 +354,31 @@ export class Blinx {
   }
 
 }
+
+//#region: Pure/stateless helper functions
+
+function extractOrderedTextNodesFromNodes(nodes: Node[]): Text[] {
+  let textNodes: Text[] = [];
+  for (const node of nodes) {
+    textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(node));
+  }
+  return textNodes;
+}
+
+function extractOrderedTextNodesFromSingleNode(node: Node): Text[] {
+  let textNodes: Text[] = [];
+  for (const childNode of [].slice.call(node.childNodes)) {
+    if (isTextNode(childNode)) {
+      textNodes.push(childNode);
+    } else {
+      textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(childNode));
+    }
+  }
+  return textNodes;
+}
+
+function isTextNode(node: Node): node is Text {
+  return node.nodeType === node.TEXT_NODE;
+}
+
+//#endregion

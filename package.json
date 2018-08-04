@@ -1,6 +1,6 @@
 {
   "name": "blinx.js",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "A multi-language client-side library to automatically convert Bible references to Bible links with passage pop-ups",
   "main": "dist/blinx.js",
   "scripts": {
@@ -9,9 +9,13 @@
     "test": "karma start karma.config.js",
     "test.chrome": "npm run test -- --browsers Chrome",
     "test.ie9": "npm run test -- --browsers win7_ie9",
+    "test.ie10": "npm run test -- --browsers win7_ie10",
+    "test.none": "karma start karma.config.js --no-browsers",
     "test.watch": "npm run test -- --no-single-run",
     "test.chrome.watch": "npm run test.chrome -- --no-single-run",
     "test.ie9.watch": "npm run test.ie9 -- --no-single-run",
+    "test.ie10.watch": "npm run test.ie10 -- --no-single-run",
+    "test.none.watch": "npm run test.none -- --no-single-run",
     "test.debug": "npm run test.watch -- --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999"
   },
   "keywords": [
@@ -38,6 +42,7 @@
     "karma-browserstack-launcher": "^1.3.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "1.1.1",
+    "karma-spec-reporter": "0.0.32",
     "karma-typescript": "git+https://github.com/renehamburger/karma-typescript.git#bundled",
     "source-map-loader": "0.2.3",
     "style-loader": "^0.20.3",
