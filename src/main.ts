@@ -12,6 +12,7 @@ if (!('__karma__' in window)) {
 }
 
 // Export function for specs
-export function loadBlinx(customOptions?: Partial<Options>) {
+export function loadBlinx(customOptions?: Partial<Options>): Blinx {
   window.blinx = new Blinx(customOptions);
+  return window.blinx;
 }

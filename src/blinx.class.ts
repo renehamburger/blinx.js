@@ -14,12 +14,15 @@ import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 import './css/blinx.css';
 
 export interface Testability {
-  linksApplied?: () => void;
-  passageDisplayed?: () => void;
+  linksApplied: Promise<void>;
+  passageDisplayed: Promise<void>;
 }
 
 export class Blinx {
 
+  public readonly testability: Testability;
+  private linksAppliedDeferred = new Deferred<void>();
+  private passageDisplayedDeferred = new Deferred<void>();
   private options = new Options();
   private parser = new Parser();
   private onlineBible: OnlineBible;
@@ -27,7 +30,6 @@ export class Blinx {
   private tippyObjects: Tippy.Object[] = [];
   private tippyLoaded = new Deferred<void>();
   private touchStarted = false;
-  private testability: Testability = {};
   private tippyPolyfills = false;
   private tippyPolyfillInterval = 0;
   /** Last recognised passage during the DOM traversal. Later on, a threshhold on nodeDistances might make sense. */
@@ -35,6 +37,10 @@ export class Blinx {
 
   /** Initialise blinx. */
   constructor(customOptions: Partial<Options> = getScriptTagOptions()) {
+    this.testability = {
+      linksApplied: this.linksAppliedDeferred.promise,
+      passageDisplayed: this.passageDisplayedDeferred.promise
+    };
     // Apply customOptions
     for (const key in customOptions) {
       if (customOptions.hasOwnProperty(key)) {
@@ -72,9 +78,7 @@ export class Blinx {
     this.tippyLoaded.promise
       .then(() => {
         this.addTooltips();
-        if (this.testability.linksApplied) {
-          this.testability.linksApplied();
-        }
+        this.linksAppliedDeferred.resolve();
       });
   }
 
@@ -120,9 +124,7 @@ export class Blinx {
               this.getTooltipContent(osis)
                 .then((text: string) => {
                   u(template).find('.bxPassageText').html(text);
-                  if (this.testability.passageDisplayed) {
-                    this.testability.passageDisplayed();
-                  }
+                  this.passageDisplayedDeferred.resolve();
                 });
             },
             onHide: (tippyInstance) => {

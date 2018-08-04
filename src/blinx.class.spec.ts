@@ -1,7 +1,9 @@
-import { Testability, Blinx } from 'src/blinx.class';
+import { Blinx } from 'src/blinx.class';
 import { loadBlinx } from 'src/main';
 import { u } from 'src/lib/u.js';
 import { Options } from 'src/options/options';
+
+let blinx: Blinx;
 
 describe('Blinx', () => {
 
@@ -260,14 +262,10 @@ describe('Blinx', () => {
         //   return done();
         // }
         u(links.first() as Node).trigger('mouseenter');
-        return new Promise(resolve => {
-          // Wait until passage is displayed & checked displayed passage
-          const testability: Testability = window.blinx.testability;
-          testability.passageDisplayed = () => {
-            const text = u('.bxPassageText').text().trim().replace(/\s+/g, ' ');
-            expect(text).toBe('1 3 God said, "Let there be light," and there was light. World English Bible');
-            resolve();
-          };
+        // Wait until passage is displayed & checked displayed passage
+        return blinx.testability.passageDisplayed.then(() => {
+          const text = u('.bxPassageText').text().trim().replace(/\s+/g, ' ');
+          expect(text).toBe('1 3 God said, "Let there be light," and there was light. World English Bible');
         });
       })
     );
@@ -288,18 +286,15 @@ function testRecognition(
   options: Partial<Options> = new Options()
 ): Promise<Umbrella.Instance> {
   document.body.innerHTML = html;
-  loadBlinx(options);
-  const testability: Testability = window.blinx.testability;
-  return new Promise(resolve => {
-    // Wait until links & tooltips are applied & check linked passages
-    testability.linksApplied = () => {
-      const links: Umbrella.Instance = u('[data-osis]');
-      const passages: string[] = [];
-      links.each(node => passages.push(u(node).data('osis')));
-      expect(links.array()).toEqual(expectedLinkLabels);
-      expect(passages).toEqual(expectedOsisPassages);
-      resolve(links);
-    };
+  blinx = loadBlinx(options);
+  // Wait until links & tooltips are applied & check linked passages
+  return blinx.testability.linksApplied.then(() => {
+    const links: Umbrella.Instance = u('[data-osis]');
+    const passages: string[] = [];
+    links.each(node => passages.push(u(node).data('osis')));
+    expect(links.array()).toEqual(expectedLinkLabels);
+    expect(passages).toEqual(expectedOsisPassages);
+    return links;
   });
 }
 
