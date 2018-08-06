@@ -42,7 +42,7 @@ export class Parser {
         callback(true);
       }
     } else {
-      loadScript('https://cdn.rawgit.com/renehamburger/Bible-Passage-Reference-Parser/7f301967/js/' +
+      loadScript('https://cdn.rawgit.com/renehamburger/Bible-Passage-Reference-Parser/0f5485de/js/' +
         `${options.language}_bcv_parser.js`,
         successful => {
           if (successful) {

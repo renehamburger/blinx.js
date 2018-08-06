@@ -78,10 +78,10 @@ describe('Blinx', () => {
 
         describe('spaces around chapter-verse separator', () => {
 
-          it('are interpreted correctly for comma', () =>
+          it('are interpreted correctly for comma and new verse expression', () =>
             testRecognition(
-              'Mt 1 &nbsp;, 3 | Verse 4, 5',
-              ['Mt 1', '3', 'Verse 4, 5'],
+              'In Mt 1 &nbsp;, 3 und in den Versen 4, 5',
+              ['Mt 1', '3', 'Versen 4, 5'],
               ['Matt.1', 'Matt.3', 'Matt.3.4-Matt.3.5'],
               { language: 'de' }
             )
@@ -286,6 +286,7 @@ function testRecognition(
   options: Partial<Options> = new Options()
 ): Promise<Umbrella.Instance> {
   document.body.innerHTML = html;
+  debugger;
   blinx = loadBlinx(options);
   // Wait until links & tooltips are applied & check linked passages
   return blinx.testability.linksApplied.then(() => {
