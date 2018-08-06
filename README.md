@@ -33,7 +33,7 @@ The `data-blinx` attribute contains the options for blinx.js. For now, look at t
 blinx.js loads several resources it requires dynamically and asynchronously. To speed up the identification and linking of Bible references on the page, the following script can already be loaded in parallel to blinx.js:
 
 ```html
-<script src="https://cdn.rawgit.com/openbibleinfo/Bible-Passage-Reference-Parser/537560a7/js/<LANGUAGE_CODE>_bcv_parser.js" defer></script>
+<script src="https://cdn.rawgit.com/renehamburger/Bible-Passage-Reference-Parser/0f5485de/js/<LANGUAGE_CODE>_bcv_parser.js" defer></script>
 <script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.2.1/dist/blinx.js" defer></script>
 ```
 

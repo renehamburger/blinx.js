@@ -191,59 +191,33 @@ describe('Blinx', () => {
           getBodyHtml(require('./fixtures/article-with-many-partial-references.html')),
           [
             'Römer 7', 'Römer 7', 'Verse\n    7', '12', 'Vers 4', 'Vers 6', 'Römer 7', 'Verse 1-4',
-            'Verse 7-13', 'Vers 14', 'Vers 14', 'Verse 5-6', 'Römer 7', 'Römer 2', 'Römer 7',
-            'Vers 7', 'Vers 14', 'Römer 7', 'Vers 14a', 'Vers 14b', 'Kapitel 6', '6,1-10',
-            '6,11', '7,23', '8,23', '7,5', '7,14', 'Verse 17', '20',
-            'Vers 23', 'Verse 16', '18, 19,', '21', 'Verse 15', '18, 19',
-            'Verse 18', '23', '6,12', '6,19', '7,7', '7,14-25',
-            '8,1-4', 'Römer 7', '7,18', '7,4', 'Phil 3,9', 'Römer 7', 'Römer 7',
-            '6,1-11', 'Phil 3,21', 'Röm 4,18-25', '6,12', '19',
-            '7,14-25', '8,10-11', '23-25', 'Römer 7', 'Römer 7',
-            '2,1-16', '7,7-13', '7,14-25', '12,16', 'Römer\n    7', 'Römer 8'
+            'Verse 7-13', 'Vers 14', 'Vers 14', 'Verse 5-6', 'Römer 7', /* 'Vers 6', */ 'Römer 2', 'Römer 7',
+            'Versen 14-25', 'Vers 22', 'Versen\n    7', '11,', '14,', '16', 'Vers 7',
+            'Vers 14', 'Versen 14-25', 'Vers 14', 'Römer 7', 'Vers 14a', 'Vers 14b', 'Kapitel 6',
+            '6,1-10', '6,11', '7,23', '8,23', '7,5', '7,14', 'Verse 17',
+            '20', 'Vers 23', 'Verse 16', '18, 19,', '21', 'Verse 15',
+            '18, 19', 'Verse 18', '23', 'Versen 14', '18,', '21,', '23',
+            '6,12', '6,19', '7,7', '7,14-25', '8,1-4', 'Römer 7', '7,18',
+            '7,4', 'Phil 3,9', 'Römer 7', 'Römer 7', '6,1-11', 'Phil 3,21', 'Röm 4,18-25',
+            '6,12', '19', '7,14-25', '8,10-11', '23-25', 'Römer 7',
+            'Römer 7', '2,1-16', '7,7-13', '7,14-25', '12,16', 'Römer\n    7', 'Römer 8'
           ],
           [
             'Rom.7', 'Rom.7', 'Rom.7.7', 'Rom.7.12', 'Rom.7.4', 'Rom.7.6', 'Rom.7', 'Rom.7.1-Rom.7.4',
-            'Rom.7.7-Rom.7.13', 'Rom.7.14', 'Rom.7.14', 'Rom.7.5-Rom.7.6', 'Rom.7', 'Rom.2', 'Rom.7',
-            'Rom.7.7', 'Rom.7.14', 'Rom.7', 'Rom.7.14', 'Rom.7.14', 'Rom.6', 'Rom.6.1-Rom.6.10',
-            'Rom.6.11', 'Rom.7.23', 'Rom.8.23', 'Rom.7.5', 'Rom.7.14', 'Rom.7.17', 'Rom.7.20',
-            'Rom.7.23', 'Rom.7.16', 'Rom.7.18-Rom.7.19', 'Rom.7.21', 'Rom.7.15', 'Rom.7.18-Rom.7.19',
-            'Rom.7.18', 'Rom.7.23', 'Rom.6.12', 'Rom.6.19', 'Rom.7.7', 'Rom.7.14-Rom.7.25',
-            'Rom.8.1-Rom.8.4', 'Rom.7', 'Rom.7.18', 'Rom.7.4', 'Phil.3.9', 'Rom.7', 'Rom.7',
-            'Rom.6.1-Rom.6.11', 'Phil.3.21', 'Rom.4.18-Rom.4.25', 'Rom.6.12', 'Rom.6.19',
-            'Rom.7.14-Rom.7.25', 'Rom.8.10-Rom.8.11', 'Rom.8.23-Rom.8.25', 'Rom.7', 'Rom.7',
-            'Rom.2.1-Rom.2.16', 'Rom.7.7-Rom.7.13', 'Rom.7.14-Rom.7.25', 'Rom.12.16', 'Rom.7', 'Rom.8'
+            'Rom.7.7-Rom.7.13', 'Rom.7.14', 'Rom.7.14', 'Rom.7.5-Rom.7.6', 'Rom.7', /* 'Rom.7.6', */ 'Rom.2', 'Rom.7',
+            'Rom.7.14-Rom.7.25', 'Rom.7.22', 'Rom.7.7', 'Rom.7.11', 'Rom.7.14', 'Rom.7.16', 'Rom.7.7',
+            'Rom.7.14', 'Rom.7.14-Rom.7.25', 'Rom.7.14', 'Rom.7', 'Rom.7.14', 'Rom.7.14', 'Rom.6',
+            'Rom.6.1-Rom.6.10', 'Rom.6.11', 'Rom.7.23', 'Rom.8.23', 'Rom.7.5', 'Rom.7.14', 'Rom.7.17',
+            'Rom.7.20', 'Rom.7.23', 'Rom.7.16', 'Rom.7.18-Rom.7.19', 'Rom.7.21', 'Rom.7.15',
+            'Rom.7.18-Rom.7.19', 'Rom.7.18', 'Rom.7.23', 'Rom.7.14', 'Rom.7.18', 'Rom.7.21', 'Rom.7.23',
+            'Rom.6.12', 'Rom.6.19', 'Rom.7.7', 'Rom.7.14-Rom.7.25', 'Rom.8.1-Rom.8.4', 'Rom.7', 'Rom.7.18',
+            'Rom.7.4', 'Phil.3.9', 'Rom.7', 'Rom.7', 'Rom.6.1-Rom.6.11', 'Phil.3.21', 'Rom.4.18-Rom.4.25',
+            'Rom.6.12', 'Rom.6.19', 'Rom.7.14-Rom.7.25', 'Rom.8.10-Rom.8.11', 'Rom.8.23-Rom.8.25', 'Rom.7',
+            'Rom.7', 'Rom.2.1-Rom.2.16', 'Rom.7.7-Rom.7.13', 'Rom.7.14-Rom.7.25', 'Rom.12.16', 'Rom.7', 'Rom.8'
           ],
           { language: 'de' }
         )
       );
-
-      xit('works for article-with-many-partial-references-and-bx-context', () => {
-
-        return testRecognition(
-          getBodyHtml(require('./fixtures/article-with-many-partial-references-and-bx-context.html')),
-          [
-            'Römer 7', 'Römer 7', 'Verse\n      7', '12', 'Vers 4', 'Vers 6', 'Römer 7',
-            'Verse 1-4', 'Verse 7-13', 'Vers 14', 'Vers 14', 'Verse 5-6',
-            'Römer 7', 'Römer 2', 'Römer 7', 'Vers 7', 'Vers 14', 'Römer 7', 'Vers 14a', 'Vers 14b',
-            'Kapitel 6', 'Verse 17', '20', 'Vers 23', 'Verse 16', '18, 19,',
-            '21', 'Verse 15', '18, 19', 'Verse 18', '23', 'Kap. 6,12',
-            'Römer 7', 'Phil 3,9', 'Römer 7', 'Römer 7', 'Phil 3,21', 'Röm\n      4,18-25', '6,12',
-            '19', '7,14-25', '8,10-11', '23-25', 'Römer 7',
-            'Römer 7', 'Römer 7', 'Römer 8'
-          ],
-          [
-            'Rom.7', 'Rom.7', 'Rom.7.7', 'Rom.7.12', 'Rom.7.4', 'Rom.7.6', 'Rom.7',
-            'Rom.7.1-Rom.7.4', 'Rom.7.7-Rom.7.13', 'Rom.7.14', 'Rom.7.14', 'Rom.7.5-Rom.7.6',
-            'Rom.7', 'Rom.2', 'Rom.7', 'Rom.7.7', 'Rom.7.14', 'Rom.7', 'Rom.7.14', 'Rom.7.14',
-            'Rom.6', 'Rom.7.17', 'Rom.7.20', 'Rom.7.23', 'Rom.7.16', 'Rom.7.18-Rom.7.19',
-            'Rom.7.21', 'Rom.7.15', 'Rom.7.18-Rom.7.19', 'Rom.7.18', 'Rom.7.23', 'Rom.6.12',
-            'Rom.7', 'Phil.3.9', 'Rom.7', 'Rom.7', 'Phil.3.21', 'Rom.4.18-Rom.4.25', 'Rom.6.12',
-            'Rom.6.19', 'Rom.7.14-Rom.7.25', 'Rom.8.10-Rom.8.11', 'Rom.8.23-Rom.8.25', 'Rom.7',
-            'Rom.7', 'Rom.7', 'Rom.8'
-          ],
-          { language: 'de' }
-        );
-      });
 
     });
 
