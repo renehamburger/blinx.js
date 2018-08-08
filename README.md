@@ -76,12 +76,11 @@ For now, this attribute will always trump any preceding complete references, no 
 
 ```html
 <p bx-context="Luke 2">
-  In these chapters Luke introduces us to a number of godly Israelites, looking for
-  the 'consolation' or 'redemption' of Israel (verses 25 and 38). In other words,
-  these people were still waiting for the end of the exile (compare Isa 40:1;
-  <span bx-context="Isa">52:9</span>). God reveals to them the presence of the
-  Saviour in the person of the baby Jesus. His coming will mean salvation and glory
-  for Israel and 'a light for revelation to the Gentiles' (verses 29-32)
+  In these chapters Luke introduces us to a number of godly Israelites, looking for the 'consolation' or
+  'redemption' of Israel (verses 25 and 38). In other words, these people were still waiting for the end
+  of the exile (compare Isa 40:1; <span bx-context="Isa">52:9</span>). God reveals to them the presence of
+  the Saviour in the person of the baby Jesus. His coming will mean salvation and glory for Israel and
+  'a light for revelation to the Gentiles' (verses 29-32)
 </p>
 ```
 
