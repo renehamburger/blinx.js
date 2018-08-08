@@ -255,14 +255,15 @@ export class Blinx {
       const fromMatchOnwards = text.slice(match.index);
       // Check for partial chapter-verse partial references first (e.g. '5:12')
       if (match.index < text.length) {
-        const chapterVerseSeparator = this.parser.getChapterVerseSeparator();
+        const { chapterVerseSeparator } = this.parser.characters;
         const regex = new RegExp(`^\\d+${chapterVerseSeparator}\\d+`);
         const verseMatch = fromMatchOnwards.match(regex);
         if (verseMatch) {
           offset = match.index;
           refs = this.parser.parse_with_context(fromMatchOnwards, previousPassage);
         }
-      }      // Check for prefixed partial reference next (e.g. 'verse 3')
+      }
+      // Check for prefixed partial reference next (e.g. 'verse 3')
       if (!refs.length && match.index > 0) {
         const prefixMatch = beforeMatch.match(/\w+\.?\s*$/);
         if (prefixMatch) {
@@ -272,11 +273,20 @@ export class Blinx {
         }
       }
       if (refs.length) {
+        // Partial reference recognised for the number found above
         for (const ref of refs) {
           ref.indices[0] += offset;
           ref.indices[1] += offset;
         }
         this.handleReferencesFoundInText(node, refs);
+      } else {
+        // Skip this (apparently) pure number and try again
+        const refCharacters = Object.values<string>(this.parser.characters).join('');
+        const matchRefCharacters = fromMatchOnwards.match(new RegExp(`^[\\d${refCharacters}]+`));
+        if (matchRefCharacters) {
+          const remainder = node.splitText(match.index + matchRefCharacters[0].length);
+          this.parsePartialReferencesInText(remainder, previousPassage);
+        }
       }
     }
   }
@@ -337,7 +347,7 @@ export class Blinx {
     } else {
       if (!('requestAnimationFrame' in window)) {
         await loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
-          'requestAnimationFrame|gated,Element.prototype.classList|gated');
+          'requestAnimationFrame|gated,Element.prototype.classList|gated, Object.values|gated');
         this.tippyPolyfills = true;
       }
       await loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`);

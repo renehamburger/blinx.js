@@ -56,6 +56,22 @@ describe('Blinx', () => {
 
       describe('without further attributes', () => {
 
+        it('recognises absolute references', () =>
+          testRecognition(
+            'Check out Gen 1:2-3:4 and II Cor 4:5ff',
+            ['Gen 1:2-3:4', 'II Cor 4:5ff'],
+            ['Gen.1.2-Gen.3.4', '2Cor.4.5-2Cor.4.18']
+          )
+        );
+
+        it('recognises partial references', () =>
+          testRecognition(
+            'Gen 1:1.2 and 3 and then verse 4 and also 2:3-5.',
+            ['Gen 1:1.2 and 3', 'verse 4', '2:3-5'],
+            ['Gen.1.1-Gen.1.3', 'Gen.1.4', 'Gen.2.3-Gen.2.5']
+          )
+        );
+
         it('skips pure numbers', () =>
           testRecognition(
             'Gen 1 and 3 are 2 of those.',
@@ -64,11 +80,21 @@ describe('Blinx', () => {
           )
         );
 
-        it('links passages for simple example', () =>
+        it('continues recognising partial references after a pure number', () =>
           testRecognition(
-            'Check out Gen 1:3, II Cor 4:5, and then verse 6.',
-            ['Gen 1:3', 'II Cor 4:5', 'verse 6'],
-            ['Gen.1.3', '2Cor.4.5', '2Cor.4.6']
+            '1) Gen 1:1 ... 2) verse 2',
+            ['Gen 1:1', 'verse 2'],
+            ['Gen.1.1', 'Gen.1.2']
+          )
+        );
+
+        it('continues recognising partial references after an uncrecognised reference', () =>
+          // This one would often lead to wrong results, if the unrecognised reference
+          // introduced a new book or chapter. In any case, a manual correction is needed.
+          testRecognition(
+            'Gen 1:1, verz 2 and verse 5',
+            ['Gen 1:1', 'verse 5'],
+            ['Gen.1.1', 'Gen.1.5']
           )
         );
 
@@ -80,8 +106,8 @@ describe('Blinx', () => {
 
           it('are interpreted correctly for comma and new verse expression', () =>
             testRecognition(
-              'In Mt 1 &nbsp;, 3 und in den Versen 4, 5',
-              ['Mt 1', '3', 'Versen 4, 5'],
+              'In Mt 1 &nbsp;, 3 und Verse 4, 5',
+              ['Mt 1', '3', 'Verse 4, 5'],
               ['Matt.1', 'Matt.3', 'Matt.3.4-Matt.3.5'],
               { language: 'de' }
             )
@@ -191,7 +217,7 @@ describe('Blinx', () => {
           getBodyHtml(require('./fixtures/article-with-many-partial-references.html')),
           [
             'Römer 7', 'Römer 7', 'Verse\n    7', '12', 'Vers 4', 'Vers 6', 'Römer 7', 'Verse 1-4',
-            'Verse 7-13', 'Vers 14', 'Vers 14', 'Verse 5-6', 'Römer 7', /* 'Vers 6', */ 'Römer 2', 'Römer 7',
+            'Verse 7-13', 'Vers 14', 'Vers 14', 'Verse 5-6', 'Römer 7', 'Vers 6', 'Römer 2', 'Römer 7',
             'Versen 14-25', 'Vers 22', 'Versen\n    7', '11,', '14,', '16', 'Vers 7',
             'Vers 14', 'Versen 14-25', 'Vers 14', 'Römer 7', 'Vers 14a', 'Vers 14b', 'Kapitel 6',
             '6,1-10', '6,11', '7,23', '8,23', '7,5', '7,14', 'Verse 17',
@@ -204,7 +230,7 @@ describe('Blinx', () => {
           ],
           [
             'Rom.7', 'Rom.7', 'Rom.7.7', 'Rom.7.12', 'Rom.7.4', 'Rom.7.6', 'Rom.7', 'Rom.7.1-Rom.7.4',
-            'Rom.7.7-Rom.7.13', 'Rom.7.14', 'Rom.7.14', 'Rom.7.5-Rom.7.6', 'Rom.7', /* 'Rom.7.6', */ 'Rom.2', 'Rom.7',
+            'Rom.7.7-Rom.7.13', 'Rom.7.14', 'Rom.7.14', 'Rom.7.5-Rom.7.6', 'Rom.7', 'Rom.7.6', 'Rom.2', 'Rom.7',
             'Rom.7.14-Rom.7.25', 'Rom.7.22', 'Rom.7.7', 'Rom.7.11', 'Rom.7.14', 'Rom.7.16', 'Rom.7.7',
             'Rom.7.14', 'Rom.7.14-Rom.7.25', 'Rom.7.14', 'Rom.7', 'Rom.7.14', 'Rom.7.14', 'Rom.6',
             'Rom.6.1-Rom.6.10', 'Rom.6.11', 'Rom.7.23', 'Rom.8.23', 'Rom.7.5', 'Rom.7.14', 'Rom.7.17',
@@ -260,7 +286,6 @@ function testRecognition(
   options: Partial<Options> = new Options()
 ): Promise<Umbrella.Instance> {
   document.body.innerHTML = html;
-  debugger;
   blinx = loadBlinx(options);
   // Wait until links & tooltips are applied & check linked passages
   return blinx.testability.linksApplied.then(() => {

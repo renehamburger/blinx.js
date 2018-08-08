@@ -13,10 +13,19 @@ export interface TextTransformationInfo {
 }
 
 export class Parser {
-  private _bcv?: BCV.Parser;
-  private chapterVerseSeparator: ',' | ':' = ':';
+  get characters() {
+    return {
+      spaces: '\\s\xa0',
+      dashes: '\\-\u2013\u2014',
+      chapterVerseSeparator: this._chapterVerseSeparator,
+      itemSeparators: '.,'
+    };
+  }
 
-  static getCurrentParserLanguage(): LanguageCode | false {
+  private _bcv?: BCV.Parser;
+  private _chapterVerseSeparator: ',' | ':' = ':';
+
+  public static getCurrentParserLanguage(): LanguageCode | false {
     if (window.bcv_parser) {
       const parser: BCV.Parser = new window.bcv_parser();
       if (parser['languages'] && parser['languages'].length === 1) {
@@ -76,14 +85,10 @@ export class Parser {
     return convertRefsBasedOnTransformedTextToOriginalText(refs, transformation);
   }
 
-  public getChapterVerseSeparator(): ',' | ':' {
-    return this.chapterVerseSeparator;
-  }
-
   /** Transform text before parsing to handle parser issues. */
   private transformTextForParsing(text: string) {
-    const spaces = (this.bcv as any).regexps.space;
-    return transformTextForParsing(text, this.chapterVerseSeparator, spaces);
+    const { spaces, chapterVerseSeparator } = this.characters;
+    return transformTextForParsing(text, chapterVerseSeparator, `[${spaces}]`);
   }
 
   private initBcvParser(options: Options) {
@@ -100,7 +105,7 @@ export class Parser {
     if (options.parserOptions) {
       this._bcv.set_options(options.parserOptions);
     }
-    this.chapterVerseSeparator = options.parserOptions.punctuation_strategy === 'eu' ? ',' : ':';
+    this._chapterVerseSeparator = options.parserOptions.punctuation_strategy === 'eu' ? ',' : ':';
   }
 
 }
