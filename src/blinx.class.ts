@@ -358,7 +358,7 @@ export class Blinx {
       ) {
         await loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
           'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated');
-        this.tippyPolyfills = true;
+        this.tippyPolyfills = !('requestAnimationFrame' in window);
       }
       await loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`);
       if (this.options.theme === 'light') {
