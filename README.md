@@ -58,10 +58,10 @@ If the chosen language is supported by the passage parser (see [below](#the-unde
 In those cases, where the automatic recognition fails, the following markup can be added to assist:
 
 1. Any text that should not be parsed, e.g. because it contains numbers that are wrongly recognised as passages, can be surrounded (at any level) by a `bx-skip` in any of the following flavours:
-  - As a custom tag: `<bx-skip>...</bx-skip>`
-  - As a regular class: `<span class="bx-skip">...</span>`
-  - As a custom attribute: `<span bx-skip>...</span>`
-  - As a regular data-attribute: `<span data-bx-skip>...</span>`
+    - As a custom tag: `<bx-skip>...</bx-skip>`
+    - As a regular class: `<span class="bx-skip">...</span>`
+    - As a custom attribute: `<span bx-skip>...</span>`
+    - As a regular data-attribute: `<span data-bx-skip>...</span>`
   The custom options are shorter, but the regular options may be needed if your editor or linter complains. All supported browsers should be fine with any of them.
 
 2. A context can be provided for partial references in case they are not preceded by a complete references or the preceeding complete reference does not apply to them. This can be done with the `bx-context` or `data-bx-context` attribute set to the correct context and attached to any of the element's ancestors. The context will be parsed according to the set language, but OSIS references will always work. Here is an example:
@@ -75,8 +75,13 @@ Without the `bx-context` attribute, 'verses 1-20' would be interpreted as belong
 For now, this attribute will always trump any preceding complete references, no matter how close they are. That is when wrappers with this attribute may need to be nested to ensure correct parsing of all partial references. Here's such an example taken from the demo chapter of the [PTC course](https://elearning.moore.edu.au/mod/page/view.php?id=707):
 
 ```html
-<p data-bx-context="Luke 2">
-  In these chapters Luke introduces us to a number of godly Israelites, looking for the 'consolation' or 'redemption' of Israel (verses 25 and 38). In other words, these people were still waiting for the end of the exile (compare Isa 40:1; <span data-bx-context="Isa">52:9</span>). God reveals to them the presence of the Saviour in the person of the baby Jesus. His coming will mean salvation and glory for Israel and 'a light for revelation to the Gentiles' (verses 29-32)
+<p bx-context="Luke 2">
+  In these chapters Luke introduces us to a number of godly Israelites, looking for
+  the 'consolation' or 'redemption' of Israel (verses 25 and 38). In other words,
+  these people were still waiting for the end of the exile (compare Isa 40:1;
+  <span bx-context="Isa">52:9</span>). God reveals to them the presence of the
+  Saviour in the person of the baby Jesus. His coming will mean salvation and glory
+  for Israel and 'a light for revelation to the Gentiles' (verses 29-32)
 </p>
 ```
 
