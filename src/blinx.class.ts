@@ -70,7 +70,6 @@ export class Blinx {
     // Exclude blacklisted selectors; this could probably be done in a more performant way
     const blacklist = ['bx-skip', '.bx-skip', '[bx-skip]', '[data-bx-skip]'].concat(this.options.blacklist);
     const blacklistSelector = `${blacklist.join(', ')}, ${blacklist.join(' *, ')} *`;
-    debugger;
     textNodes = textNodes.filter(textNode => textNode.parentNode && !u(textNode.parentNode).is(blacklistSelector));
     this.previousPassage = null;
     for (const textNode of textNodes) {
@@ -349,9 +348,16 @@ export class Blinx {
     if ('tippy' in window) {
       this.tippyLoaded.resolve();
     } else {
-      if (!('requestAnimationFrame' in window)) {
+      // Conditions taken from polyfill.io response.
+      if (
+        !('values' in Object) ||
+        !('requestAnimationFrame' in window) ||
+        !('DOMTokenList' in this && (function (x) {
+          return 'classList' in x ? !x.classList.toggle('x', false) && !x.className : true;
+        })(document.createElement('x')))
+      ) {
         await loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
-          'requestAnimationFrame|gated,Element.prototype.classList|gated, Object.values|gated');
+          'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated');
         this.tippyPolyfills = true;
       }
       await loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`);
