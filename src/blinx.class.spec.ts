@@ -13,7 +13,7 @@ describe('Blinx', () => {
 
   describe('node iteration', () => {
 
-    it('uses whitelist & blacklist correctly', () => {
+    it('uses custom whitelist & blacklist correctly', () => {
       document.body.innerHTML = `
         ...
         <div>1</div>
@@ -35,6 +35,22 @@ describe('Blinx', () => {
       });
       blinx.execute();
       expect(textContents).toEqual(['1', '2']);
+    });
+
+    it('uses default whitelist & blacklist correctly', () => {
+      document.body.innerHTML =
+        `<div>1</div>` +
+        `<div bx-skip>2</div>` +
+        `<span bx-skip>
+          <div>3</div>
+        </span>`;
+      const blinx = new Blinx({ parseAutomatically: false });
+      const textContents: string[] = [];
+      spyOn(blinx, 'parseReferencesInTextNode' as any).and.callFake((node: Node) => {
+        textContents.push(node.textContent || '');
+      });
+      blinx.execute();
+      expect(textContents).toEqual(['1']);
     });
 
     it('iterates through elements in DOM-order', () => {
@@ -117,16 +133,35 @@ describe('Blinx', () => {
 
       });
 
-      describe('with data-bx-context attribute', () => {
+      describe('with bx-context', () => {
 
         it('recognises partial references correctly', () =>
           testRecognition(
             `<p data-bx-context="Matt 6">
-              Check out verse 9 and then verse 10 (cf. Luke 11:2 and <span data-bx-context="Lk 11">verse 3</span>)
+              Check out verse 9 and then verse 10 (cf. Luke 11:2)
               and verse 11.
             </p>`,
-            ['verse 9', 'verse 10', 'Luke 11:2', 'verse 3', 'verse 11'],
-            ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Luke.11.3', 'Matt.6.11']
+            ['verse 9', 'verse 10', 'Luke 11:2', 'verse 11'],
+            ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Matt.6.11']
+          )
+        );
+
+      });
+
+      describe('with bx-skip', () => {
+
+        it('skips all variations of bx-skip and the default a', () =>
+          testRecognition(
+            `Gen 1
+            <a>Gen 2</a>
+            <bx-skip>Gen 3</bx-skip>
+            <span bx-skip>Gen 4</span>
+            <span data-bx-skip>Gen 5</span>
+            <span class="bx-skip">Gen 6</span>
+            <span>Gen 7</span>
+            `,
+            ['Gen 1', 'Gen 7'],
+            ['Gen.1', 'Gen.7']
           )
         );
 
@@ -136,30 +171,49 @@ describe('Blinx', () => {
 
     describe('across nodes', () => {
 
-      it('works for node siblings with prefixed partial reference', () =>
-        testRecognition(
-          'Gen 1:2 <i>and</i> verse 3.',
-          ['Gen 1:2', 'verse 3'],
-          ['Gen.1.2', 'Gen.1.3']
-        )
-      );
+      describe('without further attributes', () => {
 
-      it('works for higher level nodes with chapter-verse partial reference', () =>
-        testRecognition(
-          '<b><i>Gen 1:2</i></b> and 3:4.',
-          ['Gen 1:2', '3:4'],
-          ['Gen.1.2', 'Gen.3.4']
-        )
-      );
+        it('works for node siblings with prefixed partial reference', () =>
+          testRecognition(
+            'Gen 1:2 <i>and</i> verse 3.',
+            ['Gen 1:2', 'verse 3'],
+            ['Gen.1.2', 'Gen.1.3']
+          )
+        );
 
-      it('skips pure numbers', () =>
-        // This one would be nice to have, as 'Gen 1:2; 3' is recognised, but difficult to implement
-        testRecognition(
-          '<i>Gen 1:2</i>; 3.',
-          ['Gen 1:2'],
-          ['Gen.1.2']
-        )
-      );
+        it('works for higher level nodes with chapter-verse partial reference', () =>
+          testRecognition(
+            '<b><i>Gen 1:2</i></b> and 3:4.',
+            ['Gen 1:2', '3:4'],
+            ['Gen.1.2', 'Gen.3.4']
+          )
+        );
+
+        it('skips pure numbers', () =>
+          // This one would be nice to have, as 'Gen 1:2; 3' is recognised, but difficult to implement
+          testRecognition(
+            '<i>Gen 1:2</i>; 3.',
+            ['Gen 1:2'],
+            ['Gen.1.2']
+          )
+        );
+
+      });
+
+      describe('with bx-context', () => {
+
+        it('works for bx-context and data-bx-context & allows nesting', () =>
+          testRecognition(
+            `<p data-bx-context="Matt 6">
+              Check out verse 9 and then verse 10 (cf. Luke 11:2 and <span bx-context="Lk 11">verse 3</span>)
+              and verse 11.
+            </p>`,
+            ['verse 9', 'verse 10', 'Luke 11:2', 'verse 3', 'verse 11'],
+            ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Luke.11.3', 'Matt.6.11']
+          )
+        );
+
+      });
 
     });
 

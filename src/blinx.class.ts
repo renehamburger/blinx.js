@@ -64,12 +64,14 @@ export class Blinx {
   public execute(): void {
     // Search within all whitelisted selectors
     const whitelist = this.options.whitelist || ['body'];
-    const nodes = u(whitelist.join(','))
-      // Exclude blacklisted selectors
-      .not(this.options.blacklist.join(', '))
-      .not(this.options.blacklist.length ? `${this.options.blacklist.join(' *, ')} *` : '')
-      .nodes;
-    const textNodes = extractOrderedTextNodesFromNodes(nodes);
+    const nodes = u(whitelist.join(',')).nodes;
+    // Get all text nodes
+    let textNodes = extractOrderedTextNodesFromNodes(nodes);
+    // Exclude blacklisted selectors; this could probably be done in a more performant way
+    const blacklist = ['bx-skip', '.bx-skip', '[bx-skip]', '[data-bx-skip]'].concat(this.options.blacklist);
+    const blacklistSelector = `${blacklist.join(', ')}, ${blacklist.join(' *, ')} *`;
+    debugger;
+    textNodes = textNodes.filter(textNode => textNode.parentNode && !u(textNode.parentNode).is(blacklistSelector));
     this.previousPassage = null;
     for (const textNode of textNodes) {
       this.parseReferencesInTextNode(textNode);
@@ -201,8 +203,10 @@ export class Blinx {
   private handleReferencesFoundInText(node: Text, refs: BCV.OsisAndIndices[]): void {
     // Check for context
     let contextRef: BCV.OsisAndIndices | null = null;
-    const attributeContext = node.parentNode &&
-      u(node.parentNode).closest('[data-bx-context]').attr('data-bx-context');
+    const contextElement = node.parentNode &&
+      u(node.parentNode).closest('[data-bx-context], [bx-context]');
+    const attributeContext = contextElement &&
+      (contextElement.attr('data-bx-context') || contextElement.attr('bx-context'));
     if (attributeContext) {
       contextRef = this.parser.parse(attributeContext)[0];
     } else if (this.previousPassage) {

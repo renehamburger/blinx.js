@@ -53,11 +53,26 @@ You can add the dynamic version as a bookmarklet to load and start the script on
 
 ## Usage
 
-If the chosen language is supported by the passage parser (see [below](#the-underlying-bible-passage-parser)), most __complete Bible references__ should be recognised automatically.
+If the chosen language is supported by the passage parser (see [below](#the-underlying-bible-passage-parser)), most references should be recognised automatically.
 
-__Partial references__, e.g. '3:16' or 'verse 17', are currently only recognised automatically, if they are preceded by a complete passage _within the same HTML element_. In order to enable the recognition of all other partial references, the attribute `data-bx-context` can be attached to any of the element's ancestors, in order to provide the passage context for the interpretation of partial references. The context will be parsed according to the set language, but OSIS references will always work. For now, this attribute will always trump any preceding complete references, no matter how close they are. Wrapper with the `data-bx-context`-attribute can be nested to ensure correct parsing of all partial references.
+In those cases, where the automatic recognition fails, the following markup can be added to assist:
 
-Here's an example paragraph taken from the demo chapter of the [PTC course](https://elearning.moore.edu.au/mod/page/view.php?id=707) to illustrate this:
+1. Any text that should not be parsed, e.g. because it contains numbers that are wrongly recognised as passages, can be surrounded (at any level) by a `bx-skip` in any of the following flavours:
+  - As a custom tag: `<bx-skip>...</bx-skip>`
+  - As a regular class: `<span class="bx-skip">...</span>`
+  - As a custom attribute: `<span bx-skip>...</span>`
+  - As a regular data-attribute: `<span data-bx-skip>...</span>`
+  The custom options are shorter, but the regular options may be needed if your editor or linter complains. All supported browsers should be fine with any of them.
+
+2. A context can be provided for partial references in case they are not preceded by a complete references or the preceeding complete reference does not apply to them. This can be done with the `bx-context` or `data-bx-context` attribute set to the correct context and attached to any of the element's ancestors. The context will be parsed according to the set language, but OSIS references will always work. Here is an example:
+
+```html
+This article is about Matt 1, (not about Mark 1), <span bx-context="Matt 1">in particular verses 1-20.</span>
+```
+
+Without the `bx-context` attribute, 'verses 1-20' would be interpreted as belonging to Mark 1.
+
+For now, this attribute will always trump any preceding complete references, no matter how close they are. That is when wrappers with this attribute may need to be nested to ensure correct parsing of all partial references. Here's such an example taken from the demo chapter of the [PTC course](https://elearning.moore.edu.au/mod/page/view.php?id=707):
 
 ```html
 <p data-bx-context="Luke 2">
