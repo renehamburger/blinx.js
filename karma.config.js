@@ -1,5 +1,8 @@
-module.exports = function (config) {
-  config.set({
+module.exports = function (karmaConfig) {
+
+  const withCoverage = process.argv.some(arg => /^-coverage$/.test(arg));
+
+  const config = {
     /** maximum number of tries a browser will attempt in the case of a disconnection */
     browserDisconnectTolerance: 2,
 
@@ -149,6 +152,17 @@ module.exports = function (config) {
 
     karmaTypescriptConfig: {
       tsconfig: './tsconfig.json',
+      coverageOptions: {
+        instrumentation: false
+      }
+    }
+  };
+
+  if (withCoverage) {
+    Object.assign(config.karmaTypescriptConfig, {
+      coverageOptions: {
+        instrumentation: true
+      },
       reports: {
         'lcovonly': {
           'subdirectory': '',
@@ -157,6 +171,8 @@ module.exports = function (config) {
         'html': 'coverage',
         'text-summary': ''
       }
-    }
-  });
+    });
+  }
+
+  karmaConfig.set(config);
 };

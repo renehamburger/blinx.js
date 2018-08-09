@@ -10,8 +10,8 @@ node_js:
   - 8.9.4
 script:
   - npm run build
-  - npm run test-once
-  - "./node_modules/.bin/codecov"
+  - npm run test-once-with-coverage
+  - ./node_modules/.bin/codecov
 after_success:
   - .travis/commit-built-files.sh
 env:
