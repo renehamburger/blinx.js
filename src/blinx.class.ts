@@ -351,14 +351,11 @@ export class Blinx {
       // Conditions taken from polyfill.io response.
       if (
         !('values' in Object) ||
-        !('requestAnimationFrame' in window) ||
-        !('DOMTokenList' in this && (function (x) {
-          return 'classList' in x ? !x.classList.toggle('x', false) && !x.className : true;
-        })(document.createElement('x')))
+        !('requestAnimationFrame' in window)
       ) {
         this.tippyPolyfills = !('requestAnimationFrame' in window);
         await loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
-          'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated');
+          'requestAnimationFrame|gated,Object.values|gated');
       }
       await loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`);
       if (this.options.theme === 'light') {
