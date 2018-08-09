@@ -63,17 +63,21 @@ export class Blinx {
   /** Execute a parse for the given options. */
   public execute(): void {
     // Search within all whitelisted selectors
-    const bxPassageSelectors = ['bx-passage', '[bx-passage]', '[data-bx-passage]'];
-    const whitelist = bxPassageSelectors.concat(this.options.whitelist || ['body']);
+    const fixedWhitelist = [
+      'bx', '.bx', '[bx]', '[data-bx]',
+      '[bx-passage]', '[data-bx-passage]',
+      '[bx-context]', '[data-bx-context]'
+    ];
+    const whitelist = fixedWhitelist.concat(this.options.whitelist || ['body']);
     const nodes = u(whitelist.join(',')).nodes;
     // Get all text nodes
     let textNodes = extractOrderedTextNodesFromNodes(nodes);
     // Exclude blacklisted selectors; this could probably be done in a more performant way
     const blacklist = ['bx-skip', '.bx-skip', '[bx-skip]', '[data-bx-skip]'].concat(this.options.blacklist);
     const blacklistSelector = `${blacklist.join(', ')}, ${blacklist.join(' *, ')} *`;
-    const bxPassageSelector = `${bxPassageSelectors.join(', ')}, ${bxPassageSelectors.join(' *, ')} *`;
+    const fixedWhitelistSelector = `${fixedWhitelist.join(', ')}, ${fixedWhitelist.join(' *, ')} *`;
     textNodes = textNodes.filter(textNode => textNode.parentNode && (
-      u(textNode.parentNode).is(bxPassageSelector) || !u(textNode.parentNode).is(blacklistSelector)
+      u(textNode.parentNode).is(fixedWhitelistSelector) || !u(textNode.parentNode).is(blacklistSelector)
     ));
     this.previousPassage = null;
     for (const textNode of textNodes) {
