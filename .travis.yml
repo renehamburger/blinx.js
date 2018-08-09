@@ -17,5 +17,5 @@ before_install:
 
 script:
   - npm run build
-  - npm run test
+  - npm run test-once
   - ./node_modules/.bin/codecov

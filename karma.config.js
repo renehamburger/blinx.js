@@ -1,7 +1,5 @@
 module.exports = function (config) {
   config.set({
-    singleRun: true,
-
     /** maximum number of tries a browser will attempt in the case of a disconnection */
     browserDisconnectTolerance: 2,
 
