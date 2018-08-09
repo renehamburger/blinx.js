@@ -63,14 +63,18 @@ export class Blinx {
   /** Execute a parse for the given options. */
   public execute(): void {
     // Search within all whitelisted selectors
-    const whitelist = this.options.whitelist || ['body'];
+    const bxPassageSelectors = ['bx-passage', '[bx-passage]', '[data-bx-passage]'];
+    const whitelist = bxPassageSelectors.concat(this.options.whitelist || ['body']);
     const nodes = u(whitelist.join(',')).nodes;
     // Get all text nodes
     let textNodes = extractOrderedTextNodesFromNodes(nodes);
     // Exclude blacklisted selectors; this could probably be done in a more performant way
     const blacklist = ['bx-skip', '.bx-skip', '[bx-skip]', '[data-bx-skip]'].concat(this.options.blacklist);
     const blacklistSelector = `${blacklist.join(', ')}, ${blacklist.join(' *, ')} *`;
-    textNodes = textNodes.filter(textNode => textNode.parentNode && !u(textNode.parentNode).is(blacklistSelector));
+    const bxPassageSelector = `${bxPassageSelectors.join(', ')}, ${bxPassageSelectors.join(' *, ')} *`;
+    textNodes = textNodes.filter(textNode => textNode.parentNode && (
+      u(textNode.parentNode).is(bxPassageSelector) || !u(textNode.parentNode).is(blacklistSelector)
+    ));
     this.previousPassage = null;
     for (const textNode of textNodes) {
       this.parseReferencesInTextNode(textNode);

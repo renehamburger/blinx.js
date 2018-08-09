@@ -53,6 +53,23 @@ describe('Blinx', () => {
       expect(textContents).toEqual(['1']);
     });
 
+    it('works with bx-passage', () => {
+      document.body.innerHTML = `
+        <div bx-skip>
+          Gen 1
+          <span bx-passage>Gen 1</span>
+          <span data-bx-passage>Gen 2</span>
+          <bx-passage>Gen 3</bx-passage>
+        </span>`;
+      const blinx = new Blinx({ parseAutomatically: false, whitelist: [] });
+      const textContents: string[] = [];
+      spyOn(blinx, 'parseReferencesInTextNode' as any).and.callFake((node: Node) => {
+        textContents.push(node.textContent || '');
+      });
+      blinx.execute();
+      expect(textContents).toEqual(['Gen 1', 'Gen 2', 'Gen 3']);
+    });
+
     it('iterates through elements in DOM-order', () => {
       document.body.innerHTML = '<div>a<i>b<u>c<br>d<b>e</b>f</u>g</i></div>...<div>h</div>';
       const blinx = new Blinx({ parseAutomatically: false, whitelist: ['div'] });
@@ -130,6 +147,18 @@ describe('Blinx', () => {
           );
 
         });
+
+      });
+
+      describe('with bx-passage', () => {
+
+        it('recognises partial references correctly', () =>
+          testRecognition(
+            `The <span bx-passage="Gen 1:1">next verse</a> shows...`,
+            ['next verse'],
+            ['Gen.1.1']
+          )
+        );
 
       });
 
