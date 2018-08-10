@@ -1,9 +1,26 @@
 {
   "extends": "tslint-config-standard",
   "rules": {
-    "max-line-length": [true, {"limit": 120, "ignore-pattern": "^import "}],
+    "max-line-length": [
+      true,
+      {
+        "limit": 120,
+        "ignore-pattern": "^import "
+      }
+    ],
     "no-empty": false,
-    "semicolon": [true, "always"],
-    "space-before-function-paren": [true, {"anonymous": "always", "named": "never", "asyncArrow": "always"}]
+    "semicolon": [
+      true,
+      "always"
+    ],
+    "space-before-function-paren": [
+      true,
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "member-ordering": false
   }
 }

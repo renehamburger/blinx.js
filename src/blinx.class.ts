@@ -13,12 +13,49 @@ import { Bible } from 'src/bible/bible.class';
 import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 import './css/blinx.css';
 
+const isVerbose = window.__karma__.config.args.some((arg: string) => arg === 'verbose');
+
+const DEBUG = {
+  performance: isVerbose,
+  logging: isVerbose
+};
+
+const timers: { [label: string]: number } = {};
+
 export interface Testability {
   linksApplied: Promise<void>;
   passageDisplayed: Promise<void>;
 }
 
 export class Blinx {
+
+  public static log(...args: any[]) {
+    if (DEBUG.logging) {
+      console.log(...args);
+    }
+  }
+
+  public static time(label: string) {
+    if (DEBUG.performance) {
+      if (timers[label]) {
+        console.error(`Timer already started: ${label}`);
+      } else {
+        timers[label] = Date.now();
+      }
+    }
+  }
+
+  public static timeEnd(label: string) {
+    debugger;
+    if (DEBUG.performance) {
+      if (timers[label]) {
+        console.log(`${label}: ${Date.now() - timers[label]}ms`);
+        delete timers[label];
+      } else {
+        console.error(`timer missing: ${label}`);
+      }
+    }
+  }
 
   public readonly testability: Testability;
   private linksAppliedDeferred = new Deferred<void>();
@@ -62,6 +99,8 @@ export class Blinx {
 
   /** Execute a parse for the given options. */
   public execute(): void {
+    Blinx.time('execute()');
+    Blinx.time('execute() - determine textNodes');
     // Search within all whitelisted selectors
     const fixedWhitelist = [
       'bx', '.bx', '[bx]', '[data-bx]',
@@ -79,15 +118,23 @@ export class Blinx {
     textNodes = textNodes.filter(textNode => textNode.parentNode && (
       u(textNode.parentNode).is(fixedWhitelistSelector) || !u(textNode.parentNode).is(blacklistSelector)
     ));
+    Blinx.timeEnd('execute() - determine textNodes');
+    Blinx.time('execute() - parsing');
     this.previousPassage = null;
     for (const textNode of textNodes) {
       this.parseReferencesInTextNode(textNode);
     }
+    Blinx.timeEnd('execute() - parsing');
     // Once tippy.js is loaded, add tooltips
+    Blinx.time('execute() - loading of tippy');
     this.tippyLoaded.promise
       .then(() => {
+        Blinx.timeEnd('execute() - loading of tippy');
+        Blinx.time('execute() - adding of tooltips');
         this.addTooltips();
+        Blinx.timeEnd('execute() - adding of tooltips');
         this.linksAppliedDeferred.resolve();
+        Blinx.timeEnd('execute()');
       });
   }
 

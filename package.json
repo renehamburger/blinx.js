@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --port 9000 --host 0.0.0.0 --inline --progress --profile --colors --watch --content-base src/",
     "build": "webpack --config webpack.config.js -p",
-    "test": "karma start karma.config.js",
+    "test": "karma start karma.config.js -verbose",
     "test-with-coverage": "npm run test -- -coverage",
     "test.chrome": "npm run test -- --browsers Chrome",
     "test.ie9": "npm run test -- --browsers win7_ie9",
