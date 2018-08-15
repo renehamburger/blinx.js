@@ -1,21 +1,19 @@
 sudo: false
 language: node_js
-
 cache:
-  yarn: true
-
+  directories:
+    - node_modules
 notifications:
   email:
     on_failure: change
-
 node_js:
-  - '8.9.4'
-
-before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.5.1
-  - export PATH=$HOME/.yarn/bin:$PATH
-
+  - 8.9.4
 script:
   - npm run build
   - npm run test-once
-  - ./node_modules/.bin/codecov
+  - "./node_modules/.bin/codecov"
+after_success:
+  - .travis/commit-built-files.sh
+env:
+  global:
+    secure: A33O6ulABkUh36lwiA4IeK9N+cBKbiJ+2RfiBZLXRi3dLYPGNmSqGJ/MLUcx2g0TaZUfKIKL/SgqjvJ7jlbcB+M6/RvBiOEpcfyiejp+mdyTLWPR0CkIkc+yPQLX3J7ImDApIVeMds+FSjGihaToHqha22bJfEZ2VxMT5eHbu+87XxlhLAuwFGGll/IqJW2FaoUGgZGPPmSdr7QOqEEwRNJEwIOWAmObPBbwNHlNQrXHToTQcMFCQ54o6Ti4lRYoGNAXUc4dyPDsvoAqJ3j2XvAqnTtrOtTI3FqHuQxevEmT9Emm13Yie11BUg65uKHGz9c2BHkj+b8PJBvoPevfyGv3Y7CdARH72PJCAOM6XQjeL516O8J0H5Xb2tLRGOjkw7VG7dkgGJEKJsETrDy5ijgFaKmHwwYiTVpQcHU6rRvLfeireSRWshOg8nzkIh8zH7krY+FyhKRbv+j5xOr8cYVYM5SW/htn1AENTXM4uaAzVn15P9J2bhuRrd8kox7PonFysQkB/YyA/s7CDfAZgNDxjQvZ99dagFXjkKzIDvVYpBQtloIAroOvcjlUiiX5hqhGzqcImp3GoA7oqvVLuiACdexkxvU7vjEG1dP8Gp4G+XWojSCF38rt7vIyIPzm/gjeBer2V7ARJ5NrHSBUqBDd6MV7Gkc4+W6SNYgabu0=
