@@ -16,19 +16,17 @@ describe('Blinx', () => {
     it('uses custom whitelist & blacklist correctly', () => {
       document.body.innerHTML = `
         ...
-        <div>1</div>
-        <span>
+        <p>1</p>
+        <div>
           ...
-          <div>2</div>
-        </span>
-        <div class="skip">
-          <div>...</div>
+          <p>2</p>
         </div>
-        <span class="skip">
-          <div>...</div>
-        </span>
+        <p><span class="skip">...</span></p>
+        <p class="skip"> <!-- blacklist trumps whitelist -->
+          ...
+        </p>
       `;
-      const blinx = new Blinx({ parseAutomatically: false, whitelist: ['div'], blacklist: ['.skip'] });
+      const blinx = new Blinx({ parseAutomatically: false, whitelist: ['p'], blacklist: ['.skip'] });
       const textContents: string[] = [];
       spyOn(blinx, 'parseReferencesInTextNode' as any).and.callFake((node: Node) => {
         textContents.push(node.textContent || '');
@@ -40,8 +38,8 @@ describe('Blinx', () => {
     it('uses default whitelist & blacklist correctly', () => {
       document.body.innerHTML =
         `<div>1</div>` +
-        `<div bx-skip>2</div>` +
-        `<span bx-skip>
+        `<bx-skip>2</bx-skip>` +
+        `<span class="bx-skip">
           <div>3</div>
         </span>`;
       const blinx = new Blinx({ parseAutomatically: false });
@@ -55,14 +53,14 @@ describe('Blinx', () => {
 
     it('lets bx selectors trump the blacklist or a non-matching white-list', () => {
       document.body.innerHTML = `
-        <div bx-skip>
+        <bx-skip>
           0
           <span bx-passage>1</span>
           <span data-bx-passage>2</span>
           <span bx-context>3</span>
           <span data-bx-context>4</span>
           <bx>5</bx>
-        </span>`;
+        </bx-skip>`;
       const blinx = new Blinx({ parseAutomatically: false, whitelist: [] });
       const textContents: string[] = [];
       spyOn(blinx, 'parseReferencesInTextNode' as any).and.callFake((node: Node) => {
@@ -208,13 +206,11 @@ describe('Blinx', () => {
             `Gen 1
             <a>Gen 2</a>
             <bx-skip>Gen 3</bx-skip>
-            <span bx-skip>Gen 4</span>
-            <span data-bx-skip>Gen 5</span>
-            <span class="bx-skip">Gen 6</span>
-            <span>Gen 7</span>
+            <span class="bx-skip">Gen 4</span>
+            <span>Gen 5</span>
             `,
-            ['Gen 1', 'Gen 7'],
-            ['Gen.1', 'Gen.7']
+            ['Gen 1', 'Gen 5'],
+            ['Gen.1', 'Gen.5']
           )
         );
 

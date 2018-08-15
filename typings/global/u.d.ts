@@ -11,6 +11,8 @@ declare namespace Umbrella {
     width: number;
   }
 
+  type Filter = string | Instance | ((node: Node, index: number) => boolean);
+
   interface Instance {
     length: number;
     nodes: HTMLElement[];
@@ -39,7 +41,7 @@ declare namespace Umbrella {
 
     clone(): Instance;
 
-    closest(a: any): Instance;
+    closest(criterion: Filter): Instance;
 
     data(name: string): string;
     data(attributes: { [name: string]: string }): Instance;
@@ -51,7 +53,7 @@ declare namespace Umbrella {
 
     empty(): Instance;
 
-    filter(criteria: string | Instance | ((node: Node, index: number) => boolean)): Instance;
+    filter(criterion: Filter): Instance;
 
     find(a: any): Instance;
 

@@ -1,8 +1,8 @@
+import isString = require('lodash/isString');
 import { Options, getScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
 import { u } from 'src/lib/u.js';
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
-import isString = require('lodash/isString');
 import { getOnlineBible } from 'src/bible/online-bible/online-bible-overview';
 import { BibleVersionCode, bibleVersions } from 'src/bible/models/bible-versions.const';
 import { loadScript, loadCSS } from 'src/helpers/dom';
@@ -11,8 +11,10 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
+import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELECTORS } from 'src/options/selectors.const';
 import './css/blinx.css';
 
+//#region: Closure for debugging constant & timer cache
 const isVerbose = window.__karma__.config.args.some((arg: string) => arg === 'verbose');
 
 const DEBUG = {
@@ -21,12 +23,16 @@ const DEBUG = {
 };
 
 const timers: { [label: string]: number } = {};
+//#endregion: Closure for debugging constant & timer cache
 
+//#region: General exports
 export interface Testability {
   linksApplied: Promise<void>;
   passageDisplayed: Promise<void>;
 }
+//#endregion: General exports
 
+//#region Class definition
 export class Blinx {
 
   public static log(...args: any[]) {
@@ -46,7 +52,6 @@ export class Blinx {
   }
 
   public static timeEnd(label: string) {
-    debugger;
     if (DEBUG.performance) {
       if (timers[label]) {
         console.log(`${label}: ${Date.now() - timers[label]}ms`);
@@ -71,6 +76,24 @@ export class Blinx {
   private tippyPolyfillInterval = 0;
   /** Last recognised passage during the DOM traversal. Later on, a threshhold on nodeDistances might make sense. */
   private previousPassage: { ref: BCV.OsisAndIndices, nodeDistance: number } | null = null;
+
+  private get areBlacklistedElementsPresent(): boolean {
+    if (this._areBlacklistedElementsPresent === null) {
+      const el = document.querySelector(this.getBlacklistSelector());
+      this._areBlacklistedElementsPresent = !!el;
+    }
+    return this._areBlacklistedElementsPresent;
+  }
+  private _areBlacklistedElementsPresent: boolean | null = null;
+
+  private get areBxContextsPresent(): boolean {
+    if (this._areBxContextsPresent === null) {
+      const el = document.querySelector(BX_CONTEXT_SELECTORS.join(','));
+      this._areBxContextsPresent = !!el;
+    }
+    return this._areBxContextsPresent;
+  }
+  private _areBxContextsPresent: boolean | null = null;
 
   /** Initialise blinx. */
   constructor(customOptions: Partial<Options> = getScriptTagOptions()) {
@@ -102,22 +125,20 @@ export class Blinx {
     Blinx.time('execute()');
     Blinx.time('execute() - determine textNodes');
     // Search within all whitelisted selectors
-    const fixedWhitelist = [
-      'bx', '.bx', '[bx]', '[data-bx]',
-      '[bx-passage]', '[data-bx-passage]',
-      '[bx-context]', '[data-bx-context]'
-    ];
-    const whitelist = fixedWhitelist.concat(this.options.whitelist || ['body']);
-    const nodes = u(whitelist.join(',')).nodes;
+    const nodes = u(this.getWhitelistSelector()).nodes;
     // Get all text nodes
     let textNodes = extractOrderedTextNodesFromNodes(nodes);
     // Exclude blacklisted selectors; this could probably be done in a more performant way
-    const blacklist = ['bx-skip', '.bx-skip', '[bx-skip]', '[data-bx-skip]'].concat(this.options.blacklist);
-    const blacklistSelector = `${blacklist.join(', ')}, ${blacklist.join(' *, ')} *`;
-    const fixedWhitelistSelector = `${fixedWhitelist.join(', ')}, ${fixedWhitelist.join(' *, ')} *`;
-    textNodes = textNodes.filter(textNode => textNode.parentNode && (
-      u(textNode.parentNode).is(fixedWhitelistSelector) || !u(textNode.parentNode).is(blacklistSelector)
-    ));
+    if (this.areBlacklistedElementsPresent) {
+      textNodes = textNodes.filter(textNode => {
+        if (textNode.parentNode) {
+          const el = u(textNode.parentNode)
+            .closest(`${this.getWhitelistSelector()}, ${this.getBlacklistSelector()}`);
+          return !el.is(this.getBlacklistSelector());
+        }
+        return true;
+      });
+    }
     Blinx.timeEnd('execute() - determine textNodes');
     Blinx.time('execute() - parsing');
     this.previousPassage = null;
@@ -136,6 +157,22 @@ export class Blinx {
         this.linksAppliedDeferred.resolve();
         Blinx.timeEnd('execute()');
       });
+  }
+
+  private getWhitelistSelector(): string {
+    const fixedWhitelist = [
+      ...BX_SELECTORS,
+      ...BX_PASSAGE_SELECTORS,
+      ...BX_CONTEXT_SELECTORS
+    ];
+    const customisableWhitelist = this.options.whitelist || ['body'];
+    return fixedWhitelist.concat(customisableWhitelist).join(',');
+  }
+
+  private getBlacklistSelector(): string {
+    const fixedBlacklist = BX_SKIP_SELECTORS;
+    const customisableBlacklist = this.options.blacklist || [];
+    return fixedBlacklist.concat(customisableBlacklist).join(',');
   }
 
   private addTooltips() {
@@ -257,10 +294,15 @@ export class Blinx {
   private handleReferencesFoundInText(node: Text, refs: BCV.OsisAndIndices[]): void {
     // Check for context
     let contextRef: BCV.OsisAndIndices | null = null;
-    const contextElement = node.parentNode &&
-      u(node.parentNode).closest('[data-bx-context], [bx-context]');
-    const attributeContext = contextElement &&
-      (contextElement.attr('data-bx-context') || contextElement.attr('bx-context'));
+    let attributeContext = '';
+    if (this.areBxContextsPresent && node.parentNode) {
+      const contextElement = u(node.parentNode).closest(BX_CONTEXT_SELECTORS.join(','));
+      if (contextElement) {
+        for (const selector of BX_CONTEXT_SELECTORS) {
+          attributeContext = attributeContext || contextElement.attr(selector.replace(/^\[(.*)\]$/, '$1'));
+        }
+      }
+    }
     if (attributeContext) {
       contextRef = this.parser.parse(attributeContext)[0];
     } else if (this.previousPassage) {
@@ -427,11 +469,10 @@ export class Blinx {
       this.tippyLoaded.resolve();
     }
   }
-
 }
+//#endregion: Class definition
 
 //#region: Pure/stateless helper functions
-
 function extractOrderedTextNodesFromNodes(nodes: Node[]): Text[] {
   let textNodes: Text[] = [];
   for (const node of nodes) {
@@ -441,8 +482,9 @@ function extractOrderedTextNodesFromNodes(nodes: Node[]): Text[] {
 }
 
 function extractOrderedTextNodesFromSingleNode(node: Node): Text[] {
+  const childNodes = [].slice.call(node.childNodes);
   let textNodes: Text[] = [];
-  for (const childNode of [].slice.call(node.childNodes)) {
+  for (const childNode of childNodes) {
     if (isTextNode(childNode)) {
       textNodes.push(childNode);
     } else {
@@ -455,5 +497,4 @@ function extractOrderedTextNodesFromSingleNode(node: Node): Text[] {
 function isTextNode(node: Node): node is Text {
   return node.nodeType === node.TEXT_NODE;
 }
-
-//#endregion
+//#endregion: Pure/stateless helper functions
