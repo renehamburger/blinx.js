@@ -57,41 +57,47 @@ If the chosen language is supported by the passage parser (see [below](#the-unde
 
 In those cases, where the automatic recognition fails, one of the following solutions will work:
 
-1. The [blinx.js-options](src/options/options.ts#L7) contain a __whitelist__ of css-selectors, which determine the elements blinx.js should scan for references in the first place. By default, the whitelist contains the whole `body` tag of the document. This can be overwritten to only match the element(s) that can contain references.
+1. __whitelist-selectors__ can be used to specifically __activate__ parts of the html document for blinx.js' parsing of references.
+The [blinx.js-option](src/options/options.ts#L7) `whitelist` contains a customisable list of such whitelisted query- or css-selectors. By default, this whitelist contains the whole `body` tag of the document. This can be overwritten to only match the element(s) that can contain references.
+In addition, the three selectors `bx`, `bx-context`, and `bx-passage` introduced below (see 3. and 4.) are always whitelist-selectors.
 
-2. The [options](src/options/options.ts#L7) also contain a __blacklist__ of elements that will be skipped (even if they lie within whitelisted elements). By default, the whitelist only contains the `a` link tag.
-In addition to this customisable blacklist, the following `bx-skip`-elements can be used (as a built-in, fixed blacklist) to skip parts of the document. This may be necessary, because it contains numbers that are wrongly recognised as passages. In order to skip them, they can be surrounded (at any level) by a `bx-skip`-element in any of the following flavours:
+2. __blacklist-selectors__ can be used to specifically __*de*activate__ parts of the html document for blinx.js' parsing of references.
+The [option](src/options/options.ts#L7) `blacklist` contain a customisable list of blacklisted selectors. By default, it only contains the `a` link tag.
+In addition to this customisable blacklist, the __`bx-skip`-selector__ is always available as a built-in blacklist-selector to skip parts of the document. This may be necessary, because they contain numbers that are wrongly recognised as passages. In order to skip them, they can be surrounded (at any level) by a `bx-skip`-element in one of two ways:
     - As a custom tag: `<bx-skip>...</bx-skip>`
     - As a regular class: `<span class="bx-skip">...</span>`
-    - As a custom attribute: `<span bx-skip>...</span>`
-    - As a regular data-attribute: `<span data-bx-skip>...</span>`
-The custom options are shorter, but the regular options may be needed if your editor or linter complains. All supported browsers should be fine with any of them.
+(The custom tag is shorter, but the regular class may be needed if your editor or linter complains. All supported browsers should be fine with both of them.)
 
-If any of the sections that is deactivated by such a blacklisted element contains one of the `bx...`-selectors below, it will be activated again! Think of it in terms of `bx-skip` and the _blacklist_ turning a section off and the `bx...`-selectors below turning it on again. Here's an example:
+whitelist- and blacklist-selectors can be nested. They former activates a section for the parsing and the latter deactives a subsection of this section again for parsing and so on. Here's an example:
 
 ```html
 <article>      <!-- `article` is one of the whitelisted elements, so blinx.js will look for references within -->
-  Some references                <!-- ON -->
-  <p bx-skip>                    <!-- Whole p-element explicitly skipped -->
-    Some content that may be wrongly recognised as references <!-- OFF -->
+  Some references                <!-- ACTIVATED for parsing -->
+  <bx-skip>                      <!-- Whole p-element explicitly skipped -->
+    Some content that may be wrongly recognised as references <!-- DE-ACTIVATED for parsing -->
     <span bx-context="Mt 1">     <!-- bx-context activates it again -->
-      Some partial references    <!-- ON -->
+      Some partial references    <!-- ACTIVATED for parsing -->
     </span>
-    More problematic content...  <!-- still OFF -->
+    More problematic content...  <!-- still DE-ACTIVATED for parsing -->
     <bx>                         <!-- bx also activates it -->
-      Some full references       <!-- ON -->
+      Some full references       <!-- ACTIVATED for parsing -->
     </bx>
-  </p>
+  </bx-skip>
+</article>
+<article class="bx-skip">        <!-- A blacklist-selector always trumps a whitelist-selector on the same element -->
+  Some other content             <!-- DEACTIVATED for parsing -->
 </article>
 ```
 
-3. The `bx`-elements have the sole purposes of turning the passage recognition on again in an otherwise skipped section:
+3. The __`bx`-selector__ is a convenient whitelist selector that is always available for activating a section for parsing. It's the counterpart `bx-skip` and can be used likewise:
     - As a custom tag: `<bx>...</bx>`
     - As a regular class: `<span class="bx">...</span>`
-    - As a custom attribute: `<span bx>...</span>`
-    - As a regular data-attribute: `<span data-bx>...</span>`
 
-4. If partial refereces are not preceded by a complete references or if the preceeding complete reference does not apply to them, an explicit context can be provided instead. This can be done with the `bx-context` or `data-bx-context` attribute set to the correct context and attached to any of the element's ancestors. The context will be parsed according to the set language, but OSIS-references will always work. Here is an example:
+4. The __`bx-context`-attribute__ allows to provide the parsing context for partial references, in case they are not preceded by a complete reference or if the preceeding complete reference does not apply to them:
+    - As a custom attribute: `<span bx-context="...">...</span>`
+    - As a regular data-attribute: `<span data-bx-context="...">...</span>`
+(The custom attribute is shorter, but the regular data-attribute may be needed if your editor or linter complains. All supported browsers should be fine with both of them.)
+The context will be parsed according to the set language, but OSIS-references will always work. Here's an example:
 
 ```html
 This article is about Matt 1, (not about Mark 1), <span bx-context="Matt 1">in particular verses 1-20.</span>
@@ -113,7 +119,11 @@ For now, this attribute will always trump any preceding complete references, no 
 
 This paragraph contains mostly partial references within Luke chapter 2, which is provided as the overall context on the p-element. But in order to recognise 52:9 correctly as a chapter in Isaiah, another wrapper was introduced around it.
 
-5. The final and most powerful and explicit way to enable correct recognition of a passage is the `bx-passage` or `data-bx-passage` attribute. Similar to the `bx-context`-attribute, it is set to a passage, which will be parsed according to the set language. (OSIS-references will always work here, too.) The html element `bx-passage`/`data-bx-passage` is attached to will be converted to a `a`-link like all other recognised passages, so it should only contain text. Here's a short example demonstrating the use (and necessity) of this attribute:
+5. The final and most powerful and explicit way to enable correct recognition of a passage is the __`bx-passage`-attribute__:
+    - As a custom attribute: `<span bx-passage="...">...</span>`
+    - As a regular data-attribute: `<span data-bx-context="...">...</span>`
+
+Similar to the `bx-context`-attribute, it is set to a passage, which will be parsed according to the set language. (OSIS-references will always work here, too.) The html element it is attached to will be converted to an `a`-link like all other recognised passages, so it should usually only contain text. Here's a short example demonstrating the use (and necessity) of this attribute:
 
 ```html
 In Genesis 1:1 and in the <span bx-passage="Gen 1:2">following verse</span>...
