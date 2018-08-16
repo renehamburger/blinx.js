@@ -16,7 +16,7 @@ import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELEC
 import './css/blinx.css';
 
 //#region: Closure for debugging constant & timer cache
-const isVerbose = window.__karma__.config.args.some((arg: string) => arg === 'verbose');
+const isVerbose = window.__karma__ && window.__karma__.config.args.some((arg: string) => arg === 'verbose');
 
 const DEBUG = {
   performance: isVerbose,
