@@ -18,14 +18,14 @@ commit_all_files() {
 upload_files() {
   git remote add origin2 https://${GH_TOKEN}@github.com/renehamburger/blinx.js.git > /dev/null 2>&1
   branch=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-  git push --quiet origin2 $branch
+  git push --quiet origin2 HEAD:$branch
 }
 
 print_info() {
   echo "The following files were committed & pushed:"
   git log -1 --pretty=format:"%C(green)%h %C(yellow)[%ad]%Cred%d %Creset%s%Cblue [%cn]" --decorate --date=short --numstat
   commit=`git log -1 --format="%h"`
-  echo "The built file is available at:"
+  echo "The built blinx.js file is available at:"
   echo "https://cdn.rawgit.com/renehamburger/blinx.js/$commit/dist/blinx.js"
 }
 
@@ -36,4 +36,3 @@ then
   upload_files
   print_info
 fi
-
