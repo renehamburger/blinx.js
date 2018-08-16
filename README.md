@@ -123,7 +123,7 @@ This paragraph contains mostly partial references within Luke chapter 2, which i
     - As a custom attribute: `<span bx-passage="...">...</span>`
     - As a regular data-attribute: `<span data-bx-context="...">...</span>`
 
-Similar to the `bx-context`-attribute, it is set to a passage, which will be parsed according to the set language. (OSIS-references will always work here, too.) The html element it is attached to will be converted to an `a`-link like all other recognised passages, so it should usually only contain text. Here's a short example demonstrating the use (and necessity) of this attribute:
+Similar to the `bx-context`-attribute, it is set to a passage, which will be parsed according to the set language. (OSIS-references will always work here, too.) The html element it is attached to will be converted to an `a`-link like all other recognised passages. _For now, it may only context text._ Here's a short example demonstrating the use (and necessity) of this attribute:
 
 ```html
 In Genesis 1:1 and in the <span bx-passage="Gen 1:2">following verse</span>...

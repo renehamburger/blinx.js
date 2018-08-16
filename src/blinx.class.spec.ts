@@ -71,7 +71,6 @@ describe('Blinx', () => {
     });
 
     it('lets bx selectors trump the blacklist or a non-matching white-list', () => {
-      pending('TODO: Further nesting needs to be supported');
       document.body.innerHTML = `
         <div bx-skip>
           0
@@ -173,12 +172,19 @@ describe('Blinx', () => {
 
       describe('with bx-passage', () => {
 
-        it('recognises partial references correctly', () =>
-          pending('TODO: Needs to be implemented.') &&
+        it('works for single reference', () =>
           testRecognition(
-            `The <span bx-passage="Gen 1:1">next verse</a> shows...`,
+            `The <span bx-passage="Gen 1:1">next verse</span> shows...`,
             ['next verse'],
             ['Gen.1.1']
+          )
+        );
+
+        it('provides context for next partial reference', () =>
+          testRecognition(
+            `<span bx-passage="Gen 1:1">1:1</span> and verse 2...`,
+            ['1:1', 'verse 2'],
+            ['Gen.1.1', 'Gen.1.2']
           )
         );
 
