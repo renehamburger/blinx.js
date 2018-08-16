@@ -4,6 +4,7 @@
 
 interface Window {
   blinx: any;
+  __karma__: any;
 }
 
 declare let module: { exports: any };

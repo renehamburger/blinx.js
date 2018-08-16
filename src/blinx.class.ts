@@ -1,8 +1,9 @@
+import isString = require('lodash/isString');
+import uniqBy = require('lodash/uniqBy');
 import { Options, getScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
 import { u } from 'src/lib/u.js';
 import { OnlineBible } from 'src/bible/online-bible/online-bible.class';
-import isString = require('lodash/isString');
 import { getOnlineBible } from 'src/bible/online-bible/online-bible-overview';
 import { BibleVersionCode, bibleVersions } from 'src/bible/models/bible-versions.const';
 import { loadScript, loadCSS } from 'src/helpers/dom';
@@ -11,14 +12,56 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
+import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELECTORS } from 'src/options/selectors.const';
 import './css/blinx.css';
 
+//#region: Closure for debugging constant & timer cache
+const isVerbose = window.__karma__.config.args.some((arg: string) => arg === 'verbose');
+
+const DEBUG = {
+  performance: isVerbose,
+  logging: isVerbose
+};
+
+const timers: { [label: string]: number } = {};
+//#endregion: Closure for debugging constant & timer cache
+
+//#region: General exports
 export interface Testability {
   linksApplied: Promise<void>;
   passageDisplayed: Promise<void>;
 }
+//#endregion: General exports
 
+//#region Class definition
 export class Blinx {
+
+  public static log(...args: any[]) {
+    if (DEBUG.logging) {
+      console.log(...args);
+    }
+  }
+
+  public static time(label: string) {
+    if (DEBUG.performance) {
+      if (timers[label]) {
+        console.error(`Timer already started: ${label}`);
+      } else {
+        timers[label] = Date.now();
+      }
+    }
+  }
+
+  public static timeEnd(label: string) {
+    if (DEBUG.performance) {
+      if (timers[label]) {
+        console.log(`${label}: ${Date.now() - timers[label]}ms`);
+        delete timers[label];
+      } else {
+        console.error(`timer missing: ${label}`);
+      }
+    }
+  }
 
   public readonly testability: Testability;
   private linksAppliedDeferred = new Deferred<void>();
@@ -34,6 +77,7 @@ export class Blinx {
   private tippyPolyfillInterval = 0;
   /** Last recognised passage during the DOM traversal. Later on, a threshhold on nodeDistances might make sense. */
   private previousPassage: { ref: BCV.OsisAndIndices, nodeDistance: number } | null = null;
+  private selectorTests: { [selector: string]: boolean } = {};
 
   /** Initialise blinx. */
   constructor(customOptions: Partial<Options> = getScriptTagOptions()) {
@@ -62,25 +106,64 @@ export class Blinx {
 
   /** Execute a parse for the given options. */
   public execute(): void {
+    Blinx.time('execute()');
+    Blinx.time('execute() - determine textNodes');
     // Search within all whitelisted selectors
-    const whitelist = this.options.whitelist || ['body'];
-    const nodes = u(whitelist.join(',')).nodes;
+    const nodes = u(this.getWhitelistSelector()).nodes;
     // Get all text nodes
     let textNodes = extractOrderedTextNodesFromNodes(nodes);
     // Exclude blacklisted selectors; this could probably be done in a more performant way
-    const blacklist = ['bx-skip', '.bx-skip', '[bx-skip]', '[data-bx-skip]'].concat(this.options.blacklist);
-    const blacklistSelector = `${blacklist.join(', ')}, ${blacklist.join(' *, ')} *`;
-    textNodes = textNodes.filter(textNode => textNode.parentNode && !u(textNode.parentNode).is(blacklistSelector));
+    if (this.isSelectorPresent(this.getBlacklistSelector())) {
+      textNodes = textNodes.filter(textNode => {
+        if (textNode.parentNode) {
+          const el = u(textNode.parentNode)
+            .closest(`${this.getWhitelistSelector()}, ${this.getBlacklistSelector()}`);
+          return !el.is(this.getBlacklistSelector());
+        }
+      });
+    }
+    Blinx.timeEnd('execute() - determine textNodes');
+    Blinx.time('execute() - parsing');
     this.previousPassage = null;
     for (const textNode of textNodes) {
       this.parseReferencesInTextNode(textNode);
     }
+    Blinx.timeEnd('execute() - parsing');
     // Once tippy.js is loaded, add tooltips
+    Blinx.time('execute() - loading of tippy');
     this.tippyLoaded.promise
       .then(() => {
+        Blinx.timeEnd('execute() - loading of tippy');
+        Blinx.time('execute() - adding of tooltips');
         this.addTooltips();
+        Blinx.timeEnd('execute() - adding of tooltips');
         this.linksAppliedDeferred.resolve();
+        Blinx.timeEnd('execute()');
       });
+  }
+
+  private getWhitelistSelector(): string {
+    const fixedWhitelist = [
+      ...BX_SELECTORS,
+      ...BX_PASSAGE_SELECTORS,
+      ...BX_CONTEXT_SELECTORS
+    ];
+    const customisableWhitelist = this.options.whitelist || ['body'];
+    return fixedWhitelist.concat(customisableWhitelist).join(',');
+  }
+
+  private getBlacklistSelector(): string {
+    const fixedBlacklist = BX_SKIP_SELECTORS;
+    const customisableBlacklist = this.options.blacklist || [];
+    return fixedBlacklist.concat(customisableBlacklist).join(',');
+  }
+
+  private isSelectorPresent(selector: string): boolean {
+    if (!(selector in this.selectorTests)) {
+      const el = document.querySelector(selector);
+      this.selectorTests[selector] = !!el;
+    }
+    return this.selectorTests[selector];
   }
 
   private addTooltips() {
@@ -189,9 +272,21 @@ export class Blinx {
    * @param textNode
    */
   private parseReferencesInTextNode(textNode: Text): void {
-    // Look for all complete Bible references
-    const refs = this.parser.parse(textNode.textContent || '');
-    this.handleReferencesFoundInText(textNode, refs);
+    const bxPassageSelector = BX_PASSAGE_SELECTORS.join(',');
+    const parent = textNode.parentNode && u(textNode.parentNode);
+    // Check if text node is wrapped by element with [bx-passage] attribute
+    if (this.isSelectorPresent(bxPassageSelector) && parent && parent.is(bxPassageSelector)) {
+      const passage = getAttributeBySelectors(parent, BX_PASSAGE_SELECTORS);
+      const refs = this.parser.parse(passage);
+      if (refs.length === 1) {
+        this.addLink(textNode, refs[0]);
+        this.previousPassage = { ref: refs[0], nodeDistance: 0 };
+      }
+    } else {
+      // Look for all complete Bible references
+      const refs = this.parser.parse(textNode.textContent || '');
+      this.handleReferencesFoundInText(textNode, refs);
+    }
   }
 
   /**
@@ -202,10 +297,14 @@ export class Blinx {
   private handleReferencesFoundInText(node: Text, refs: BCV.OsisAndIndices[]): void {
     // Check for context
     let contextRef: BCV.OsisAndIndices | null = null;
-    const contextElement = node.parentNode &&
-      u(node.parentNode).closest('[data-bx-context], [bx-context]');
-    const attributeContext = contextElement &&
-      (contextElement.attr('data-bx-context') || contextElement.attr('bx-context'));
+    let attributeContext = '';
+    const contextSelector = BX_CONTEXT_SELECTORS.join(',');
+    if (this.isSelectorPresent(contextSelector) && node.parentNode) {
+      const contextElement = u(node.parentNode).closest(contextSelector);
+      if (contextElement.nodes.length === 1) {
+        attributeContext = getAttributeBySelectors(contextElement, BX_CONTEXT_SELECTORS);
+      }
+    }
     if (attributeContext) {
       contextRef = this.parser.parse(attributeContext)[0];
     } else if (this.previousPassage) {
@@ -372,22 +471,22 @@ export class Blinx {
       this.tippyLoaded.resolve();
     }
   }
-
 }
+//#endregion: Class definition
 
 //#region: Pure/stateless helper functions
-
 function extractOrderedTextNodesFromNodes(nodes: Node[]): Text[] {
   let textNodes: Text[] = [];
   for (const node of nodes) {
     textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(node));
   }
-  return textNodes;
+  return uniqBy(textNodes, node => node);
 }
 
 function extractOrderedTextNodesFromSingleNode(node: Node): Text[] {
+  const childNodes = [].slice.call(node.childNodes);
   let textNodes: Text[] = [];
-  for (const childNode of [].slice.call(node.childNodes)) {
+  for (const childNode of childNodes) {
     if (isTextNode(childNode)) {
       textNodes.push(childNode);
     } else {
@@ -401,4 +500,13 @@ function isTextNode(node: Node): node is Text {
   return node.nodeType === node.TEXT_NODE;
 }
 
-//#endregion
+function getAttributeBySelectors(element: Umbrella.Instance, selectors: string[]): string {
+  for (const selector of selectors) {
+    const value = element.attr(selector.replace(/^\[(.*)\]$/, '$1'));
+    if (value) {
+      return value;
+    }
+  }
+  return '';
+}
+//#endregion: Pure/stateless helper functions

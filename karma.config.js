@@ -1,5 +1,9 @@
-module.exports = function (config) {
-  config.set({
+module.exports = function (karmaConfig) {
+
+  const withCoverage = process.argv.some(arg => /^-coverage$/.test(arg));
+  const isVerbose = process.argv.some(arg => /^-verbose$/.test(arg));
+
+  const config = {
     /** maximum number of tries a browser will attempt in the case of a disconnection */
     browserDisconnectTolerance: 2,
 
@@ -8,10 +12,17 @@ module.exports = function (config) {
 
     retryLimit: 3,
 
+    client: {
+      args: isVerbose ? ['verbose'] : []
+    },
+
+    //logLevel: isVerbose ? karmaConfig.LOG_DEBUG : karmaConfig.LOG_INFO,
+
     //--- BrowserStack settings
     browserStack: {
       project: 'blinx.js'
     },
+
     customLaunchers: {
       ChromeDebugging: {
         base: 'Chrome',
@@ -117,6 +128,7 @@ module.exports = function (config) {
         os_version: '4.0'
       }
     },
+
     browsers: [
       'winxp_chrome', 'winxp_firefox', 'winxp_opera',
       'win7_ie9', 'win7_ie10', 'win7_ie11',
@@ -149,6 +161,17 @@ module.exports = function (config) {
 
     karmaTypescriptConfig: {
       tsconfig: './tsconfig.json',
+      coverageOptions: {
+        instrumentation: false
+      }
+    }
+  };
+
+  if (withCoverage) {
+    Object.assign(config.karmaTypescriptConfig, {
+      coverageOptions: {
+        instrumentation: true
+      },
       reports: {
         'lcovonly': {
           'subdirectory': '',
@@ -157,6 +180,8 @@ module.exports = function (config) {
         'html': 'coverage',
         'text-summary': ''
       }
-    }
-  });
+    });
+  }
+
+  karmaConfig.set(config);
 };
