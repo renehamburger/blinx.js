@@ -8,6 +8,7 @@ notifications:
     on_failure: change
 node_js:
   - 8.9.4
+if: commit_message !~ /^Travis build:\s\d+$/
 script:
   - npm run build
   - npm run test-once-with-coverage
