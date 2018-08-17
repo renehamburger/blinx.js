@@ -151,6 +151,14 @@ describe('Blinx', () => {
           )
         );
 
+        it('disregards partial references if they would be invalid after another reference', () =>
+          testRecognition(
+            `Romans 5:1–5; chapters 1–39 of Isaiah`,
+            ['Romans 5:1–5'],
+            ['Rom.5.1-Rom.5.5']
+          )
+        );
+
       });
 
       describe('workarounds for parser', () => {

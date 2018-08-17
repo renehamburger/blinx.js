@@ -295,7 +295,9 @@ export class Blinx {
    * @param node Text node the given reference was found in
    * @param ref bcv_parser reference object
    */
-  private handleReferencesFoundInText(node: Text, refs: BCV.OsisAndIndices[]): void {
+  private handleReferencesFoundInText(node: Text, incomingRefs: BCV.OsisAndIndices[]): void {
+    // Filter refs, as the parser sometimes returns references without chapters or verses.
+    const refs = incomingRefs.filter(ref => /[.]/.test(ref.osis));
     // Check for context
     let contextRef: BCV.OsisAndIndices | null = null;
     let attributeContext = '';
@@ -315,7 +317,7 @@ export class Blinx {
       const ref = refs[i];
       const remainder = node.splitText(ref.indices[1]);
       const passage = node.splitText(ref.indices[0]);
-      if (passage) { // Always true in this case
+      if (passage) { // Should always true anyway
         this.addLink(passage, ref);
       }
       const effectiveContextRef = attributeContext && contextRef ? contextRef : ref;
