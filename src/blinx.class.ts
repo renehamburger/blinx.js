@@ -16,7 +16,8 @@ import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELEC
 import './css/blinx.css';
 
 //#region: Closure for debugging constant & timer cache
-const isVerbose = window.__karma__ && window.__karma__.config.args.some((arg: string) => arg === 'verbose');
+const isVerbose = window.__karma__ &&
+  window.__karma__.config.args.some((arg: string) => arg === 'verbose');
 
 const DEBUG = {
   performance: isVerbose,
@@ -75,7 +76,7 @@ export class Blinx {
   private touchStarted = false;
   private tippyPolyfills = false;
   private tippyPolyfillInterval = 0;
-  /** Last recognised passage during the DOM traversal. Later on, a threshhold on nodeDistances might make sense. */
+  /** Last recognised passage during DOM traversal. Later on, a threshhold on nodeDistances might make sense. */
   private previousPassage: { ref: BCV.OsisAndIndices, nodeDistance: number } | null = null;
   private selectorTests: { [selector: string]: boolean } = {};
 
