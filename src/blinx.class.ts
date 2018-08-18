@@ -295,9 +295,7 @@ export class Blinx {
    * @param node Text node the given reference was found in
    * @param ref bcv_parser reference object
    */
-  private handleReferencesFoundInText(node: Text, incomingRefs: BCV.OsisAndIndices[]): void {
-    // Filter refs, as the parser sometimes returns references without chapters or verses.
-    const refs = incomingRefs.filter(ref => /[.]/.test(ref.osis));
+  private handleReferencesFoundInText(node: Text, refs: BCV.OsisAndIndices[]): void {
     // Check for context
     let contextRef: BCV.OsisAndIndices | null = null;
     let attributeContext = '';

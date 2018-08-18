@@ -73,7 +73,7 @@ export class Parser {
   public parse(text: string): BCV.OsisAndIndices[] {
     const transformation = this.transformTextForParsing(text);
     this.bcv.parse(transformation.transformedText);
-    const refs = this.bcv.osis_and_indices();
+    const refs = filterReferences(this.bcv.osis_and_indices());
     return convertRefsBasedOnTransformedTextToOriginalText(refs, transformation);
   }
 
@@ -81,7 +81,7 @@ export class Parser {
   public parse_with_context(possibleReferenceWithPrefix: string, previousPassage: string) {
     const transformation = this.transformTextForParsing(possibleReferenceWithPrefix);
     this.bcv.parse_with_context(transformation.transformedText, previousPassage);
-    const refs = this.bcv.osis_and_indices();
+    const refs = filterReferences(this.bcv.osis_and_indices());
     return convertRefsBasedOnTransformedTextToOriginalText(refs, transformation);
   }
 
@@ -153,4 +153,9 @@ export function convertRefsBasedOnTransformedTextToOriginalText(
     }
   }
   return refs;
+}
+
+function filterReferences(refs: BCV.OsisAndIndices[]): BCV.OsisAndIndices[] {
+  // The parser sometimes returns references without chapters or verses.
+  return refs.filter(ref => /[.]/.test(ref.osis));
 }
