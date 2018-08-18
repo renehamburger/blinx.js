@@ -63,6 +63,7 @@
 }
 .bxCredits {
   font-style: italic;
+  float: right;
 }
 
 /* Spinner (taken from https://projects.lukehaas.me/css-loaders/) */

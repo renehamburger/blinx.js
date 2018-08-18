@@ -1,0 +1,14 @@
+{
+  "de": {
+    "credits": "Automatisch erstellt mit {{blinx}} | Bibelstelle abgerufen von {{api}}",
+    "error": {
+      "multiBookReference": "Biblestellen über mehrere Bücher hinweg werden noch nicht unterstützt. Oben werden nur die Kapitel und/oder Verse aus dem ersten Buch angezeigt."
+    }
+  },
+  "en": {
+    "credits": "Automatically created by {{blinx}} | Bible text retrieved from {{api}}",
+    "error": {
+      "multiBookReference": "Bible references stretching across several books are not yet supported. Only the chapters and/or verses from the first book are displayed above."
+    }
+  }
+}

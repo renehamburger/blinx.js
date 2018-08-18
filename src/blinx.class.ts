@@ -14,6 +14,7 @@ import { Bible } from 'src/bible/bible.class';
 import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELECTORS } from 'src/options/selectors.const';
 import './css/blinx.css';
+import { I18n } from 'src/i18n/i18n.class';
 
 //#region: Closure for constants & caches
 const isVerbose = window.__karma__ &&
@@ -71,6 +72,7 @@ export class Blinx {
   private passageDisplayedDeferred = new Deferred<void>();
   private options = new Options();
   private parser = new Parser();
+  private i18n = new I18n();
   private onlineBible: OnlineBible;
   private bibleApi: BibleApi;
   private tippyObjects: Tippy.Object[] = [];
@@ -98,6 +100,7 @@ export class Blinx {
     window.addEventListener('touchstart', () => {
       this.touchStarted = true;
     });
+    this.i18n.setLanguage(this.options.language);
     this.onlineBible = getOnlineBible(this.options.onlineBible);
     // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
     this.bibleApi = getBibleApi(this.options.bibleApi);
@@ -171,6 +174,10 @@ export class Blinx {
   }
 
   private addTooltips() {
+    const credits = this.i18n.translate('credits', {
+      api: `<a href="${this.bibleApi.url}"  target="_blank">${this.bibleApi.title}</a>`,
+      blinx: `<a href="https://github.com/renehamburger/blinx.js" target="_blank">blinx.js</a>`
+    });
     const versionCode = this.getVersionCode(this.onlineBible);
     // Loop through all nodes in order to create a unique template for each
     u('[data-osis]')
@@ -188,10 +195,7 @@ export class Blinx {
     <a class="bxPassageLink" href="${this.onlineBible.buildPassageLink(osis, versionCode)}" target="_blank">
       ${this.convertOsisToContext(osis)}</a>
     <span class="bxCredits">
-      retrieved from
-      <a href="${this.bibleApi.url}"  target="_blank">${this.bibleApi.title}</a>
-      by
-      <a href="https://github.com/renehamburger/blinx.js" target="_blank">blinx.js</a>.
+      ${credits}
     </span>
   </div>
 </div>
@@ -430,8 +434,7 @@ export class Blinx {
     const truncatedOsis = truncateMultiBookOsis(osis);
     let info = '';
     if (osis !== truncatedOsis) {
-      info = 'Bible references stretching across several books are not yet supported.' +
-        ' Only the verses from the first book are displayed above.';
+      info = this.i18n.translate('error.multiBookReference');
     }
     return this.getPassage(truncatedOsis, versionCode)
       .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`)
