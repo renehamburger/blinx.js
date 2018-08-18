@@ -15,7 +15,7 @@ import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELECTORS } from 'src/options/selectors.const';
 import './css/blinx.css';
 
-//#region: Closure for debugging constant & timer cache
+//#region: Closure for constants & caches
 const isVerbose = window.__karma__ &&
   window.__karma__.config.args.some((arg: string) => arg === 'verbose');
 
@@ -25,7 +25,9 @@ const DEBUG = {
 };
 
 const timers: { [label: string]: number } = {};
-//#endregion: Closure for debugging constant & timer cache
+
+const passageCache: { [bibleApi: string]: { [osis: string]: string } } = {};
+//#endregion: Closure for constants & caches
 
 //#region: General exports
 export interface Testability {
@@ -99,6 +101,7 @@ export class Blinx {
     this.onlineBible = getOnlineBible(this.options.onlineBible);
     // TODO: Later on, the best Bible API containing a certain translation should rather be used automatically
     this.bibleApi = getBibleApi(this.options.bibleApi);
+    passageCache[this.bibleApi.title] = {};
     // Load dependency required for link creation
     this.parser.load(this.options, () => this.initComplete());
     // Load dependency required for tooltip display
@@ -430,9 +433,16 @@ export class Blinx {
       info = 'Bible references stretching across several books are not yet supported.' +
         ' Only the verses from the first book are displayed above.';
     }
-    return this.bibleApi.getPassage(truncatedOsis, versionCode)
+    return this.getPassage(truncatedOsis, versionCode)
       .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`)
       .then(text => info ? `${text} <div class="bxInfo">${info}</i>` : text);
+  }
+
+  private async getPassage(osis: string, versionCode: BibleVersionCode): Promise<string> {
+    if (!passageCache[this.bibleApi.title][osis]) {
+      passageCache[this.bibleApi.title][osis] = await this.bibleApi.getPassage(osis, versionCode);
+    }
+    return passageCache[this.bibleApi.title][osis];
   }
 
   private async loadTippy(): Promise<any> {
