@@ -11,7 +11,7 @@ import { Deferred } from 'src/helpers/deferred.class';
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
-import { transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
+import { transformOsis, truncateMultiBookOsis, TransformOsisOptions } from 'src/helpers/osis';
 import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELECTORS } from 'src/options/selectors.const';
 import './css/blinx.css';
 import { I18n } from 'src/i18n/i18n.class';
@@ -193,7 +193,7 @@ export class Blinx {
   </div>
   <div class="bxTippyFooter">
     <a class="bxPassageLink" href="${this.onlineBible.buildPassageLink(osis, versionCode)}" target="_blank">
-      ${this.convertOsisToContext(osis)}</a>
+      ${this.convertOsisToRegularReference(osis, true)}</a>
     <span class="bxCredits">
       ${credits}
     </span>
@@ -326,7 +326,7 @@ export class Blinx {
         this.addLink(passage, ref);
       }
       const effectiveContextRef = attributeContext && contextRef ? contextRef : ref;
-      this.parsePartialReferencesInText(remainder, this.convertOsisToContext(effectiveContextRef.osis));
+      this.parsePartialReferencesInText(remainder, this.convertOsisToRegularReference(effectiveContextRef.osis));
     }
     if (refs.length) {
       this.previousPassage = { ref: refs[refs.length - 1], nodeDistance: 0 };
@@ -335,14 +335,17 @@ export class Blinx {
     }
     // If an explicit context was provided, check for partial references _preceding_ the first recognised ref
     if (node.textContent && contextRef) {
-      this.parsePartialReferencesInText(node, this.convertOsisToContext(contextRef.osis));
+      this.parsePartialReferencesInText(node, this.convertOsisToRegularReference(contextRef.osis));
     }
   }
 
-  private convertOsisToContext(osis: string): string {
-    const chapterVerse = this.options.parserOptions && this.options.parserOptions.punctuation_strategy === 'eu' ?
-      ',' : ':';
-    return transformOsis(osis, { bookChapter: ' ', chapterVerse });
+  private convertOsisToRegularReference(osis: string, prettyBookName?: boolean): string {
+    const options: Partial<TransformOsisOptions> = {
+      bookChapter: ' ',
+      chapterVerse: this.parser.characters.chapterVerseSeparator,
+      ...(prettyBookName ? { bookNameMap: this.i18n.translate<{ [name: string]: string }>('books') } : {})
+    };
+    return transformOsis(osis, options);
   }
 
   /**

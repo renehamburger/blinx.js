@@ -14,7 +14,9 @@ export class I18n {
     this.languageCode = languageCode;
   }
 
-  public translate(key: string, interpolations?: { [label: string]: string }): string {
+  public translate<T extends Translations[string]= string>(
+    key: string, interpolations?: { [label: string]: string }
+  ): T {
     let translation = (get(this.translations, `${this.languageCode}.${key}`)
       || get(this.translations, `en.${key}`)) as string;
     if (interpolations) {
@@ -26,6 +28,6 @@ export class I18n {
         return label;
       });
     }
-    return translation;
+    return translation as T;
   }
 }
