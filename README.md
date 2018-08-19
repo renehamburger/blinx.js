@@ -14,6 +14,10 @@ There are several other tools out there that do something similar (e.g. [Logos' 
 
 That is why I decided to create this library which will hopefully one day tick all these boxes. I named it __blinx.js__ after its older brother, the MS Word Add-in [Blinx](https://github.com/renehamburger/blinx), as both of them create __Bible-Links__ with passage pop-ups.
 
+## Demo
+
+Have a look at [this unit of the Bibel-für-alle course](http://kostprobe.bibel-fuer-alle.net) or [any of the articles on the Evangelium21 website](https://www.evangelium21.net/ressourcen/die-bedeutung-von-1.-mose-3-15) to get an idea of what blinx.js does out-of-the-box. 
+
 ## Activation
 
 For now, the script can be included directly from GitHub via RawGit, either through a script tag or dynamically.
