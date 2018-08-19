@@ -14,8 +14,6 @@ There are several other tools out there that do something similar (e.g. [Logos' 
 
 That is why I decided to create this library which will hopefully one day tick all these boxes. I named it __blinx.js__ after its older brother, the MS Word Add-in [Blinx](https://github.com/renehamburger/blinx), as both of them create __Bible-Links__ with passage pop-ups.
 
-This library is __work in progress__: see the [preliminary roadmap](../projects/1). I am looking for one or two developers to join this project.
-
 ## Activation
 
 For now, the script can be included directly from GitHub via RawGit, either through a script tag or dynamically.
@@ -132,6 +130,19 @@ In Genesis 1:1 and in the <span bx-passage="Gen 1:2">following verse</span>...
 ## The underlying Bible passage parser
 
 blinx.js is based on the amazingly comprehensive [Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser). It's shorter, internal name is 'BCV (=BookChapterVerse) Parser'. It is apparently able to parse Bible references for currently 23 different languages, covered by tests, and support for further languages can be added easily in that repository.
+
+## How to contribute
+
+This library itself is almost feature-complete for the browser. See the [roadmap](../projects/1) for possible next steps. PRs are welcome, especially for support for new languages, Online bibles or Bible APIs. 
+
+The build process should be straight forward:
+1. Clone this repo
+2. Run `npm install`.
+3. Run `npm start` for a local development server and `npm test.chrome` (or one of the other test scripts) for running the unit tests.
+
+Any PR will also be built and unit-tested by Travis CI.
+
+Theres also more work to be done on the underlying [Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser).
 
 ## Known issues
 
