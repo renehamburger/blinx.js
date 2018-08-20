@@ -16,7 +16,7 @@ That is why I decided to create this library which will hopefully one day tick a
 
 ## Demo
 
-Have a look at [this unit of the Bibel-für-alle course](http://kostprobe.bibel-fuer-alle.net) or opem [one of the articles on the Evangelium21 website](https://www.evangelium21.net/ressourcen/typ/artikel) to get an idea of what blinx.js does out-of-the-box. 
+Have a look at [this unit of the Bibel-für-alle course](http://kostprobe.bibel-fuer-alle.net) or open [one of the articles on the Evangelium21 website](https://www.evangelium21.net/ressourcen/typ/artikel) to get an idea of what blinx.js does out-of-the-box. 
 
 ## Activation
 
