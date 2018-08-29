@@ -201,10 +201,7 @@ export class GetBibleBibleApi extends BibleApi {
         const verseObject = chapterObject[verseIndex];
         output += `
 <span class="bxVerse">
-  <span class="bxVerseNumber">
-    ${verseObject.verse_nr}
-  </span>
-  ${verseObject.verse.trim()}
+  <span class="bxVerseNumber">${verseObject.verse_nr}</span>&nbsp;${verseObject.verse.trim()}
 </span>`;
       }
     }
