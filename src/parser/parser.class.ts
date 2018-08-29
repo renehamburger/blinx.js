@@ -28,9 +28,17 @@ export class Parser {
   public static getCurrentParserLanguage(): LanguageCode | false {
     if (window.bcv_parser) {
       const parser: BCV.Parser = new window.bcv_parser();
-      if (parser['languages'] && parser['languages'].length === 1) {
-        return parser['languages'][0] as LanguageCode;
+      if (parser.languages.length === 1) {
+        return parser.languages[0] as LanguageCode;
       }
+    }
+    return false;
+  }
+
+  public static isRangeAndExpression(text: string): boolean {
+    if (window.bcv_parser) {
+      const parser: BCV.Parser = new window.bcv_parser();
+      return new RegExp(parser.regexps.range_and).test(text);
     }
     return false;
   }

@@ -141,7 +141,7 @@ describe('Blinx', () => {
           )
         );
 
-        it('continues recognising partial references after an uncrecognised reference', () =>
+        it('continues recognising partial references after an unrecognised reference', () =>
           // This one would often lead to wrong results, if the unrecognised reference
           // introduced a new book or chapter. In any case, a manual correction is needed.
           testRecognition(
@@ -156,6 +156,14 @@ describe('Blinx', () => {
             `Romans 5:1–5; chapters 1–39 of Isaiah`,
             ['Romans 5:1–5'],
             ['Rom.5.1-Rom.5.5']
+          )
+        );
+
+        it('only includes conjunction if directly adjacent', () =>
+          testRecognition(
+            `Romans 1:1 and 2 found on page 3 and 4`,
+            ['Romans 1:1 and 2'],
+            ['Rom.1.1-Rom.1.2']
           )
         );
 

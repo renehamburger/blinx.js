@@ -2,7 +2,26 @@ declare namespace BCV {
 
   export class Parser {
 
-    private languages: string[];
+    public readonly languages: string[];
+
+    public readonly regexps: {
+      readonly space: string;
+      readonly escaped_passage: RegExp;
+      readonly match_end_split: RegExp;
+      readonly control: RegExp;
+      readonly pre_book: string;
+      readonly first: string;
+      readonly second: string;
+      readonly third: string;
+      readonly range_and: string;
+      readonly range_only: string;
+      readonly books: {
+        osis: string[];
+        apocrypha: boolean;
+        extra: string;
+        regexp: RegExp;
+      }[];
+    }
 
     /** This function does the parsing. It returns the `bcv` object and is suitable for chaining.*/
     parse(text: string): this;

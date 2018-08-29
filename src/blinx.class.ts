@@ -379,7 +379,12 @@ export class Blinx {
       // Check for prefixed partial reference next (e.g. 'verse 3')
       if (!refs.length && match.index > 0) {
         const prefixMatch = beforeMatch.match(/\w+\.?\s*$/);
-        if (prefixMatch) {
+        // Exclude range prefixes (e.g. 'and'), as they are interpreted by the parser as if they
+        // were following the full references immediately. But those that do are already included
+        // in the 'full' references found above. (See spec 'only includes conjunction if directly adjacent')
+        // We are really only interested in 'chapter' and 'verse' equivalents here, but they are not yet
+        // exposed individually by the parser.
+        if (prefixMatch && !Parser.isRangeAndExpression(prefixMatch[0].trim())) {
           const possibleReferenceWithPrefix = prefixMatch[0] + fromMatchOnwards;
           offset = match.index - prefixMatch[0].length;
           refs = this.parser.parse_with_context(possibleReferenceWithPrefix, previousPassage);
