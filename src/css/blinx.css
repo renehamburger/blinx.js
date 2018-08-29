@@ -6,6 +6,7 @@
   max-width: 800px;
   text-align: left;
   font-size: 14px;
+  font-size: 0.875rem;
 }
 .bxTippy a {
   color: #007bff;
@@ -21,12 +22,14 @@
   max-height: 200px;
   overflow: auto;
   margin: 5px;
+  margin: 0.3125rem;
 }
 .bxChapter {
   display: block;
 }
 .bxChapter:not(:first-child) {
   margin-top: 10px;
+  margin-top: 0.625rem;
 }
 .bxChapterNumber {
   font-weight: bold;
@@ -43,7 +46,9 @@
   color: hsl(0, 0%, 70%);
   float: right;
   line-height: 19.6px;
-  margin-left: 15px;
+  line-height: 1.225rem;
+  margin-left: 16px;
+  margin-left: 1rem;
 }
 .tippy-tooltip.dark-theme .bxPassageVersion {
   color: hsl(0, 0%, 50%);
@@ -51,11 +56,14 @@
 .bxInfo {
   font-style: italic;
   margin-top: 20px;
+  margin-top: 1.25rem;
 }
 .bxTippyFooter {
   background: hsl(0, 0%, 95%);
   margin: 0 -9px -5px; /* Reach to tippy border */
+  margin: 0 calc(-0.3125rem - 4px) -0.3125rem; /* Reach to tippy border */
   padding: 5px 15px;
+  padding: 0.3125rem 0.9375rem;
   border-radius: 0 0 4px 4px;
 }
 .bxTippyFooter:after {
@@ -69,12 +77,33 @@
 }
 .bxPassageLink {
   font-weight: 600;
-  margin-right: 25px;
+  margin-right: 16px;
+  margin-right: 1rem;
+  /* Avoid credits to move underneath */
+  padding-bottom: 3px;
+  margin-bottom: -3px;
 }
 .bxCredits {
   font-style: italic;
   float: right;
+  text-align: right;
+  line-height: 19.6px;
+  line-height: 1.225rem;
+  margin-left: 8px;
+  margin-left: 0.5rem;
 }
+.bxCredits:not(:last-child):before {
+  content: '|';
+  font-style: normal;
+  margin-right: 5px;
+  margin-right: 0.3125rem;
+}
+@media only screen and (max-width: 600px) {
+  .bxCredits {
+    font-size: 85%;
+  }
+}
+
 
 /* Spinner (taken from https://projects.lukehaas.me/css-loaders/) */
 .bxLoader,

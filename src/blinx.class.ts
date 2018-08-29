@@ -174,9 +174,11 @@ export class Blinx {
   }
 
   private addTooltips() {
-    const credits = this.i18n.translate('credits', {
-      api: `<a href="${this.bibleApi.url}"  target="_blank">${this.bibleApi.title}</a>`,
+    const blinxCredits = this.i18n.translate('credits.blinx', {
       blinx: `<a href="https://github.com/renehamburger/blinx.js" target="_blank">blinx.js</a>`
+    });
+    const apiCredits = this.i18n.translate('credits.api', {
+      api: `<a href="${this.bibleApi.url}"  target="_blank">${this.bibleApi.title}</a>`
     });
     const versionCode = this.getVersionCode(this.onlineBible);
     // Loop through all nodes in order to create a unique template for each
@@ -195,7 +197,10 @@ export class Blinx {
     <a class="bxPassageLink" href="${this.onlineBible.buildPassageLink(osis, versionCode)}" target="_blank">
       ${this.convertOsisToRegularReference(osis, true)}</a>
     <span class="bxCredits">
-      ${credits}
+      ${apiCredits}
+    </span>
+    <span class="bxCredits">
+      ${blinxCredits}
     </span>
   </div>
 </div>

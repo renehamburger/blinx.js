@@ -68,7 +68,10 @@
       "Jude": "Judas",
       "Rev": "Offenbarung"
     },
-    "credits": "Automatisch erstellt mit {{blinx}} | Bibelstelle abgerufen von {{api}}",
+    "credits": {
+      "api": "Bibelstelle abgerufen von {{api}}",
+      "blinx": "Automatisch erstellt mit {{blinx}}"
+    },
     "error": {
       "multiBookReference": "Biblestellen über mehrere Bücher hinweg werden noch nicht unterstützt. Oben werden nur die Kapitel und/oder Verse aus dem ersten Buch angezeigt."
     }
@@ -142,7 +145,10 @@
       "Jude": "Jude",
       "Rev": "Revelation"
     },
-    "credits": "Automatically created by {{blinx}} | Bible text retrieved from {{api}}",
+    "credits": {
+      "api": "Bible text retrieved from {{api}}",
+      "blinx": "Automatically created by {{blinx}}"
+    },
     "error": {
       "multiBookReference": "Bible references stretching across several books are not yet supported. Only the chapters and/or verses from the first book are displayed above."
     }
