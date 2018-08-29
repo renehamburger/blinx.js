@@ -29,8 +29,10 @@ export class Options {
   whitelist: string[] = ['body'];
   /** Automatic parsing can be disabled with the following whitelisted selectors. */
   blacklist: string[] = ['a'];
-  /** Color theme */
+  /** Color theme for pop-up */
   theme: 'dark' | 'light' = 'light';
+  /** Preferred placement of pop-up; if space is not sufficient, the side will flip dynamically. */
+  placement: 'top' | 'bottom' = 'bottom';
 }
 
 export function getScriptTagOptions(): Partial<Options> {

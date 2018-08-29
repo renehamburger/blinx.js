@@ -207,7 +207,7 @@ export class Blinx {
           `).attr('id', `bxTippyTemplate${index}`);
         this.tippyObjects.push(
           tippy(node as Element, {
-            placement: 'top',
+            placement: this.options.placement,
             arrow: true,
             arrowType: 'round',
             theme: this.options.theme,
