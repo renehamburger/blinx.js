@@ -529,7 +529,7 @@ function isTextNode(node: Node): node is Text {
 
 function getAttributeBySelectors(element: Umbrella.Instance, selectors: string[]): string {
   for (const selector of selectors) {
-    const value = element.attr(selector.replace(/^\[(.*)\]$/, '$1'));
+    const value = element.attr(selector.replace(/^.*\[(.*)\]$/, '$1'));
     if (value) {
       return value;
     }

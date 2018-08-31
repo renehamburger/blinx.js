@@ -198,7 +198,7 @@ describe('Blinx', () => {
 
         it('provides context for next partial reference', () =>
           testRecognition(
-            `<span bx-passage="Gen 1:1">1:1</span> and verse 2...`,
+            `<bx passage="Gen 1:1">1:1</bx> and verse 2...`,
             ['1:1', 'verse 2'],
             ['Gen.1.1', 'Gen.1.2']
           )
@@ -276,7 +276,7 @@ describe('Blinx', () => {
         it('works for bx-context and data-bx-context & allows nesting', () =>
           testRecognition(
             `<p data-bx-context="Matt 6">
-              Check out verse 9 and then verse 10 (cf. Luke 11:2 and <span bx-context="Lk 11">verse 3</span>)
+              Check out verse 9 and then verse 10 (cf. Luke 11:2 and <bx context="Lk 11">verse 3</bx>)
               and verse 11.
             </p>`,
             ['verse 9', 'verse 10', 'Luke 11:2', 'verse 3', 'verse 11'],

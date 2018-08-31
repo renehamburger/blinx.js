@@ -98,14 +98,15 @@ whitelist- and blacklist-selectors can be nested. They former activates a sectio
 4. The __`bx-context`-attribute__ allows to provide the parsing context for partial references, in case they are not preceded by a complete reference or if the preceeding complete reference does not apply to them:
     - As a custom attribute: `<span bx-context="...">...</span>`
     - As a regular data-attribute: `<span data-bx-context="...">...</span>`
-(The custom attribute is shorter, but the regular data-attribute may be needed if your editor or linter complains. All supported browsers should be fine with both of them.)
+    - In combination with `bx`: `<bx context="...">...</bx>`
+(The first two options can be used on existing wrappers. The custom attribute with or without `bx` is shorter, but the regular data-attribute on a regular tag may be needed if your editor or linter complains. All supported browsers should be fine with all of them.)
 The context will be parsed according to the set language, but OSIS-references will always work. Here's an example:
 
 ```html
-This article is about Matt 1, (not about Mark 1), <span bx-context="Matt 1">in particular verses 1-20.</span>
+This article is about Matt 1, (not about Mark 1), <bx context="Matt 1">in particular verses 1-20.</bx>
 ```
 
-Without the `bx-context` attribute, 'verses 1-20' would be interpreted as belonging to Mark 1.
+Without the `bx-context`-attribute, 'verses 1-20' would be interpreted as belonging to Mark 1.
 
 For now, this attribute will always trump any preceding complete references, no matter how close they are. That is when wrappers with this attribute may need to be nested to ensure correct parsing of all partial references. Here's such an example taken from the demo chapter of the [PTC course](https://elearning.moore.edu.au/mod/page/view.php?id=707):
 
@@ -123,12 +124,13 @@ This paragraph contains mostly partial references within Luke chapter 2, which i
 
 5. The final and most powerful and explicit way to enable correct recognition of a passage is the __`bx-passage`-attribute__:
     - As a custom attribute: `<span bx-passage="...">...</span>`
-    - As a regular data-attribute: `<span data-bx-context="...">...</span>`
+    - As a regular data-attribute: `<span data-bx-passage="...">...</span>`
+    - In combination with `bx`: `<bx passage="...">...</bx>`
 
 Similar to the `bx-context`-attribute, it is set to a passage, which will be parsed according to the set language. (OSIS-references will always work here, too.) The html element it is attached to will be converted to an `a`-link like all other recognised passages. _For now, it may only context text._ Here's a short example demonstrating the use (and necessity) of this attribute:
 
 ```html
-In Genesis 1:1 and in the <span bx-passage="Gen 1:2">following verse</span>...
+In Genesis 1:1 and in the <bx passage="Gen 1:2">following verse</bx>...
 ```
 
 ## The underlying Bible passage parser
