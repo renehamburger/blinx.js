@@ -486,9 +486,9 @@ export class Blinx {
         await loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
           'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated');
       }
-      await loadScript(`https://unpkg.com/tippy.js/dist/tippy.all.js`);
+      await loadScript(`https://unpkg.com/tippy.js@2.5.4/dist/tippy.all.js`);
       if (this.options.theme === 'light') {
-        await loadCSS('https://unpkg.com/tippy.js/dist/themes/light.css');
+        await loadCSS('https://unpkg.com/tippy.js@2.5.4/dist/themes/light.css');
       }
       if (requireWorkaround) {
         win.tippy = win.module.exports;
