@@ -13,8 +13,10 @@ import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis, truncateMultiBookOsis, TransformOsisOptions } from 'src/helpers/osis';
 import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELECTORS } from 'src/options/selectors.const';
-import './css/blinx.css';
+import 'src/css/blinx.css';
 import { I18n } from 'src/i18n/i18n.class';
+
+const BLINX_VERSION = 'v0.3.9';
 
 //#region: Closure for constants & caches
 const isVerbose = window.__karma__ &&
@@ -462,15 +464,6 @@ export class Blinx {
   }
 
   private async loadTippy(): Promise<any> {
-    const win: any = window;
-    // For websites with require.js support, tippy will try to load through require.js, which fails.
-    // Defining a temporary module object is a nasty workaround to force tippy to add itself as module.exports.
-    const requireWorkaround = typeof win.define === 'function' && typeof win.module === 'undefined' &&
-      typeof win.exports === 'undefined';
-    if (requireWorkaround) {
-      win.exports = {};
-      win.module = {};
-    }
     if ('tippy' in window) {
       this.tippyLoaded.resolve();
     } else {
@@ -486,14 +479,9 @@ export class Blinx {
         await loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
           'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated');
       }
-      await loadScript(`https://unpkg.com/tippy.js@2.5.4/dist/tippy.all.js`);
+      await loadScript(`https://cdn.rawgit.com/renehamburger/blinx.js/${BLINX_VERSION}/assets/tippy.all.min.js`);
       if (this.options.theme === 'light') {
-        await loadCSS('https://unpkg.com/tippy.js@2.5.4/dist/themes/light.css');
-      }
-      if (requireWorkaround) {
-        win.tippy = win.module.exports;
-        delete win.module;
-        delete win.exports;
+        await loadCSS(`https://cdn.rawgit.com/renehamburger/blinx.js/${BLINX_VERSION}/assets/tippy.light.css`);
       }
       this.tippyLoaded.resolve();
     }
