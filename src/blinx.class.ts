@@ -16,7 +16,7 @@ import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELEC
 import './css/blinx.css'; // relative path is needed here!
 import { I18n } from 'src/i18n/i18n.class';
 
-const BLINX_VERSION = 'v0.3.9';
+const BLINX_VERSION = 'v0.3.10';
 
 //#region: Closure for constants & caches
 const isVerbose = window.__karma__ &&
