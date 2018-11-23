@@ -13,7 +13,7 @@ import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis, truncateMultiBookOsis, TransformOsisOptions } from 'src/helpers/osis';
 import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELECTORS } from 'src/options/selectors.const';
-import 'src/css/blinx.css';
+import './css/blinx.css'; // relative path is needed here!
 import { I18n } from 'src/i18n/i18n.class';
 
 const BLINX_VERSION = 'v0.3.9';
