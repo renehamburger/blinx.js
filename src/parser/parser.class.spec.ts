@@ -1,9 +1,22 @@
-import { TextTransformationInfo, convertRefsBasedOnTransformedTextToOriginalText, disambiguateSeparators } from 'src/parser/parser.class';
+import { TextTransformationInfo, convertRefsBasedOnTransformedTextToOriginalText, disambiguateSeparators, decodeHtmlEntities } from 'src/parser/parser.class';
 
 describe('Parser', () => {
 
   describe('transformTextForParsing()', () => {
 
+    it('replaces html-entities', () => {
+      const theOriginalText = 'R&ouml;&shy;mer&nbsp;1';
+      //                       012345678901234567890
+      //                       012   3456   7
+      const transformedText = 'Rö\xadmer\xa01';
+      const transformationInfo = decodeHtmlEntities(theOriginalText);
+      expect(transformationInfo.transformedText).toBe(transformedText);
+      expect(transformationInfo.transformations).toEqual([
+        { oldStart: 1, newStart: 1, oldString: '&ouml;', newString: 'ö' },
+        { oldStart: 7, newStart: 2, oldString: '&shy;', newString: '\xad' },
+        { oldStart: 15, newStart: 6, oldString: '&nbsp;', newString: '\xa0' }
+      ]);
+    });
 
     it('disambiguates separators', () => {
       const theOriginalText = '1,2|1 ,2|1, 2|21  ,  23|1 \xa0, 2';

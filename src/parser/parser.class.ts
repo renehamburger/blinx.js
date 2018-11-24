@@ -1,6 +1,7 @@
 import { LanguageCode } from 'src/options/languages';
 import { loadScript } from 'src/helpers/dom';
 import { Options } from 'src/options/options';
+import { decode } from 'src/helpers/decode';
 
 export interface TextTransformationInfo {
   transformedText: string;
@@ -146,6 +147,25 @@ export function disambiguateSeparators(
       return precedingDigit + newString + followingDigit;
     }
   );
+  return {
+    transformedText,
+    transformations
+  };
+}
+
+export function decodeHtmlEntities(originalText: string): TextTransformationInfo {
+  const transformations: TextTransformationInfo['transformations'] = [];
+  let accumulativeDelta = 0;
+  const transformedText = decode(originalText, (oldString, newString, offset) => {
+    transformations.push({
+      oldStart: offset,
+      newStart: offset + accumulativeDelta,
+      oldString,
+      newString
+    });
+    accumulativeDelta += newString.length - oldString.length;
+    return newString;
+  });
   return {
     transformedText,
     transformations
