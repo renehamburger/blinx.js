@@ -1,4 +1,4 @@
-import { TextTransformationInfo, convertRefsBasedOnTransformedTextToOriginalText, disambiguateSeparators, decodeHtmlEntities } from 'src/parser/parser.class';
+import { TextTransformationInfo, adjustRefsToTransformations, disambiguateSeparators, decodeHtmlEntities } from 'src/parser/parser.class';
 
 describe('Parser', () => {
 
@@ -52,7 +52,7 @@ describe('Parser', () => {
         { indices: [2, 3], osis: '', translations: [] },
         { indices: [4, 7], osis: '', translations: [] }
       ];
-      expect(convertRefsBasedOnTransformedTextToOriginalText(refs, transformationInfo)).toEqual([
+      expect(adjustRefsToTransformations(refs, [transformationInfo])).toEqual([
         { indices: [0, 1], osis: '', translations: [] },
         { indices: [0, 4], osis: '', translations: [] },
         { indices: [4, 5], osis: '', translations: [] },

@@ -80,24 +80,28 @@ export class Parser {
 
   /** Wrapper for BCV's parse: @see BCV.parse() */
   public parse(text: string) {
-    const transformation = this.transformTextForParsing(text);
-    this.bcv.parse(transformation.transformedText);
+    const transformationInfos = this.transformTextForParsing(text);
+    this.bcv.parse(transformationInfos.slice(-1)[0].transformedText);
     const refs = filterReferences(this.bcv.osis_and_indices());
-    return convertRefsBasedOnTransformedTextToOriginalText(refs, transformation);
+    return adjustRefsToTransformations(refs, transformationInfos);
   }
 
   /** Wrapper for BCV's parse_with_context: @see BCV.parse_with_context() */
   public parse_with_context(possibleReferenceWithPrefix: string, previousPassage: string): BCV.OsisAndIndices[] {
-    const transformation = this.transformTextForParsing(possibleReferenceWithPrefix);
-    this.bcv.parse_with_context(transformation.transformedText, previousPassage);
+    const transformationInfos = this.transformTextForParsing(possibleReferenceWithPrefix);
+    this.bcv.parse_with_context(transformationInfos.slice(-1)[0].transformedText, previousPassage);
     const refs = filterReferences(this.bcv.osis_and_indices());
-    return convertRefsBasedOnTransformedTextToOriginalText(refs, transformation);
+    return adjustRefsToTransformations(refs, transformationInfos);
   }
 
   /** Transform text before parsing to handle parser issues. */
-  private transformTextForParsing(text: string): TextTransformationInfo {
+  private transformTextForParsing(text: string): TextTransformationInfo[] {
     const { spaces, chapterVerseSeparator } = this.characters;
-    return disambiguateSeparators(text, chapterVerseSeparator, `[${spaces}]`);
+    const transformationInfos: TextTransformationInfo[] = [];
+    const currentText = () => transformationInfos.slice(-1)[0].transformedText;
+    transformationInfos.push(decodeHtmlEntities(text));
+    transformationInfos.push(disambiguateSeparators(currentText(), chapterVerseSeparator, `[${spaces}]`));
+    return transformationInfos;
   }
 
   private initBcvParser(options: Options) {
@@ -173,18 +177,21 @@ export function decodeHtmlEntities(originalText: string): TextTransformationInfo
 }
 
 /** Convert references based on transformed text back to references in original text  */
-export function convertRefsBasedOnTransformedTextToOriginalText(
-  refs: BCV.OsisAndIndices[], transformationInfo: TextTransformationInfo
+export function adjustRefsToTransformations(
+  refs: BCV.OsisAndIndices[], transformationInfos: TextTransformationInfo[]
 ): BCV.OsisAndIndices[] {
-  for (const ref of refs) {
-    for (const transformation of transformationInfo.transformations) {
-      for (let i = 0; i < 2; i++) {
-        if (ref.indices[i] >= transformation.newStart + transformation.newString.length) {
-          ref.indices[i] += transformation.oldString.length - transformation.newString.length;
+  for (const transformationInfo of transformationInfos) {
+    for (const ref of refs) {
+      for (const transformation of transformationInfo.transformations) {
+        for (let i = 0; i < 2; i++) {
+          if (ref.indices[i] >= transformation.newStart + transformation.newString.length) {
+            ref.indices[i] += transformation.oldString.length - transformation.newString.length;
+          }
         }
       }
     }
   }
+
   return refs;
 }
 
