@@ -167,6 +167,14 @@ describe('Blinx', () => {
           )
         );
 
+        it('works when reference contains html entities', () =>
+          testRecognition(
+            `Ze&shy;phan&shy;iah&nbsp;3:17`,
+            ['Ze\xadphan\xadiah&nbsp;3:17'],
+            ['Zeph.3.17']
+          )
+        );
+
       });
 
       describe('workarounds for parser', () => {

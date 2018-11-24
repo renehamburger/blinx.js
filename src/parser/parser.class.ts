@@ -100,6 +100,7 @@ export class Parser {
     const transformationInfos: TextTransformationInfo[] = [];
     const currentText = () => transformationInfos.slice(-1)[0].transformedText;
     transformationInfos.push(decodeHtmlEntities(text));
+    transformationInfos.push(transformUnsupportedCharacters(currentText()));
     transformationInfos.push(disambiguateSeparators(currentText(), chapterVerseSeparator, `[${spaces}]`));
     return transformationInfos;
   }
@@ -161,6 +162,28 @@ export function decodeHtmlEntities(originalText: string): TextTransformationInfo
   const transformations: TextTransformationInfo['transformations'] = [];
   let accumulativeDelta = 0;
   const transformedText = decode(originalText, (oldString, newString, offset) => {
+    transformations.push({
+      oldStart: offset,
+      newStart: offset + accumulativeDelta,
+      oldString,
+      newString
+    });
+    accumulativeDelta += newString.length - oldString.length;
+    return newString;
+  });
+  return {
+    transformedText,
+    transformations
+  };
+}
+
+/** Transform characters not yet support by the parser, e.g., soft hyphens */
+export function transformUnsupportedCharacters(originalText: string): TextTransformationInfo {
+  const regex = /\xad/g;
+  const transformations: TextTransformationInfo['transformations'] = [];
+  let accumulativeDelta = 0;
+  const transformedText = originalText.replace(regex, (oldString, offset) => {
+    const newString = '';
     transformations.push({
       oldStart: offset,
       newStart: offset + accumulativeDelta,
