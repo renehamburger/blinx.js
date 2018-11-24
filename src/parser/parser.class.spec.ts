@@ -1,14 +1,15 @@
-import { TextTransformationInfo, convertRefsBasedOnTransformedTextToOriginalText, transformTextForParsing } from 'src/parser/parser.class';
+import { TextTransformationInfo, convertRefsBasedOnTransformedTextToOriginalText, disambiguateSeparators } from 'src/parser/parser.class';
 
 describe('Parser', () => {
 
   describe('transformTextForParsing()', () => {
 
-    it('works', () => {
+
+    it('disambiguates separators', () => {
       const theOriginalText = '1,2|1 ,2|1, 2|21  ,  23|1 \xa0, 2';
       //                       012345678901234567890123456   789
       const transformedText = '1,2|1;2|1;2|21;23|1;2';
-      const transformationInfo = transformTextForParsing(theOriginalText, ',', '[\\s\\xa0]');
+      const transformationInfo = disambiguateSeparators(theOriginalText, ',', '[\\s\\xa0]');
       expect(transformationInfo.transformedText).toBe(transformedText);
       expect(transformationInfo.transformations).toEqual([
         { oldStart: 5, newStart: 5, oldString: ' ,', newString: ';' },

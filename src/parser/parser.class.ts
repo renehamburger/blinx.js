@@ -73,12 +73,12 @@ export class Parser {
   }
 
   /** Wrapper for BCV's reset: @see BCV.reset() */
-  public reset(): void {
+  public reset() {
     this.bcv.reset();
   }
 
   /** Wrapper for BCV's parse: @see BCV.parse() */
-  public parse(text: string): BCV.OsisAndIndices[] {
+  public parse(text: string) {
     const transformation = this.transformTextForParsing(text);
     this.bcv.parse(transformation.transformedText);
     const refs = filterReferences(this.bcv.osis_and_indices());
@@ -86,7 +86,7 @@ export class Parser {
   }
 
   /** Wrapper for BCV's parse_with_context: @see BCV.parse_with_context() */
-  public parse_with_context(possibleReferenceWithPrefix: string, previousPassage: string) {
+  public parse_with_context(possibleReferenceWithPrefix: string, previousPassage: string): BCV.OsisAndIndices[] {
     const transformation = this.transformTextForParsing(possibleReferenceWithPrefix);
     this.bcv.parse_with_context(transformation.transformedText, previousPassage);
     const refs = filterReferences(this.bcv.osis_and_indices());
@@ -94,9 +94,9 @@ export class Parser {
   }
 
   /** Transform text before parsing to handle parser issues. */
-  private transformTextForParsing(text: string) {
+  private transformTextForParsing(text: string): TextTransformationInfo {
     const { spaces, chapterVerseSeparator } = this.characters;
-    return transformTextForParsing(text, chapterVerseSeparator, `[${spaces}]`);
+    return disambiguateSeparators(text, chapterVerseSeparator, `[${spaces}]`);
   }
 
   private initBcvParser(options: Options) {
@@ -118,8 +118,13 @@ export class Parser {
 
 }
 
-/** Transform text and store all transformations */
-export function transformTextForParsing(
+/**
+ * Replace character that is used by chapter-verse-separator by semicolon if it is followed by space(s).
+ * The parser ignores the spaces and treats it as a chapter-verse-separator.
+ * English example of ':' not being used as chapter-verse-separator: "in Acts 15: 4 days later...".
+ * German example of ',' not being used as chapter-verse-separator: "Römer 1, 3, und 5".
+ */
+export function disambiguateSeparators(
   originalText: string, chapterVerseSeparator: string, spaces: string
 ): TextTransformationInfo {
   const separatorWithSpacesRegex =
