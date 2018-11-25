@@ -73,30 +73,34 @@ export class Parser {
   }
 
   /** Wrapper for BCV's reset: @see BCV.reset() */
-  public reset(): void {
+  public reset() {
     this.bcv.reset();
   }
 
   /** Wrapper for BCV's parse: @see BCV.parse() */
-  public parse(text: string): BCV.OsisAndIndices[] {
-    const transformation = this.transformTextForParsing(text);
-    this.bcv.parse(transformation.transformedText);
+  public parse(text: string) {
+    const transformationInfos = this.transformTextForParsing(text);
+    this.bcv.parse(transformationInfos.slice(-1)[0].transformedText);
     const refs = filterReferences(this.bcv.osis_and_indices());
-    return convertRefsBasedOnTransformedTextToOriginalText(refs, transformation);
+    return adjustRefsToTransformations(refs, transformationInfos);
   }
 
   /** Wrapper for BCV's parse_with_context: @see BCV.parse_with_context() */
-  public parse_with_context(possibleReferenceWithPrefix: string, previousPassage: string) {
-    const transformation = this.transformTextForParsing(possibleReferenceWithPrefix);
-    this.bcv.parse_with_context(transformation.transformedText, previousPassage);
+  public parse_with_context(possibleReferenceWithPrefix: string, previousPassage: string): BCV.OsisAndIndices[] {
+    const transformationInfos = this.transformTextForParsing(possibleReferenceWithPrefix);
+    this.bcv.parse_with_context(transformationInfos.slice(-1)[0].transformedText, previousPassage);
     const refs = filterReferences(this.bcv.osis_and_indices());
-    return convertRefsBasedOnTransformedTextToOriginalText(refs, transformation);
+    return adjustRefsToTransformations(refs, transformationInfos);
   }
 
   /** Transform text before parsing to handle parser issues. */
-  private transformTextForParsing(text: string) {
+  private transformTextForParsing(text: string): TextTransformationInfo[] {
     const { spaces, chapterVerseSeparator } = this.characters;
-    return transformTextForParsing(text, chapterVerseSeparator, `[${spaces}]`);
+    const transformationInfos: TextTransformationInfo[] = [];
+    const currentText = () => transformationInfos.slice(-1)[0].transformedText;
+    transformationInfos.push(transformUnsupportedCharacters(text));
+    transformationInfos.push(disambiguateSeparators(currentText(), chapterVerseSeparator, `[${spaces}]`));
+    return transformationInfos;
   }
 
   private initBcvParser(options: Options) {
@@ -118,8 +122,13 @@ export class Parser {
 
 }
 
-/** Transform text and store all transformations */
-export function transformTextForParsing(
+/**
+ * Replace character that is used by chapter-verse-separator by semicolon if it is followed by space(s).
+ * The parser ignores the spaces and treats it as a chapter-verse-separator.
+ * English example of ':' not being used as chapter-verse-separator: "in Acts 15: 4 days later...".
+ * German example of ',' not being used as chapter-verse-separator: "Römer 1, 3, und 5".
+ */
+export function disambiguateSeparators(
   originalText: string, chapterVerseSeparator: string, spaces: string
 ): TextTransformationInfo {
   const separatorWithSpacesRegex =
@@ -147,19 +156,44 @@ export function transformTextForParsing(
   };
 }
 
+/** Transform characters not yet support by the parser, e.g., soft hyphens */
+export function transformUnsupportedCharacters(originalText: string): TextTransformationInfo {
+  const regex = /\xad/g;
+  const transformations: TextTransformationInfo['transformations'] = [];
+  let accumulativeDelta = 0;
+  const transformedText = originalText.replace(regex, (oldString, offset) => {
+    const newString = '';
+    transformations.push({
+      oldStart: offset,
+      newStart: offset + accumulativeDelta,
+      oldString,
+      newString
+    });
+    accumulativeDelta += newString.length - oldString.length;
+    return newString;
+  });
+  return {
+    transformedText,
+    transformations
+  };
+}
+
 /** Convert references based on transformed text back to references in original text  */
-export function convertRefsBasedOnTransformedTextToOriginalText(
-  refs: BCV.OsisAndIndices[], transformationInfo: TextTransformationInfo
+export function adjustRefsToTransformations(
+  refs: BCV.OsisAndIndices[], transformationInfos: TextTransformationInfo[]
 ): BCV.OsisAndIndices[] {
-  for (const ref of refs) {
-    for (const transformation of transformationInfo.transformations) {
-      for (let i = 0; i < 2; i++) {
-        if (ref.indices[i] >= transformation.newStart + transformation.newString.length) {
-          ref.indices[i] += transformation.oldString.length - transformation.newString.length;
+  for (const transformationInfo of transformationInfos) {
+    for (const ref of refs) {
+      for (const transformation of transformationInfo.transformations) {
+        for (let i = 0; i < 2; i++) {
+          if (ref.indices[i] >= transformation.newStart + transformation.newString.length) {
+            ref.indices[i] += transformation.oldString.length - transformation.newString.length;
+          }
         }
       }
     }
   }
+
   return refs;
 }
 

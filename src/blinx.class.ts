@@ -16,8 +16,6 @@ import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELEC
 import './css/blinx.css'; // relative path is needed here!
 import { I18n } from 'src/i18n/i18n.class';
 
-const BLINX_VERSION = 'v0.3.10';
-
 //#region: Closure for constants & caches
 const isVerbose = window.__karma__ &&
   window.__karma__.config.args.some((arg: string) => arg === 'verbose');
@@ -479,9 +477,9 @@ export class Blinx {
         await loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
           'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated');
       }
-      await loadScript(`https://cdn.rawgit.com/renehamburger/blinx.js/${BLINX_VERSION}/assets/tippy.all.min.js`);
+      await loadScript(`https://cdn.rawgit.com/renehamburger/blinx.js/master/assets/tippy.all.min.js`);
       if (this.options.theme === 'light') {
-        await loadCSS(`https://cdn.rawgit.com/renehamburger/blinx.js/${BLINX_VERSION}/assets/tippy.light.css`);
+        await loadCSS(`https://cdn.rawgit.com/renehamburger/blinx.js/master/assets/tippy.light.css`);
       }
       this.tippyLoaded.resolve();
     }

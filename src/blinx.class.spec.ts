@@ -167,6 +167,14 @@ describe('Blinx', () => {
           )
         );
 
+        it('works when reference contains html entities', () =>
+          testRecognition(
+            `Ze&shy;phan&shy;iah&nbsp;3:17`,
+            [/^Ze(\xad|&shy;)phan(\xad|&shy;)iah&nbsp;3:17$/], // Handled differently by browsers
+            ['Zeph.3.17']
+          )
+        );
+
       });
 
       describe('workarounds for parser', () => {
@@ -406,7 +414,7 @@ function getBodyHtml(html: string): string {
 }
 
 function testRecognition(
-  html: string, expectedLinkLabels: string[], expectedOsisPassages: string[],
+  html: string, expectedLinkLabels: (string | RegExp)[], expectedOsisPassages: string[],
   // Specify default options, as parser is not always destroyed between tests and can lead to wrong language
   options: Partial<Options> = new Options()
 ): Promise<Umbrella.Instance> {
@@ -417,7 +425,9 @@ function testRecognition(
     const links: Umbrella.Instance = u('[data-osis]');
     const passages: string[] = [];
     links.each(node => passages.push(u(node).data('osis')));
-    expect(links.array()).toEqual(expectedLinkLabels);
+    links.array().forEach((link, pos) => {
+      expect(link).toMatch(expectedLinkLabels[pos]);
+    });
     expect(passages).toEqual(expectedOsisPassages);
     return links;
   });
