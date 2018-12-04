@@ -169,9 +169,12 @@ describe('Blinx', () => {
 
         it('works when reference contains html entities', () =>
           testRecognition(
-            `Ze&shy;phan&shy;iah&nbsp;3:17`,
-            [/^Ze(\xad|&shy;)phan(\xad|&shy;)iah&nbsp;3:17$/], // Handled differently by browsers
-            ['Zeph.3.17']
+            `Ze&shy;phan&shy;iah&nbsp;1:2, Ze&shy;phan&shy;iah&nbsp;3:4`,
+            [
+              /^Ze(\xad|&shy;)phan(\xad|&shy;)iah&nbsp;1:2$/,
+              /^Ze(\xad|&shy;)phan(\xad|&shy;)iah&nbsp;3:4$/
+            ], // Handled differently by browsers
+            ['Zeph.1.2', 'Zeph.3.4']
           )
         );
 
