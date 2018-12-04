@@ -1,4 +1,4 @@
-import { TextTransformationInfo, adjustRefsToTransformations, disambiguateSeparators } from 'src/parser/parser.class';
+import { TextTransformationInfo, adjustRefsToTransformations, disambiguateSeparators, transformUnsupportedCharacters } from 'src/parser/parser.class';
 
 describe('Parser', () => {
 
@@ -15,6 +15,19 @@ describe('Parser', () => {
         { oldStart: 10, newStart: 9, oldString: ', ', newString: ';' },
         { oldStart: 16, newStart: 14, oldString: '  ,  ', newString: ';' },
         { oldStart: 25, newStart: 19, oldString: ' \xa0, ', newString: ';' }
+      ]);
+    });
+
+    it('removes unsupported characters', () => {
+      const theOriginalText = '1\xad2\xad3';
+      //                       01   23   4
+      //                       012
+      const transformedText = '123';
+      const transformationInfo = transformUnsupportedCharacters(theOriginalText);
+      expect(transformationInfo.transformedText).toBe(transformedText);
+      expect(transformationInfo.transformations).toEqual([
+        { oldStart: 1, newStart: 1, oldString: '\xad', newString: '' },
+        { oldStart: 3, newStart: 2, oldString: '\xad', newString: '' }
       ]);
     });
 

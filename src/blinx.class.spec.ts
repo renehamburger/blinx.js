@@ -169,9 +169,12 @@ describe('Blinx', () => {
 
         it('works when reference contains html entities', () =>
           testRecognition(
-            `Ze&shy;phan&shy;iah&nbsp;3:17`,
-            [/^Ze(\xad|&shy;)phan(\xad|&shy;)iah&nbsp;3:17$/], // Handled differently by browsers
-            ['Zeph.3.17']
+            `Ze&shy;phan&shy;iah&nbsp;1:2, Ze&shy;phan&shy;iah&nbsp;3:4`,
+            [
+              /^Ze(\xad|&shy;)phan(\xad|&shy;)iah&nbsp;1:2$/,
+              /^Ze(\xad|&shy;)phan(\xad|&shy;)iah&nbsp;3:4$/
+            ], // Handled differently by browsers
+            ['Zeph.1.2', 'Zeph.3.4']
           )
         );
 
@@ -351,11 +354,11 @@ describe('Blinx', () => {
           [
             'Römer 7', 'Römer 7', 'Verse\n    7', '12', 'Vers 4', 'Vers 6', 'Römer 7', 'Verse 1-4',
             'Verse 7-13', 'Vers 14', 'Vers 14', 'Verse 5-6', 'Römer 7', 'Vers 6', 'Römer 2', 'Römer 7',
-            'Versen 14-25', 'Vers 22', 'Versen\n    7', '11,', '14,', '16', 'Vers 7',
+            'Versen 14-25', 'Vers 22', 'Versen\n    7', '11', '14', '16', 'Vers 7',
             'Vers 14', 'Versen 14-25', 'Vers 14', 'Römer 7', 'Vers 14a', 'Vers 14b', 'Kapitel 6',
             '6,1-10', '6,11', '7,23', '8,23', '7,5', '7,14', 'Verse 17',
-            '20', 'Vers 23', 'Verse 16', '18, 19,', '21', 'Verse 15',
-            '18, 19', 'Verse 18', '23', 'Versen 14', '18,', '21,', '23',
+            '20', 'Vers 23', 'Verse 16', '18, 19', '21', 'Verse 15',
+            '18, 19', 'Verse 18', '23', 'Versen 14', '18', '21', '23',
             '6,12', '6,19', '7,7', '7,14-25', '8,1-4', 'Römer 7', '7,18',
             '7,4', 'Phil 3,9', 'Römer 7', 'Römer 7', '6,1-11', 'Phil 3,21', 'Röm 4,18-25',
             '6,12', '19', '7,14-25', '8,10-11', '23-25', 'Römer 7',
