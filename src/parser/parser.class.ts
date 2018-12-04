@@ -183,8 +183,8 @@ export function adjustRefsToTransformations(
   refs: BCV.OsisAndIndices[], transformationInfos: TextTransformationInfo[]
 ): BCV.OsisAndIndices[] {
   for (const transformationInfo of transformationInfos) {
-    for (const ref of refs) {
-      for (const transformation of transformationInfo.transformations) {
+    for (const transformation of transformationInfo.transformations.reverse()) {
+      for (const ref of refs) {
         for (let i = 0; i < 2; i++) {
           if (ref.indices[i] >= transformation.newStart + transformation.newString.length) {
             ref.indices[i] += transformation.oldString.length - transformation.newString.length;
