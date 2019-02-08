@@ -157,7 +157,7 @@ export class GetBibleBibleApi extends BibleApi {
     Exod: 'Exo',
     Deut: 'Deu',
     Josh: 'Jos',
-    Judg: 'Jud',
+    Judg: 'Ju',
     '1Kgs': '1Kg',
     '2Kgs': '2Kg',
     Ezra: 'Ezr',
