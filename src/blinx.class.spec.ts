@@ -219,7 +219,7 @@ describe('Blinx', () => {
 
       describe('with bx-context', () => {
 
-        it('recognises partial references correctly', () =>
+        it('works for reference with chapter', () =>
           testRecognition(
             `<p data-bx-context="Matt 6">
               Check out verse 9 and then verse 10 (cf. Luke 11:2)
@@ -227,6 +227,17 @@ describe('Blinx', () => {
             </p>`,
             ['verse 9', 'verse 10', 'Luke 11:2', 'verse 11'],
             ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Matt.6.11']
+          )
+        );
+
+        it('works for reference without chapter', () =>
+          testRecognition(
+            `<p data-bx-context="Matt">
+              Check out verse 9 and then 6:10 (cf. Luke 11:2)
+              and verse 11.
+            </p>`,
+            ['verse 10', 'Luke 11:2', 'verse 11'],
+            ['Matt.6.10', 'Luke.11.2', 'Matt.6.11']
           )
         );
 
