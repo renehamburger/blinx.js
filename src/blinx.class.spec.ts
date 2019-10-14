@@ -178,6 +178,15 @@ describe('Blinx', () => {
           )
         );
 
+        it('rejects date-like references to the book of Amos', () =>
+          testRecognition(
+            'am 3 und am 3,1 sind Bibelstellen, aber "am 3. Januar" und am\xa04.1. sind Daten.',
+            ['am 3', 'am 3,1'],
+            ['Amos.3', 'Amos.3.1'],
+            { language: 'de' }
+          )
+        );
+
       });
 
       describe('workarounds for parser', () => {
@@ -440,7 +449,7 @@ function testRecognition(
     const passages: string[] = [];
     links.each(node => passages.push(u(node).data('osis')));
     links.array().forEach((link, pos) => {
-      expect(link).toMatch(expectedLinkLabels[pos]);
+      expect(link).toMatch('' + expectedLinkLabels[pos]);
     });
     expect(passages).toEqual(expectedOsisPassages);
     return links;
