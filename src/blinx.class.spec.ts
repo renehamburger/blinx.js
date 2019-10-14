@@ -449,7 +449,7 @@ function testRecognition(
     const passages: string[] = [];
     links.each(node => passages.push(u(node).data('osis')));
     links.array().forEach((link, pos) => {
-      expect(link).toMatch('' + expectedLinkLabels[pos]);
+      expect(link).toMatch(expectedLinkLabels[pos] || '');
     });
     expect(passages).toEqual(expectedOsisPassages);
     return links;
