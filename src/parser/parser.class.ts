@@ -80,16 +80,18 @@ export class Parser {
   /** Wrapper for BCV's parse: @see BCV.parse() */
   public parse(text: string) {
     const transformationInfos = this.transformTextForParsing(text);
-    this.bcv.parse(transformationInfos.slice(-1)[0].transformedText);
-    const refs = filterReferences(this.bcv.osis_and_indices());
+    const transformedText = transformationInfos.slice(-1)[0].transformedText;
+    this.bcv.parse(transformedText);
+    const refs = filterReferences(this.bcv.osis_and_indices(), transformedText);
     return adjustRefsToTransformations(refs, transformationInfos);
   }
 
   /** Wrapper for BCV's parse_with_context: @see BCV.parse_with_context() */
   public parse_with_context(possibleReferenceWithPrefix: string, previousPassage: string): BCV.OsisAndIndices[] {
     const transformationInfos = this.transformTextForParsing(possibleReferenceWithPrefix);
-    this.bcv.parse_with_context(transformationInfos.slice(-1)[0].transformedText, previousPassage);
-    const refs = filterReferences(this.bcv.osis_and_indices());
+    const transformedText = transformationInfos.slice(-1)[0].transformedText;
+    this.bcv.parse_with_context(transformedText, previousPassage);
+    const refs = filterReferences(this.bcv.osis_and_indices(), transformedText);
     return adjustRefsToTransformations(refs, transformationInfos);
   }
 
@@ -197,7 +199,30 @@ export function adjustRefsToTransformations(
   return refs;
 }
 
-function filterReferences(refs: BCV.OsisAndIndices[]): BCV.OsisAndIndices[] {
-  // The parser sometimes returns references without chapters or verses.
-  return refs.filter(ref => /[.]/.test(ref.osis));
+function filterReferences(refs: BCV.OsisAndIndices[], text: string): BCV.OsisAndIndices[] {
+  const language = Parser.getCurrentParserLanguage();
+  let skipNext = false;
+  return refs.filter(ref => {
+    if (skipNext) {
+      skipNext = false;
+      return false;
+    }
+    // Filter out references without both chapter and verse, which the parser sometimes returns.
+    if (!/[.]/.test(ref.osis)) {
+      return false;
+    }
+    if (language === 'de') {
+      // Filter out German references that could be dates, e.g. 'am 3.'
+      const extendedLabel = text.slice(ref.indices[0], ref.indices[1] + 4);
+      if (/^Amos\.\d+$/.test(ref.osis) && /^am\b\s*\d+\./i.test(extendedLabel)) {
+        // If the date looks like 'am 1.2.', the second number is wrongly parsed as another
+        // chapter of Amos and needs to be skipped
+        if (/^am\b\s*\d+\.\d+/i.test(extendedLabel)) {
+          skipNext = true;
+        }
+        return false;
+      }
+    }
+    return true;
+  });
 }

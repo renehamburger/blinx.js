@@ -178,6 +178,15 @@ describe('Blinx', () => {
           )
         );
 
+        it('rejects date-like references to the book of Amos', () =>
+          testRecognition(
+            'am 3 und am 3,1 sind Bibelstellen, aber "am 3. Januar" und am\xa04.1. sind Daten.',
+            ['am 3', 'am 3,1'],
+            ['Amos.3', 'Amos.3.1'],
+            { language: 'de' }
+          )
+        );
+
       });
 
       describe('workarounds for parser', () => {
@@ -219,7 +228,7 @@ describe('Blinx', () => {
 
       describe('with bx-context', () => {
 
-        it('recognises partial references correctly', () =>
+        it('works for reference with chapter', () =>
           testRecognition(
             `<p data-bx-context="Matt 6">
               Check out verse 9 and then verse 10 (cf. Luke 11:2)
@@ -227,6 +236,17 @@ describe('Blinx', () => {
             </p>`,
             ['verse 9', 'verse 10', 'Luke 11:2', 'verse 11'],
             ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Matt.6.11']
+          )
+        );
+
+        xit('works for reference without chapter', () =>
+          testRecognition(
+            `<p data-bx-context="Matt">
+              Check out verse 9 and then 6:10 (cf. Luke 11:2)
+              and verse 11.
+            </p>`,
+            ['verse 10', 'Luke 11:2', 'verse 11'],
+            ['Matt.6.10', 'Luke.11.2', 'Matt.6.11']
           )
         );
 
@@ -429,7 +449,7 @@ function testRecognition(
     const passages: string[] = [];
     links.each(node => passages.push(u(node).data('osis')));
     links.array().forEach((link, pos) => {
-      expect(link).toMatch(expectedLinkLabels[pos]);
+      expect(link).toMatch('' + expectedLinkLabels[pos]);
     });
     expect(passages).toEqual(expectedOsisPassages);
     return links;
