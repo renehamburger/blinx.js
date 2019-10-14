@@ -230,7 +230,7 @@ describe('Blinx', () => {
           )
         );
 
-        it('works for reference without chapter', () =>
+        xit('works for reference without chapter', () =>
           testRecognition(
             `<p data-bx-context="Matt">
               Check out verse 9 and then 6:10 (cf. Luke 11:2)
