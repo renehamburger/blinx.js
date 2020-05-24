@@ -20,12 +20,12 @@ Have a look at [this unit of the Bibel-für-alle course](http://kostprobe.bibel-
 
 ## Activation
 
-For now, the script can be included directly from GitHub via RawGit, either through a script tag or dynamically.
+For now, the script can be included directly from GitHub via the jsdelivr CDN, either through a script tag or dynamically.
 
 ### Script tag
 
 ```html
-<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.3.15/dist/blinx.js" defer data-blinx="{
+<script src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.3.15/dist/blinx.js" defer data-blinx="{
   language: 'de'
 }"></script>
 ```
@@ -35,8 +35,8 @@ The `data-blinx` attribute contains the options for blinx.js. For now, look at t
 blinx.js loads several resources it requires dynamically and asynchronously. To speed up the identification and linking of Bible references on the page, the following script can already be loaded in parallel to blinx.js:
 
 ```html
-<script src="https://cdn.rawgit.com/renehamburger/Bible-Passage-Reference-Parser/99f03385/js/<LANGUAGE_CODE>_bcv_parser.js" defer></script>
-<script src="https://cdn.rawgit.com/renehamburger/blinx.js/v0.3.15/dist/blinx.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/renehamburger/Bible-Passage-Reference-Parser@99f0338587acb6eb8365c4ea6b48b9c52040ae90/js/<LANGUAGE_CODE>_bcv_parser.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.3.15/dist/blinx.js" defer></script>
 ```
 
 The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determine the language for blinx.js. ('537560a7' is the current [latest commit of the Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser/commits/master) and may need to be updated at a later stage.
@@ -46,7 +46,7 @@ The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determin
 ```js
 var blinxScript = document.createElement("script");
 blinxScript.type = 'text/javascript';
-blinxScript.src = 'https://cdn.rawgit.com/renehamburger/blinx.js/v0.3.15/dist/blinx.js';
+blinxScript.src = 'https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.3.15/dist/blinx.js';
 document.documentElement.appendChild(blinxScript);
 blinxScript.setAttribute('data-blinx', '{ language: "de" }');
 ```
