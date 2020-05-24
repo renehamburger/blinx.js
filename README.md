@@ -45,7 +45,7 @@ The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determin
 ```js
 var blinxScript = document.createElement("script");
 blinxScript.type = 'text/javascript';
-blinxScript.src = 'https://cdn.rawgit.com/renehamburger/blinx.js/v0.3.15/dist/blinx.js';
+blinxScript.src = 'https://cdn.statically.io/gh/benjaminwolkchen/blinx.js/fd8671c0/dist/blinx.js';
 document.documentElement.appendChild(blinxScript);
 blinxScript.setAttribute('data-blinx', '{ language: "de" }');
 ```
