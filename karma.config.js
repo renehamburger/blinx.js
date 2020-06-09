@@ -133,12 +133,11 @@ module.exports = function (karmaConfig) {
       'win10_firefox',
       'win10_opera',
       'win10_edge',
-      'osx_10_6_safari',
-      'osx_10_13_safari',
-      'iphone4s',
-      'ipad2',
-      'google_nexus'
+      //'osx_10_6_safari',
+      'osx_10_13_safari'
+      //'iphone4s', 'ipad2', 'google_nexus'
     ],
+    frameworks: ['jasmine', 'karma-typescript'],
     frameworks: ['jasmine', 'karma-typescript'],
     files: [
       'src/**/!(*.spec).ts',
