@@ -1,8 +1,9 @@
 module.exports = function (karmaConfig) {
-  const withCoverage = process.argv.some(arg => arg === '-coverage');
-  const isVerbose = process.argv.some(arg => arg === '-verbose');
-  const browserArgPosition = process.argv.findIndex(arg => arg === '--browsers');
-  const browserStack = browserArgPosition === -1 || !/^Chrome/.test(process.argv[browserArgPosition + 1]);
+  const withCoverage = process.argv.some((arg) => arg === '-coverage');
+  const isVerbose = process.argv.some((arg) => arg === '-verbose');
+  const browserArgPosition = process.argv.findIndex((arg) => arg === '--browsers');
+  const browserStack =
+    browserArgPosition === -1 || !/^Chrome/.test(process.argv[browserArgPosition + 1]);
 
   const config = {
     browserDisconnectTolerance: browserStack ? 2 : 0,
@@ -132,14 +133,13 @@ module.exports = function (karmaConfig) {
       'win10_firefox',
       'win10_opera',
       'win10_edge',
-      //'osx_10_6_safari',
-      'osx_10_13_safari'
-      //'iphone4s', 'ipad2', 'google_nexus'
+      'osx_10_6_safari',
+      'osx_10_13_safari',
+      'iphone4s',
+      'ipad2',
+      'google_nexus'
     ],
-    frameworks: [
-      'jasmine',
-      'karma-typescript'
-    ],
+    frameworks: ['jasmine', 'karma-typescript'],
     files: [
       'src/**/!(*.spec).ts',
       browserStack ? 'src/**/browserstack.spec.ts' : 'src/**/!(browserstack).spec.ts'
@@ -148,11 +148,7 @@ module.exports = function (karmaConfig) {
       'src/**/*.ts': ['karma-typescript'],
       'src/**/*.js': ['karma-typescript']
     },
-    reporters: [
-      'spec',
-      'BrowserStack',
-      'karma-typescript'
-    ],
+    reporters: ['spec', 'BrowserStack', 'karma-typescript'],
     karmaTypescriptConfig: {
       tsconfig: './tsconfig.json',
       coverageOptions: {
