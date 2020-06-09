@@ -38,7 +38,7 @@
     "@types/node": "^9.4.6",
     "awesome-typescript-loader": "^3.4.1",
     "circular-dependency-plugin": "^4.4.0",
-    "codecov": "^3.0.0",
+    "codecov": "^3.6.5",
     "css-loader": "^3.5.3",
     "jasmine-core": "2.99.1",
     "karma": "^5.0.9",
