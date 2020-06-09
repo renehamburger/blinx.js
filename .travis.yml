@@ -14,8 +14,6 @@ script:
   - npm run build
   - npm run test-ci
   - ./node_modules/.bin/codecov
-if: commit_message !~ /^Travis build:\s\d+$/ AND env(BROWSER_STACK_ACCESS_KEY) IS present AND env(BROWSER_STACK_USERNAME) IS present
-script:
   - npm run test-browserstack
 after_success:
   - .travis/commit-built-files.sh
