@@ -477,9 +477,9 @@ export class Blinx {
         await loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
           'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated');
       }
-      await loadScript(`https://cdn.rawgit.com/renehamburger/blinx.js/master/assets/tippy.all.min.js`);
+      await loadScript(`https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@master/assets/tippy.all.min.js`);
       if (this.options.theme === 'light') {
-        await loadCSS(`https://cdn.rawgit.com/renehamburger/blinx.js/master/assets/tippy.light.css`);
+        await loadCSS(`https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@master/assets/tippy.light.css`);
       }
       this.tippyLoaded.resolve();
     }

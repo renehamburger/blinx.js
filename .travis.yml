@@ -1,13 +1,12 @@
 sudo: false
 language: node_js
-cache:
-  directories:
-    - node_modules
 notifications:
   email:
     on_failure: change
 node_js:
   - 8.9.4
+before_install:
+  - npm i -g npm@6.13.4
 if: commit_message !~ /^Travis build:\s\d+$/
 script:
   - npm run build

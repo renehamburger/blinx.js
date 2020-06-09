@@ -26,7 +26,7 @@ print_info() {
   git log -1 --pretty=format:"%C(green)%h %C(yellow)[%ad]%Cred%d %Creset%s%Cblue [%cn]" --decorate --date=short --numstat
   commit=`git log -1 --format="%h"`
   echo "The built blinx.js file is available at:"
-  echo "https://cdn.rawgit.com/renehamburger/blinx.js/$commit/dist/blinx.js"
+  echo "https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@$commit/dist/blinx.js"
 }
 
 if are_there_files_to_be_committed
