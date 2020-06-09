@@ -1,28 +1,22 @@
 module.exports = function (karmaConfig) {
-  const withCoverage = process.argv.some((arg) => /^-coverage$/.test(arg));
-  const isVerbose = process.argv.some((arg) => /^-verbose$/.test(arg));
+  const withCoverage = process.argv.some(arg => arg === '-coverage');
+  const isVerbose = process.argv.some(arg => arg === '-verbose');
+  const browserArgPosition = process.argv.findIndex(arg => arg === '--browsers');
+  const browserStack = browserArgPosition === -1 || !/^Chrome/.test(process.argv[browserArgPosition + 1]);
 
   const config = {
-    /** maximum number of tries a browser will attempt in the case of a disconnection */
-    browserDisconnectTolerance: 2,
-
-    /** How long will Karma wait for a message from a browser before disconnecting from it (in ms). */
+    browserDisconnectTolerance: browserStack ? 2 : 0,
     browserNoActivityTimeout: 20000,
-
-    retryLimit: 3,
-
-    client: {
-      args: isVerbose ? ['verbose'] : []
-    },
-
+    client: { args: isVerbose ? ['verbose'] : [] },
     //logLevel: isVerbose ? karmaConfig.LOG_DEBUG : karmaConfig.LOG_INFO,
-
-    //--- BrowserStack settings
     browserStack: {
       project: 'blinx.js'
     },
-
     customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      },
       ChromeDebugging: {
         base: 'Chrome',
         flags: ['--remote-debugging-port=9333']
@@ -127,7 +121,6 @@ module.exports = function (karmaConfig) {
         os_version: '4.0'
       }
     },
-
     browsers: [
       'winxp_chrome',
       'winxp_firefox',
@@ -143,18 +136,23 @@ module.exports = function (karmaConfig) {
       'osx_10_13_safari'
       //'iphone4s', 'ipad2', 'google_nexus'
     ],
-
-    frameworks: ['jasmine', 'karma-typescript'],
-
-    files: ['src/**/!(languages).ts', 'src/**/!(promise).js'],
-
+    frameworks: [
+      'jasmine',
+      'karma-typescript'
+    ],
+    files: [
+      'src/**/!(*.spec).ts',
+      browserStack ? 'src/**/browserstack.spec.ts' : 'src/**/!(browserstack).spec.ts'
+    ],
     preprocessors: {
       'src/**/*.ts': ['karma-typescript'],
       'src/**/*.js': ['karma-typescript']
     },
-
-    reporters: ['spec', 'BrowserStack', 'karma-typescript'],
-
+    reporters: [
+      'spec',
+      'BrowserStack',
+      'karma-typescript'
+    ],
     karmaTypescriptConfig: {
       tsconfig: './tsconfig.json',
       coverageOptions: {
