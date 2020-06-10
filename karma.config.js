@@ -123,9 +123,7 @@ module.exports = function (karmaConfig) {
       }
     },
     browsers: [
-      'winxp_chrome',
-      'winxp_firefox',
-      'winxp_opera',
+      // 'winxp_chrome', 'winxp_firefox', 'winxp_opera',
       'win7_ie9',
       'win7_ie10',
       'win7_ie11',

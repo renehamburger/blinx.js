@@ -14,7 +14,8 @@
     "test-ci": "npm run karma -- --browsers ChromeHeadlessNoSandbox --single-run -coverage",
     "test-debug": "npm run karma -- --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999",
     "test-debug-node": "node --inspect-brk ./node_modules/karma/bin/karma start karma.config.js --browsers Chrome",
-    "test-browserstack": "npm run karma --single-run"
+    "test-browserstack": "npm run karma -- --single-run",
+    "test-browserstack.chrome": "npm run karma -- --single-run --browsers win10_chrome"
   },
   "engines": {
     "node": ">=12.18.0",
