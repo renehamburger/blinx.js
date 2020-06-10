@@ -14,7 +14,7 @@ script:
   - npm run build
   - npm run test-ci
   - ./node_modules/.bin/codecov
-  - npm run test-browserstack
+  - npm run test-browserstack.chrome
 after_success:
   - .travis/commit-built-files.sh
 env:
