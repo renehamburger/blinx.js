@@ -125,6 +125,30 @@ describe('Blinx', () => {
           )
         );
 
+        it('bases partial reference on the preceding valid reference', () =>
+          testRecognition(
+            'Gen 1:1 and 2:1 and then Exod 1:1 and 2:1.',
+            ['Gen 1:1', '2:1', 'Exod 1:1', '2:1'],
+            ['Gen.1.1', 'Gen.2.1', 'Exod.1.1', 'Exod.2.1']
+          )
+        );
+
+        it('bases partial reference on the preceding valid reference across nodes', () =>
+          testRecognition(
+            `<p>Gen 1</p><p>ch.3</p>`,
+            ['Gen 1', 'ch.3'],
+            ['Gen.1', 'Gen.3']
+          )
+        );
+
+        it('bases partial reference on the preceding valid reference across nodes', () =>
+          testRecognition(
+            `<p>Gen 1</p><p>ch.3; Ex 5</p><p>ch.7</p>`,
+            ['Gen 1', 'ch.3', 'Ex 5', 'ch.7'],
+            ['Gen.1', 'Gen.3', 'Exod.5', 'Exod.7']
+          )
+        );
+
         it('skips pure numbers', () =>
           testRecognition(
             'Gen 1 and 3 are 2 of those.',
