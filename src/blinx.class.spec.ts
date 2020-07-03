@@ -123,9 +123,9 @@ describe('Blinx', () => {
 
         it('bases partial reference on the preceding valid reference', async () => {
           await testRecognition(
-            'Gen 1:1 and 2:1 and then Exod 1:1 and 2:1.',
-            ['Gen 1:1', '2:1', 'Exod 1:1', '2:1'],
-            ['Gen.1.1', 'Gen.2.1', 'Exod.1.1', 'Exod.2.1']
+            '1:1; Gen 2:1 and ... 2:2; Exod 3:1 and ... 3:2.',
+            ['Gen 2:1', '2:2', 'Exod 3:1', '3:2'],
+            ['Gen.2.1', 'Gen.2.2', 'Exod.3.1', 'Exod.3.2']
           );
         });
 
@@ -133,7 +133,7 @@ describe('Blinx', () => {
           await testRecognition(`<p>Gen 1</p><p>ch.3</p>`, ['Gen 1', 'ch.3'], ['Gen.1', 'Gen.3']);
         });
 
-        it('bases partial reference on the preceding valid reference across nodes', async () => {
+        it('bases partial reference on the preceding valid reference across nodes with other partial references', async () => {
           await testRecognition(
             `<p>Gen 1</p><p>ch.3; Ex 5</p><p>ch.7</p>`,
             ['Gen 1', 'ch.3', 'Ex 5', 'ch.7'],

@@ -325,10 +325,22 @@ export class Blinx {
     } else if (this.previousPassage) {
       contextRef = this.previousPassage.ref;
     }
+    //--- Split up nodes from back to front (required because of splitText() functionality)
+    const nodesBetweenReferences: Text[] = [];
+    const nodesWithReference: Text[] = [];
     for (let i = refs.length - 1; i >= 0; i--) {
       const ref = refs[i];
-      const remainder = node.splitText(ref.indices[1]);
-      const passage = node.splitText(ref.indices[0]);
+      nodesBetweenReferences.unshift(node.splitText(ref.indices[1]));
+      nodesWithReference.unshift(node.splitText(ref.indices[0]));
+    }
+    //--- Process passages from start to end to ensure correct context for partial references
+    // If an explicit context was provided, check for partial references preceding the first recognised ref
+    if (node.textContent && contextRef) {
+      this.parsePartialReferencesInText(node, this.convertOsisToRegularReference(contextRef.osis));
+    }
+    refs.forEach((ref, index) => {
+      const passage = nodesWithReference[index];
+      const remainder = nodesBetweenReferences[index];
       if (passage) {
         // Should always true anyway
         this.addLink(passage, ref);
@@ -338,15 +350,11 @@ export class Blinx {
         remainder,
         this.convertOsisToRegularReference(effectiveContextRef.osis)
       );
-    }
+    });
     if (refs.length) {
       this.previousPassage = { ref: refs[refs.length - 1], nodeDistance: 0 };
     } else if (this.previousPassage) {
       this.previousPassage.nodeDistance++;
-    }
-    // If an explicit context was provided, check for partial references _preceding_ the first recognised ref
-    if (node.textContent && contextRef) {
-      this.parsePartialReferencesInText(node, this.convertOsisToRegularReference(contextRef.osis));
     }
   }
 
