@@ -1,23 +1,13 @@
 {
-  "extends": "tslint-config-standard",
+  "extends": "tslint:recommended",
   "rules": {
-    "max-line-length": [
-      true,
-      {
-        "limit": 120,
-        "ignore-pattern": "^import "
-      }
-    ],
-    "no-empty": false,
-    "semicolon": [true, "always"],
-    "space-before-function-paren": [
-      true,
-      {
-        "anonymous": "always",
-        "named": "never",
-        "asyncArrow": "always"
-      }
-    ],
-    "member-ordering": false
+    "comment-format": false,
+    "max-line-length": {
+      "options": [120]
+    },
+    "no-console": false,
+    "object-literal-sort-keys": false,
+    "quotemark": [true, "single"],
+    "trailing-comma": false
   }
 }
