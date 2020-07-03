@@ -1,3 +1,4 @@
+// tslint:disable: no-string-literal
 import { GetBibleBibleApi } from 'src/bible/bible-api/get-bible-bible-api.class';
 
 describe('GetBibleBibleApi - ', () => {

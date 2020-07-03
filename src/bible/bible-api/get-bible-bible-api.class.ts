@@ -179,7 +179,7 @@ export class GetBibleBibleApi extends BibleApi {
     ).then((result) => {
       let output = '';
       if (result.type === 'verse') {
-        for (let bookObject of result.book) {
+        for (const bookObject of result.book) {
           if (bookObject.chapter) {
             const chapterOutput = this.getOutputForChapter(bookObject.chapter);
             output += `

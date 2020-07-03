@@ -17,11 +17,11 @@ export class Deferred<T> {
     });
   }
 
-  resolve = (value?: T | PromiseLike<T>): void => {
-    this._resolve && this._resolve(value);
-  };
+  resolve(value?: T | PromiseLike<T>): void {
+    this._resolve?.(value);
+  }
 
-  reject = (reason?: any): void => {
-    this._reject && this._reject(reason);
-  };
+  reject(reason?: any): void {
+    this._reject?.(reason);
+  }
 }

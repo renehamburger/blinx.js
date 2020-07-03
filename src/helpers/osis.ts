@@ -17,7 +17,7 @@ export interface BibleReference {
  * @return Object containing all parts of the reference
  */
 export function parseOsis(osis: string): BibleReference {
-  let reference: BibleReference = { start: { book: 'Gen', chapter: -1 } };
+  const reference: BibleReference = { start: { book: 'Gen', chapter: -1 } };
   for (let i = 0; i < 2; i++) {
     const segment = osis.split('-')[i];
     if (segment) {

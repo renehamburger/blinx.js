@@ -3,8 +3,6 @@ import { loadBlinx } from 'src/main';
 import { u } from 'src/lib/u.js';
 import { Options } from 'src/options/options';
 
-let blinx: Blinx;
-
 describe('Blinx', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
@@ -107,142 +105,159 @@ describe('Blinx', () => {
   describe('parsing', () => {
     describe('within a single textNode', () => {
       describe('without further attributes', () => {
-        it('recognises absolute references', () =>
-          testRecognition(
+        it('recognises absolute references', async () => {
+          await testRecognition(
             'Check out Gen 1:2-3:4 and II Cor 4:5ff',
             ['Gen 1:2-3:4', 'II Cor 4:5ff'],
             ['Gen.1.2-Gen.3.4', '2Cor.4.5-2Cor.4.18']
-          ));
+          );
+        });
 
-        it('recognises partial references', () =>
-          testRecognition(
+        it('recognises partial references', async () => {
+          await testRecognition(
             'Gen 1:1.2 and 3 and then verse 4 and also 2:3-5.',
             ['Gen 1:1.2 and 3', 'verse 4', '2:3-5'],
             ['Gen.1.1-Gen.1.3', 'Gen.1.4', 'Gen.2.3-Gen.2.5']
-          ));
+          );
+        });
 
-        it('bases partial reference on the preceding valid reference', () =>
-          testRecognition(
+        it('bases partial reference on the preceding valid reference', async () => {
+          await testRecognition(
             'Gen 1:1 and 2:1 and then Exod 1:1 and 2:1.',
             ['Gen 1:1', '2:1', 'Exod 1:1', '2:1'],
             ['Gen.1.1', 'Gen.2.1', 'Exod.1.1', 'Exod.2.1']
-          ));
+          );
+        });
 
-        it('bases partial reference on the preceding valid reference across nodes', () =>
-          testRecognition(`<p>Gen 1</p><p>ch.3</p>`, ['Gen 1', 'ch.3'], ['Gen.1', 'Gen.3']));
+        it('bases partial reference on the preceding valid reference across nodes', async () => {
+          await testRecognition(`<p>Gen 1</p><p>ch.3</p>`, ['Gen 1', 'ch.3'], ['Gen.1', 'Gen.3']);
+        });
 
-        it('bases partial reference on the preceding valid reference across nodes', () =>
-          testRecognition(
+        it('bases partial reference on the preceding valid reference across nodes', async () => {
+          await testRecognition(
             `<p>Gen 1</p><p>ch.3; Ex 5</p><p>ch.7</p>`,
             ['Gen 1', 'ch.3', 'Ex 5', 'ch.7'],
             ['Gen.1', 'Gen.3', 'Exod.5', 'Exod.7']
-          ));
+          );
+        });
 
-        it('skips pure numbers', () =>
-          testRecognition('Gen 1 and 3 are 2 of those.', ['Gen 1', '3'], ['Gen.1', 'Gen.3']));
+        it('skips pure numbers', async () => {
+          await testRecognition('Gen 1 and 3 are 2 of those.', ['Gen 1', '3'], ['Gen.1', 'Gen.3']);
+        });
 
-        it('continues recognising partial references after a pure number', () =>
-          testRecognition(
+        it('continues recognising partial references after a pure number', async () => {
+          await testRecognition(
             '1) Gen 1:1 ... 2) verse 2',
             ['Gen 1:1', 'verse 2'],
             ['Gen.1.1', 'Gen.1.2']
-          ));
+          );
+        });
 
-        it('continues recognising partial references after an unrecognised reference', () =>
+        it('continues recognising partial references after an unrecognised reference', async () => {
           // This one would often lead to wrong results, if the unrecognised reference
-          // introduced a new book or chapter. In any case, a manual correction is needed.
-          testRecognition(
+          // introduced a new book or chapter. In any case, a manual correction is neasync eded.
+          await testRecognition(
             'Gen 1:1, verz 2 and verse 5',
             ['Gen 1:1', 'verse 5'],
             ['Gen.1.1', 'Gen.1.5']
-          ));
+          );
+        });
 
-        it('disregards partial references if they would be invalid after another reference', () =>
-          testRecognition(
+        it('disregards partial references if they would be invalid after another reference', async () => {
+          await testRecognition(
             `Romans 5:1–5; chapters 1–39 of Isaiah`,
             ['Romans 5:1–5'],
             ['Rom.5.1-Rom.5.5']
-          ));
+          );
+        });
 
-        it('only includes conjunction if directly adjacent', () =>
-          testRecognition(
+        it('only includes conjunction if directly adjacent', async () => {
+          await testRecognition(
             `Romans 1:1 and 2 found on page 3 and 4`,
             ['Romans 1:1 and 2'],
             ['Rom.1.1-Rom.1.2']
-          ));
+          );
+        });
 
-        it('works when reference contains html entities', () =>
-          testRecognition(
+        it('works when reference contains html entities', async () => {
+          await testRecognition(
             `Ze&shy;phan&shy;iah&nbsp;1:2, Ze&shy;phan&shy;iah&nbsp;3:4`,
             [
               /^Ze(\xad|&shy;)phan(\xad|&shy;)iah&nbsp;1:2$/,
               /^Ze(\xad|&shy;)phan(\xad|&shy;)iah&nbsp;3:4$/
             ], // Handled differently by browsers
             ['Zeph.1.2', 'Zeph.3.4']
-          ));
+          );
+        });
 
-        it('rejects date-like references to the book of Amos', () =>
-          testRecognition(
+        it('rejects date-like references to the book of Amos', async () => {
+          await testRecognition(
             'am 3 und am 3,1 sind Bibelstellen, aber "am 3. Januar" und am\xa04.1. sind Daten.',
             ['am 3', 'am 3,1'],
             ['Amos.3', 'Amos.3.1'],
             { language: 'de' }
-          ));
+          );
+        });
       });
 
       describe('workarounds for parser', () => {
         describe('spaces around chapter-verse separator', () => {
-          it('are interpreted correctly for comma and new verse expression', () =>
-            testRecognition(
+          it('are interpreted correctly for comma and new verse expression', async () => {
+            await testRecognition(
               'In Mt 1 &nbsp;, 3 und Verse 4, 5',
               ['Mt 1', '3', 'Verse 4, 5'],
               ['Matt.1', 'Matt.3', 'Matt.3.4-Matt.3.5'],
               { language: 'de' }
-            ));
+            );
+          });
         });
       });
 
       describe('with bx-passage', () => {
-        it('works for single reference', () =>
-          testRecognition(
+        it('works for single reference', async () => {
+          await testRecognition(
             `The <span bx-passage="Gen 1:1">next verse</span> shows...`,
             ['next verse'],
             ['Gen.1.1']
-          ));
+          );
+        });
 
-        it('provides context for next partial reference', () =>
-          testRecognition(
+        it('provides context for next partial reference', async () => {
+          await testRecognition(
             `<bx passage="Gen 1:1">1:1</bx> and verse 2...`,
             ['1:1', 'verse 2'],
             ['Gen.1.1', 'Gen.1.2']
-          ));
+          );
+        });
       });
 
       describe('with bx-context', () => {
-        it('works for reference with chapter', () =>
-          testRecognition(
+        it('works for reference with chapter', async () => {
+          await testRecognition(
             `<p data-bx-context="Matt 6">
               Check out verse 9 and then verse 10 (cf. Luke 11:2)
               and verse 11.
             </p>`,
             ['verse 9', 'verse 10', 'Luke 11:2', 'verse 11'],
             ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Matt.6.11']
-          ));
+          );
+        });
 
-        xit('works for reference without chapter', () =>
-          testRecognition(
+        xit('works for reference without chapter', async () => {
+          await testRecognition(
             `<p data-bx-context="Matt">
               Check out verse 9 and then 6:10 (cf. Luke 11:2)
               and verse 11.
             </p>`,
             ['verse 10', 'Luke 11:2', 'verse 11'],
             ['Matt.6.10', 'Luke.11.2', 'Matt.6.11']
-          ));
+          );
+        });
       });
 
       describe('with bx-skip', () => {
-        it('skips all variations of bx-skip and the default a', () =>
-          testRecognition(
+        it('skips all variations of bx-skip and the default a', async () => {
+          await testRecognition(
             `Gen 1
             <a>Gen 2</a>
             <bx-skip>Gen 3</bx-skip>
@@ -251,41 +266,46 @@ describe('Blinx', () => {
             `,
             ['Gen 1', 'Gen 5'],
             ['Gen.1', 'Gen.5']
-          ));
+          );
+        });
       });
     });
 
     describe('across nodes', () => {
       describe('without further attributes', () => {
-        it('works for node siblings with prefixed partial reference', () =>
-          testRecognition(
+        it('works for node siblings with prefixed partial reference', async () => {
+          await testRecognition(
             'Gen 1:2 <i>and</i> verse 3.',
             ['Gen 1:2', 'verse 3'],
             ['Gen.1.2', 'Gen.1.3']
-          ));
+          );
+        });
 
-        it('works for higher level nodes with chapter-verse partial reference', () =>
-          testRecognition(
+        it('works for higher level nodes with chapter-verse partial reference', async () => {
+          await testRecognition(
             '<b><i>Gen 1:2</i></b> and 3:4.',
             ['Gen 1:2', '3:4'],
             ['Gen.1.2', 'Gen.3.4']
-          ));
+          );
+        });
 
-        it('skips pure numbers', () =>
-          // This one would be nice to have, as 'Gen 1:2; 3' is recognised, but difficult to implement
-          testRecognition('<i>Gen 1:2</i>; 3.', ['Gen 1:2'], ['Gen.1.2']));
+        it('skips pure numbers', async () => {
+          // This one would be nice to have, as 'Gen 1:2; 3' is recognised, but difficult to implasync ement
+          await testRecognition('<i>Gen 1:2</i>; 3.', ['Gen 1:2'], ['Gen.1.2']);
+        });
       });
 
       describe('with bx-context', () => {
-        it('works for bx-context and data-bx-context & allows nesting', () =>
-          testRecognition(
+        it('works for bx-context and data-bx-context & allows nesting', async () => {
+          await testRecognition(
             `<p data-bx-context="Matt 6">
               Check out verse 9 and then verse 10 (cf. Luke 11:2 and <bx context="Lk 11">verse 3</bx>)
               and verse 11.
             </p>`,
             ['verse 9', 'verse 10', 'Luke 11:2', 'verse 3', 'verse 11'],
             ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Luke.11.3', 'Matt.6.11']
-          ));
+          );
+        });
       });
     });
 
@@ -295,8 +315,8 @@ describe('Blinx', () => {
         return;
       }
 
-      it('works for example-article-1', () =>
-        testRecognition(
+      it('works for example-article-1', async () => {
+        await testRecognition(
           getBodyHtml(require('./fixtures/example-article-1.html')),
           [
             'Offb\n    5,9-10',
@@ -401,10 +421,11 @@ describe('Blinx', () => {
             '1Tim.2.1'
           ],
           { language: 'de' }
-        ));
+        );
+      });
 
-      it('works for article-with-potential-false-positives', () =>
-        testRecognition(
+      it('works for article-with-potential-false-positives', async () => {
+        await testRecognition(
           getBodyHtml(require('./fixtures/article-with-potential-false-positives.html')),
           [
             'Genesis 1',
@@ -429,10 +450,11 @@ describe('Blinx', () => {
             '1Cor.15.21-1Cor.15.22'
           ],
           { language: 'de' }
-        ));
+        );
+      });
 
-      it('works for article-with-many-partial-references', () =>
-        testRecognition(
+      it('works for article-with-many-partial-references', async () => {
+        await testRecognition(
           getBodyHtml(require('./fixtures/article-with-many-partial-references.html')),
           [
             'Römer 7',
@@ -593,26 +615,26 @@ describe('Blinx', () => {
             'Rom.8'
           ],
           { language: 'de' }
-        ));
+        );
+      });
     });
   });
 
   describe('tooltip', () => {
-    it('is shown with text from getBible API', () =>
-      testRecognition('Gen 1:3', ['Gen 1:3'], ['Gen.1.3']).then((links) => {
-        // if (!(window as any).tippy.browser.supported) {
-        //   console.warn('Browser does not support tippy. Skipping second part of test');
-        //   return done();
-        // }
-        u(links.first() as Node).trigger('mouseenter');
-        // Wait until passage is displayed & checked displayed passage
-        return blinx.testability.passageDisplayed.then(() => {
-          const text = u('.bxPassageText').text().trim().replace(/\s+/g, ' ');
-          expect(text).toBe(
-            '1 3 God said, "Let there be light," and there was light. World English Bible'
-          );
-        });
-      }));
+    it('is shown with text from getBible API', async () => {
+      const [links, blinx] = await testRecognition('Gen 1:3', ['Gen 1:3'], ['Gen.1.3']);
+      // if (!(window as any).tippy.browser.supported) {
+      //   console.warn('Browser does not support tippy. Skipping second part of test');
+      //   return done();
+      // }
+      u(links.first() as Node).trigger('mouseenter');
+      // Wait until passage is displayed & checked displayed passage
+      await blinx.testability.passageDisplayed;
+      const text = u('.bxPassageText').text().trim().replace(/\s+/g, ' ');
+      expect(text).toBe(
+        '1 3 God said, "Let there be light," and there was light. World English Bible'
+      );
+    });
   });
 });
 
@@ -622,26 +644,25 @@ function getBodyHtml(html: string): string {
   return doc.getElementsByTagName('body')[0].innerHTML;
 }
 
-function testRecognition(
+async function testRecognition(
   html: string,
   expectedLinkLabels: (string | RegExp)[],
   expectedOsisPassages: string[],
   // Specify default options, as parser is not always destroyed between tests and can lead to wrong language
   options: Partial<Options> = new Options()
-): Promise<Umbrella.Instance> {
+): Promise<[Umbrella.Instance, Blinx]> {
   document.body.innerHTML = html;
-  blinx = loadBlinx(options);
+  const blinx = loadBlinx(options);
   // Wait until links & tooltips are applied & check linked passages
-  return blinx.testability.linksApplied.then(() => {
-    const links: Umbrella.Instance = u('[data-osis]');
-    const passages: string[] = [];
-    links.each((node) => passages.push(u(node).data('osis')));
-    links.array().forEach((link, pos) => {
-      expect(link).toMatch(expectedLinkLabels[pos] || '');
-    });
-    expect(passages).toEqual(expectedOsisPassages);
-    return links;
+  await blinx.testability.linksApplied;
+  const links: Umbrella.Instance = u('[data-osis]');
+  const passages: string[] = [];
+  links.each((node) => passages.push(u(node).data('osis')));
+  links.array().forEach((link, pos) => {
+    expect(link).toMatch(expectedLinkLabels[pos] || '');
   });
+  expect(passages).toEqual(expectedOsisPassages);
+  return [links, blinx];
 }
 
 function isIE9(): boolean {

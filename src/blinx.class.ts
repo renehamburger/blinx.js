@@ -222,8 +222,8 @@ export class Blinx {
             if (this.tippyPolyfills) {
               this.fixPopperPosition(tippyInstance);
             }
-            const osis = u(tippyInstance.reference).data('osis');
-            this.getTooltipContent(osis).then((text: string) => {
+            const osisRef = u(tippyInstance.reference).data('osis');
+            this.getTooltipContent(osisRef).then((text: string) => {
               u(template).find('.bxPassageText').html(text);
               this.passageDisplayedDeferred.resolve();
             });
@@ -490,7 +490,7 @@ export class Blinx {
         !('requestAnimationFrame' in window) ||
         !(
           'DOMTokenList' in this &&
-          (function (x) {
+          ((x) => {
             return 'classList' in x ? !x.classList.toggle('x', false) && !x.className : true;
           })(document.createElement('x'))
         )
