@@ -6,6 +6,9 @@
   "scripts": {
     "start": "webpack-dev-server --port 9000 --host 0.0.0.0 --inline --progress --profile --colors --watch --content-base src/",
     "build": "webpack --config webpack.config.js -p",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "format": "prettier \"**/*.*\" --write",
+    "format:check": "prettier \"**/*.*\" --check",
     "test": "karma start karma.config.js",
     "test-with-coverage": "npm run test -- -coverage",
     "test.chrome": "npm run test -- --browsers Chrome",
@@ -47,6 +50,7 @@
     "karma-jasmine": "^1.1.1",
     "karma-spec-reporter": "^0.0.32",
     "karma-typescript": "git+https://github.com/renehamburger/karma-typescript.git#bundled",
+    "prettier": "^2.0.5",
     "source-map-loader": "^0.2.3",
     "style-loader": "^0.20.3",
     "tsconfig-paths-webpack-plugin": "^2.0.0",

@@ -1,0 +1,14 @@
+# Ignore all but the file types below to ensure prettier cli and prettier extensions cover the same files
+*.*
+!*.css
+!*.html
+!*.js
+!*.json
+!*.md
+!*.ts
+!/.vscode
+
+# Actual ignores
+/assets
+/coverage
+/dist
