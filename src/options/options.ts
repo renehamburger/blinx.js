@@ -11,7 +11,8 @@ export class Options {
   /** Language code of the language to be used for the parser. */
   language: keyof Languages = 'en';
   /** Code of the bible version to be used, for the displayed Bible text and the online Bible being linked to. */
-  bibleVersion: BibleVersionCode | { bibleText: BibleVersionCode, onlineBible: BibleVersionCode } = 'en.ESV';
+  bibleVersion: BibleVersionCode | { bibleText: BibleVersionCode; onlineBible: BibleVersionCode } =
+    'en.ESV';
   /** Online Bible to be linked to. */
   onlineBible: OnlineBibleName = 'BibleServer';
   /** Online Bible to be linked to. */
@@ -52,7 +53,7 @@ export function getScriptTagOptions(): Partial<Options> {
   }
   // If user does not specify language in script tag, check whether he has inlcude a bcv_parser with a
   // single language already
-  if (!(opts.language)) {
+  if (!opts.language) {
     const language = Parser.getCurrentParserLanguage();
     if (language) {
       opts.language = language;

@@ -9,10 +9,7 @@
       }
     ],
     "no-empty": false,
-    "semicolon": [
-      true,
-      "always"
-    ],
+    "semicolon": [true, "always"],
     "space-before-function-paren": [
       true,
       {

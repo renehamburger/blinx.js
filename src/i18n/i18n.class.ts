@@ -6,7 +6,6 @@ export interface Translations {
 }
 
 export class I18n {
-
   private readonly translations: Translations = require('./translations.json');
   private languageCode: keyof Languages = 'en';
 
@@ -14,11 +13,12 @@ export class I18n {
     this.languageCode = languageCode;
   }
 
-  public translate<T extends Translations[string]= string>(
-    key: string, interpolations?: { [label: string]: string }
+  public translate<T extends Translations[string] = string>(
+    key: string,
+    interpolations?: { [label: string]: string }
   ): T {
-    let translation = (get(this.translations, `${this.languageCode}.${key}`)
-      || get(this.translations, `en.${key}`)) as string;
+    let translation = (get(this.translations, `${this.languageCode}.${key}`) ||
+      get(this.translations, `en.${key}`)) as string;
     if (interpolations) {
       translation = translation.replace(/\{\{ *(\w+) *\}\}/gi, (_match, label) => {
         if (label in interpolations) {

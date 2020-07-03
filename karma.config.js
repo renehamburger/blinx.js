@@ -1,7 +1,6 @@
 module.exports = function (karmaConfig) {
-
-  const withCoverage = process.argv.some(arg => /^-coverage$/.test(arg));
-  const isVerbose = process.argv.some(arg => /^-verbose$/.test(arg));
+  const withCoverage = process.argv.some((arg) => /^-coverage$/.test(arg));
+  const isVerbose = process.argv.some((arg) => /^-verbose$/.test(arg));
 
   const config = {
     /** maximum number of tries a browser will attempt in the case of a disconnection */
@@ -130,34 +129,31 @@ module.exports = function (karmaConfig) {
     },
 
     browsers: [
-      'winxp_chrome', 'winxp_firefox', 'winxp_opera',
-      'win7_ie9', 'win7_ie10', 'win7_ie11',
-      'win10_chrome', 'win10_firefox', 'win10_opera', 'win10_edge',
+      'winxp_chrome',
+      'winxp_firefox',
+      'winxp_opera',
+      'win7_ie9',
+      'win7_ie10',
+      'win7_ie11',
+      'win10_chrome',
+      'win10_firefox',
+      'win10_opera',
+      'win10_edge',
       //'osx_10_6_safari',
-      'osx_10_13_safari',
+      'osx_10_13_safari'
       //'iphone4s', 'ipad2', 'google_nexus'
     ],
 
-    frameworks: [
-      'jasmine',
-      'karma-typescript'
-    ],
+    frameworks: ['jasmine', 'karma-typescript'],
 
-    files: [
-      'src/**/!(languages).ts',
-      'src/**/!(promise).js'
-    ],
+    files: ['src/**/!(languages).ts', 'src/**/!(promise).js'],
 
     preprocessors: {
       'src/**/*.ts': ['karma-typescript'],
       'src/**/*.js': ['karma-typescript']
     },
 
-    reporters: [
-      'spec',
-      'BrowserStack',
-      'karma-typescript'
-    ],
+    reporters: ['spec', 'BrowserStack', 'karma-typescript'],
 
     karmaTypescriptConfig: {
       tsconfig: './tsconfig.json',
@@ -173,11 +169,11 @@ module.exports = function (karmaConfig) {
         instrumentation: true
       },
       reports: {
-        'lcovonly': {
-          'subdirectory': '',
-          'filename': 'lcov.info'
+        lcovonly: {
+          subdirectory: '',
+          filename: 'lcov.info'
         },
-        'html': 'coverage',
+        html: 'coverage',
         'text-summary': ''
       }
     });

@@ -32,7 +32,7 @@ CSS tabs (taken from https://codepen.io/Merri/pen/bytea/)
   vertical-align: bottom;
 }
 
-.tabs .tab > [type="radio"] {
+.tabs .tab > [type='radio'] {
   clip: rect(0 0 0 0);
   height: 1px;
   opacity: 0;
@@ -64,28 +64,31 @@ CSS tabs (taken from https://codepen.io/Merri/pen/bytea/)
   width: 100%;
 }
 
-.tabs .tab [type="radio"]:checked + .tab-label {
+.tabs .tab [type='radio']:checked + .tab-label {
   background: white;
   border-bottom-width: 0;
   padding-bottom: 11px;
   z-index: 1;
 }
 
-.tabs .tab [type="radio"]:checked ~ .tab-panel {
+.tabs .tab [type='radio']:checked ~ .tab-panel {
   display: inline;
 }
-
 
 /* UNIMPORTANT STYLES BEGIN HERE */
 
 html {
   background: #333;
-  color: #DDD;
+  color: #ddd;
   padding: 1em;
 }
 
-a:link,a:visited,a:hover,a:focus,a:active {
-  color: #58C;
+a:link,
+a:visited,
+a:hover,
+a:focus,
+a:active {
+  color: #58c;
 }
 
 label {
@@ -96,13 +99,17 @@ label {
   color: #222;
 }
 
-.tabs a:link,.tabs a:visited,.tabs a:hover,.tabs a:focus,.tabs a:active {
-  color: #36A;
+.tabs a:link,
+.tabs a:visited,
+.tabs a:hover,
+.tabs a:focus,
+.tabs a:active {
+  color: #36a;
 }
 
 body > h3 {
   font-variant: small-caps;
-  letter-spacing: .0625em;
+  letter-spacing: 0.0625em;
 }
 
 p {
@@ -110,19 +117,20 @@ p {
   max-width: 50em;
 }
 
-code,pre {
+code,
+pre {
   font-family: 'Lucida Console', monospace;
 }
 
 pre {
   background: #191919;
-  color: #8DA;
+  color: #8da;
   overflow-x: auto;
   padding: 1em;
 }
 
 p > code {
-  background: #DED;
+  background: #ded;
   margin: -2px;
   padding: 2px;
 }
@@ -133,18 +141,18 @@ p > code {
 }
 
 .for:after {
-  background: #DDD;
+  background: #ddd;
   bottom: 150%;
   color: #222;
   font-family: sans-serif;
   font-size: 12px;
   opacity: 0;
-  padding: .5em;
+  padding: 0.5em;
   pointer-events: none;
   position: absolute;
   right: 0;
-  -webkit-transition: opacity .2s ease-in-out;
-  transition: opacity .2s ease-in-out;
+  -webkit-transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
   white-space: nowrap;
 }
 
@@ -153,7 +161,7 @@ p > code {
 }
 
 .for.default-tab {
-  color: #8AD;
+  color: #8ad;
 }
 
 .for.default-tab:after {
@@ -163,7 +171,7 @@ p > code {
 /* and just for fun... */
 @media only screen and (max-width: 43em) {
   .tabs .tab > label {
-    background: #BBB;
+    background: #bbb;
     border-color: #999;
 
     -webkit-box-sizing: border-box;
@@ -171,10 +179,10 @@ p > code {
     box-sizing: border-box;
     width: 100%;
   }
-  .tabs .tab [type="radio"]:checked + .tab-label {
+  .tabs .tab [type='radio']:checked + .tab-label {
     background: #222;
     border-color: #444;
-    color: #DDD;
+    color: #ddd;
   }
 }
 

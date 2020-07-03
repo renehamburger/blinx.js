@@ -59,17 +59,19 @@ export class Parser {
         callback(true);
       }
     } else {
-      loadScript('https://cdn.jsdelivr.net/gh/renehamburger/' +
-        'Bible-Passage-Reference-Parser@99f0338587acb6eb8365c4ea6b48b9c52040ae90/js/' +
-        `${options.language}_bcv_parser.js`,
-        successful => {
+      loadScript(
+        'https://cdn.jsdelivr.net/gh/renehamburger/' +
+          'Bible-Passage-Reference-Parser@99f0338587acb6eb8365c4ea6b48b9c52040ae90/js/' +
+          `${options.language}_bcv_parser.js`,
+        (successful) => {
           if (successful) {
             this.initBcvParser(options);
           }
           if (callback) {
             callback(successful);
           }
-        });
+        }
+      );
     }
   }
 
@@ -88,7 +90,10 @@ export class Parser {
   }
 
   /** Wrapper for BCV's parse_with_context: @see BCV.parse_with_context() */
-  public parse_with_context(possibleReferenceWithPrefix: string, previousPassage: string): BCV.OsisAndIndices[] {
+  public parse_with_context(
+    possibleReferenceWithPrefix: string,
+    previousPassage: string
+  ): BCV.OsisAndIndices[] {
     const transformationInfos = this.transformTextForParsing(possibleReferenceWithPrefix);
     const transformedText = transformationInfos.slice(-1)[0].transformedText;
     this.bcv.parse_with_context(transformedText, previousPassage);
@@ -102,7 +107,9 @@ export class Parser {
     const transformationInfos: TextTransformationInfo[] = [];
     const currentText = () => transformationInfos.slice(-1)[0].transformedText;
     transformationInfos.push(transformUnsupportedCharacters(text));
-    transformationInfos.push(disambiguateSeparators(currentText(), chapterVerseSeparator, `[${spaces}]`));
+    transformationInfos.push(
+      disambiguateSeparators(currentText(), chapterVerseSeparator, `[${spaces}]`)
+    );
     return transformationInfos;
   }
 
@@ -122,7 +129,6 @@ export class Parser {
     }
     this._chapterVerseSeparator = options.parserOptions.punctuation_strategy === 'eu' ? ',' : ':';
   }
-
 }
 
 /**
@@ -132,15 +138,18 @@ export class Parser {
  * German example of ',' not being used as chapter-verse-separator: "Römer 1, 3, und 5".
  */
 export function disambiguateSeparators(
-  originalText: string, chapterVerseSeparator: string, spaces: string
+  originalText: string,
+  chapterVerseSeparator: string,
+  spaces: string
 ): TextTransformationInfo {
-  const separatorWithSpacesRegex =
-    new RegExp(
-      `(\\d)(${spaces}*${chapterVerseSeparator}${spaces}+|${spaces}+${chapterVerseSeparator}${spaces}*)(\\d)`,
-      'g');
+  const separatorWithSpacesRegex = new RegExp(
+    `(\\d)(${spaces}*${chapterVerseSeparator}${spaces}+|${spaces}+${chapterVerseSeparator}${spaces}*)(\\d)`,
+    'g'
+  );
   let accumulativeDelta = 0;
   const transformations: TextTransformationInfo['transformations'] = [];
-  const transformedText = originalText.replace(separatorWithSpacesRegex,
+  const transformedText = originalText.replace(
+    separatorWithSpacesRegex,
     (_substring, precedingDigit, oldString, followingDigit, offset) => {
       const newString = `;`;
       transformations.push({
@@ -183,7 +192,8 @@ export function transformUnsupportedCharacters(originalText: string): TextTransf
 
 /** Convert references based on transformed text back to references in original text  */
 export function adjustRefsToTransformations(
-  refs: BCV.OsisAndIndices[], transformationInfos: TextTransformationInfo[]
+  refs: BCV.OsisAndIndices[],
+  transformationInfos: TextTransformationInfo[]
 ): BCV.OsisAndIndices[] {
   for (const transformationInfo of transformationInfos) {
     for (const transformation of transformationInfo.transformations.reverse()) {
@@ -203,7 +213,7 @@ export function adjustRefsToTransformations(
 function filterReferences(refs: BCV.OsisAndIndices[], text: string): BCV.OsisAndIndices[] {
   const language = Parser.getCurrentParserLanguage();
   let skipNext = false;
-  return refs.filter(ref => {
+  return refs.filter((ref) => {
     if (skipNext) {
       skipNext = false;
       return false;

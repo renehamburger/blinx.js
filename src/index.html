@@ -1,54 +1,50 @@
 <html>
+  <head>
+    <title>Blinx.js demos</title>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+  </head>
 
-<head>
-  <title>Blinx.js demos</title>
-  <link rel="stylesheet" type="text/css" href="index.css">
-</head>
+  <body>
+    <div class="tabs">
+      <div class="tab">
+        <input class="tab-radio" type="radio" id="tab-1" name="tab-group-1" checked />
+        <label class="tab-label" for="tab-1">API-test</label>
+        <div class="tab-panel">
+          <div class="tab-content">
+            <iframe src="/fixtures/API-test.html"></iframe>
+          </div>
+        </div>
+      </div>
 
-<body>
-  <div class="tabs">
+      <div class="tab">
+        <input class="tab-radio" type="radio" id="tab-2" name="tab-group-1" />
+        <label class="tab-label" for="tab-2">Example article</label>
+        <div class="tab-panel">
+          <div class="tab-content">
+            <iframe src="/fixtures/example-article-1.html"></iframe>
+          </div>
+        </div>
+      </div>
 
-    <div class="tab">
-      <input class="tab-radio" type="radio" id="tab-1" name="tab-group-1" checked>
-      <label class="tab-label" for="tab-1">API-test</label>
-      <div class="tab-panel">
-        <div class="tab-content">
-          <iframe src="/fixtures/API-test.html"></iframe>
+      <div class="tab">
+        <input class="tab-radio" type="radio" id="tab-3" name="tab-group-1" />
+        <label class="tab-label" for="tab-3">Article with potential false positives</label>
+        <div class="tab-panel">
+          <div class="tab-content">
+            <iframe src="/fixtures/article-with-potential-false-positives.html"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab">
+        <input class="tab-radio" type="radio" id="tab-4" name="tab-group-1" />
+        <label class="tab-label" for="tab-4">Article with many partial references</label>
+        <div class="tab-panel">
+          <div class="tab-content">
+            <iframe src="/fixtures/article-with-many-partial-references.html"></iframe>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="tab">
-      <input class="tab-radio" type="radio" id="tab-2" name="tab-group-1">
-      <label class="tab-label" for="tab-2">Example article</label>
-      <div class="tab-panel">
-        <div class="tab-content">
-          <iframe src="/fixtures/example-article-1.html"></iframe>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab">
-      <input class="tab-radio" type="radio" id="tab-3" name="tab-group-1">
-      <label class="tab-label" for="tab-3">Article with potential false positives</label>
-      <div class="tab-panel">
-        <div class="tab-content">
-          <iframe src="/fixtures/article-with-potential-false-positives.html"></iframe>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab">
-      <input class="tab-radio" type="radio" id="tab-4" name="tab-group-1">
-      <label class="tab-label" for="tab-4">Article with many partial references</label>
-      <div class="tab-panel">
-        <div class="tab-content">
-          <iframe src="/fixtures/article-with-many-partial-references.html"></iframe>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</body>
-
+  </body>
 </html>

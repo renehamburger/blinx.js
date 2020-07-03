@@ -1,7 +1,7 @@
 export type BibleBook = keyof BibleBooks;
 
 export type BibleBooksInterface = {
-  [P in BibleBook]: BibleBookInfo
+  [P in BibleBook]: BibleBookInfo;
 };
 
 export interface BibleBookInfo {

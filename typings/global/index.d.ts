@@ -10,7 +10,7 @@ interface Window {
 declare let module: { exports: any };
 declare const require: (module: string) => any;
 
-declare module 'src/lib/promise.js' { }
+declare module 'src/lib/promise.js' {}
 
 interface ObjectConstructor {
   values<T = any>(obj: {}): T[];

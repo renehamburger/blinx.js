@@ -8,18 +8,20 @@ interface VerseResponse {
   type: 'verse';
   version: string;
   direction: 'LTR' | 'RTL';
-  book: [{
-    book_ref: string;
-    book_name: string;
-    book_nr: number | string;
-    chapter_nr: number | string;
-    chapter: {
-      [key: string]: {
-        verse_nr: number | string;
-        verse: string;
-      }
-    };
-  }];
+  book: [
+    {
+      book_ref: string;
+      book_name: string;
+      book_nr: number | string;
+      chapter_nr: number | string;
+      chapter: {
+        [key: string]: {
+          verse_nr: number | string;
+          verse: string;
+        };
+      };
+    }
+  ];
 }
 
 interface ChapterResponse {
@@ -33,14 +35,13 @@ interface ChapterResponse {
     [key: string]: {
       verse_nr: number | string;
       verse: string;
-    }
+    };
   };
 }
 
 type Response = VerseResponse | ChapterResponse;
 
 export class GetBibleBibleApi extends BibleApi {
-
   public readonly title = 'getBible.net';
   public readonly url = 'https://getbible.net/api';
 
@@ -171,8 +172,11 @@ export class GetBibleBibleApi extends BibleApi {
 
   public getPassage(osis: string, bibleVersion: BibleVersionCode): Promise<string> {
     return executeJsonp<Response>(
-      `https://getbible.net/json?p=${this.getPassageFromOsis(osis)}&v=${this.bibleVersionMap[bibleVersion]}`, 'getbible'
-    ).then(result => {
+      `https://getbible.net/json?p=${this.getPassageFromOsis(osis)}&v=${
+        this.bibleVersionMap[bibleVersion]
+      }`,
+      'getbible'
+    ).then((result) => {
       let output = '';
       if (result.type === 'verse') {
         for (let bookObject of result.book) {
@@ -217,13 +221,14 @@ export class GetBibleBibleApi extends BibleApi {
         `${book}.${ref.start.chapter}.${ref.start.verse || 1}-${book}.${ref.start.chapter}.999`
       );
       for (let chapter = ref.start.chapter + 1; chapter < ref.end.chapter; chapter++) {
-        passageString += ';' + this.getSinglePassageFromOsis(
-          `${book}.${chapter}.1-${book}.${chapter}.999`
-        );
+        passageString +=
+          ';' + this.getSinglePassageFromOsis(`${book}.${chapter}.1-${book}.${chapter}.999`);
       }
-      passageString += ';' + this.getSinglePassageFromOsis(
-        `${book}.${ref.end.chapter}.1-${book}.${ref.end.chapter}.${ref.end.verse || 999}`
-      );
+      passageString +=
+        ';' +
+        this.getSinglePassageFromOsis(
+          `${book}.${ref.end.chapter}.1-${book}.${ref.end.chapter}.${ref.end.verse || 999}`
+        );
     } else {
       passageString = this.getSinglePassageFromOsis(osis);
     }

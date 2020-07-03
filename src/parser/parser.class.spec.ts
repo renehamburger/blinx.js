@@ -1,9 +1,12 @@
-import { TextTransformationInfo, adjustRefsToTransformations, disambiguateSeparators, transformUnsupportedCharacters } from 'src/parser/parser.class';
+import {
+  TextTransformationInfo,
+  adjustRefsToTransformations,
+  disambiguateSeparators,
+  transformUnsupportedCharacters
+} from 'src/parser/parser.class';
 
 describe('Parser', () => {
-
   describe('transformTextForParsing()', () => {
-
     it('disambiguates separators', () => {
       const theOriginalText = '1,2|1 ,2|1, 2|21  ,  23|1 \xa0, 2';
       //                       012345678901234567890123456   789
@@ -30,11 +33,9 @@ describe('Parser', () => {
         { oldStart: 3, newStart: 2, oldString: '\xad', newString: '' }
       ]);
     });
-
   });
 
   describe('convertRefsBasedOnTransformedTextToOriginalText()', () => {
-
     it('works', () => {
       const transformationInfo: TextTransformationInfo = {
         //     oldText:  'abbbcbbbd'
@@ -58,7 +59,5 @@ describe('Parser', () => {
         { indices: [6, 8], osis: '', translations: [] }
       ]);
     });
-
   });
-
 });

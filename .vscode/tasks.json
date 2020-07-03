@@ -8,12 +8,7 @@
   "tasks": [
     {
       "taskName": "test",
-      "args": [
-        "-w",
-        "-p",
-        "./tsconfig.json",
-        "--noEmit"
-      ],
+      "args": ["-w", "-p", "./tsconfig.json", "--noEmit"],
       "showOutput": "silent",
       "problemMatcher": "$tsc-watch",
       "isBackground": true,
