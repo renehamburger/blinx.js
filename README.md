@@ -156,9 +156,15 @@ In Genesis 1:1 and in the <bx passage="Gen 1:2">following verse</bx>...
 
 blinx.js is based on the amazingly comprehensive [Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser). It's shorter, internal name is 'BCV (=BookChapterVerse) Parser'. It is apparently able to parse Bible references for currently 23 different languages, covered by tests, and support for further languages can be added easily in that repository.
 
+## Creating a snapshot of all Bible references on a website with the blinx-cli
+
+[blinx-cli](https://github.com/renehamburger/blinx-cli) is a Node.js project that can be used to scan a complete website for all blinx.js-generated Bible links, which are saved as a JSON file per page. This can be very useful for creating a snapshot before upgrading to a signficantly different version of blinx.js.
+
+At a later stage blinx-cli may include the generation of an Bible reference index page with links to the pages where those references are used. 
+
 ## How to contribute
 
-This library itself is almost feature-complete for the browser. See the [roadmap](../projects/1) for possible next steps. PRs are welcome, especially for support for new languages, Online bibles or Bible APIs.
+This library itself is almost feature-complete for the browser. See the [roadmap](../projects/1) for possible next steps. PRs are welcome, especially for support for new languages, online Bibles or Bible APIs.
 
 The build process should be straight forward:
 
@@ -168,7 +174,7 @@ The build process should be straight forward:
 
 Any PR will also be built and unit-tested by Travis CI.
 
-Theres also more work to be done on the underlying [Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser).
+There is also more work to be done on the underlying [Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser).
 
 ## Known issues
 
