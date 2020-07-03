@@ -1,6 +1,5 @@
 import { Blinx } from 'src/blinx.class';
 import { u } from 'src/lib/u.js';
-import { Options } from 'src/options/options';
 import { testRecognition, isIE9, getBodyHtml } from './test-helpers/test-helpers';
 
 describe('Blinx', () => {
