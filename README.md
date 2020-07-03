@@ -27,7 +27,7 @@ For now, the script can be included directly from GitHub via the jsdelivr CDN, e
 
 ```html
 <script
-  src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.3.16/dist/blinx.js"
+  src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.4.0/dist/blinx.js"
   defer
   data-blinx="{
   language: 'de'
@@ -45,7 +45,7 @@ blinx.js loads several resources it requires dynamically and asynchronously. To 
   defer
 ></script>
 <script
-  src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.3.16/dist/blinx.js"
+  src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.4.0/dist/blinx.js"
   defer
 ></script>
 ```

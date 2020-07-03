@@ -1,6 +1,6 @@
 {
   "name": "blinx.js",
-  "version": "0.3.16",
+  "version": "0.4.0",
   "description": "A multi-language client-side library to automatically convert Bible references to Bible links with passage pop-ups",
   "main": "dist/blinx.js",
   "scripts": {
