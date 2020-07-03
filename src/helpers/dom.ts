@@ -3,7 +3,10 @@ let uniqueNumber = 0;
 /** Load script for the given url dynamically & asynchronously */
 export function loadScript(url: string, callback: (succesful: boolean) => void): void;
 export function loadScript(url: string): Promise<void>;
-export function loadScript(url: string, callback?: (succesful: boolean) => void): Promise<void> | void {
+export function loadScript(
+  url: string,
+  callback?: (succesful: boolean) => void
+): Promise<void> | void {
   const script = document.createElement('script');
   // Add unique qualifier to prevent caching by IE10, which leads to onload not being called the second time.
   // (This happens in specs if the parser language is changed from 'en' to 'de' and then back to 'en')

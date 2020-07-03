@@ -1,5 +1,4 @@
 declare namespace Umbrella {
-
   type Selector = string | Node | NodeList | Node[] | Instance;
 
   interface Dimensions {
@@ -76,7 +75,9 @@ declare namespace Umbrella {
 
     last(): Node | false;
 
-    map(iterator: (node: Node, index: number) => false | Node | string | Node[] | string[] | Instance): Instance;
+    map(
+      iterator: (node: Node, index: number) => false | Node | string | Node[] | string[] | Instance
+    ): Instance;
 
     not(a: any): Instance;
 
@@ -126,22 +127,24 @@ declare namespace Umbrella {
     wrap(a: any): Instance;
   }
 
-
   interface AjaxOptions {
     method?: 'GET' | 'POST';
     body?: string;
     headers?: { [key: string]: string };
   }
 
-
   type AjaxAfter = (err: Error | null, data: object | string | null, xhr?: XMLHttpRequest) => void;
 
   type AjaxBefore = (xhr: XMLHttpRequest) => void;
 
-  type Ajax = (url: string, options?: AjaxOptions, after?: AjaxAfter, before?: AjaxBefore) => XMLHttpRequest;
+  type Ajax = (
+    url: string,
+    options?: AjaxOptions,
+    after?: AjaxAfter,
+    before?: AjaxBefore
+  ) => XMLHttpRequest;
 }
 
 declare module 'src/lib/u.js' {
   export const u: (selector?: Umbrella.Selector, scope?: Umbrella.Selector) => Umbrella.Instance;
 }
-

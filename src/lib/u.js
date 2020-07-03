@@ -37,7 +37,7 @@ var u = function (parameter, context) {
 
 // Map u(...).length to u(...).nodes.length
 u.prototype = {
-  get length () {
+  get length() {
     return this.nodes.length;
   }
 };
@@ -52,7 +52,6 @@ u.prototype.nodes = [];
 //     el.classList.add(name);
 //   });
 // };
-
 
 // [INTERNAL USE ONLY]
 // Add text in the specified position. It is used by other functions
@@ -71,20 +70,20 @@ u.prototype.adjacent = function (html, data, callback) {
     var fragment = document.createDocumentFragment();
 
     // Allow for data to be falsy and still loop once
-    u(data || {}).map(function (el, i) {
-      // Allow for callbacks that accept some data
-      var part = (typeof html === 'function') ? html.call(this, el, i, node, j) : html;
+    u(data || {})
+      .map(function (el, i) {
+        // Allow for callbacks that accept some data
+        var part = typeof html === 'function' ? html.call(this, el, i, node, j) : html;
 
-      if (typeof part === 'string') {
-        return this.generate(part);
-      }
+        if (typeof part === 'string') {
+          return this.generate(part);
+        }
 
-      return u(part);
-    }).each(function (n) {
-      this.isInPage(n)
-        ? fragment.appendChild(u(n).clone().first())
-        : fragment.appendChild(n);
-    });
+        return u(part);
+      })
+      .each(function (n) {
+        this.isInPage(n) ? fragment.appendChild(u(n).clone().first()) : fragment.appendChild(n);
+      });
 
     callback.call(this, node, fragment);
   });
@@ -96,7 +95,6 @@ u.prototype.adjacent = function (html, data, callback) {
 //     node.parentNode.insertBefore(fragment, node.nextSibling);
 //   });
 // };
-
 
 // // Create a HTTP request for whenever the matched form submits
 // u.prototype.ajax = function (done, before) {
@@ -110,14 +108,12 @@ u.prototype.adjacent = function (html, data, callback) {
 //   });
 // };
 
-
 // Add some html as a child at the end of each of the matched elements.
 u.prototype.append = function (html, data) {
   return this.adjacent(html, data, function (node, fragment) {
     node.appendChild(fragment);
   });
 };
-
 
 // [INTERNAL USE ONLY]
 
@@ -135,11 +131,13 @@ u.prototype.args = function (args, node, i) {
   }
 
   // Then convert that string to an array of not-null strings
-  return args.toString().split(/[\s,]+/).filter(function (e) {
-    return e.length;
-  });
+  return args
+    .toString()
+    .split(/[\s,]+/)
+    .filter(function (e) {
+      return e.length;
+    });
 };
-
 
 // Merge all of the nodes that the callback return into a simple array
 u.prototype.array = function (callback) {
@@ -159,7 +157,6 @@ u.prototype.array = function (callback) {
   }, []);
 };
 
-
 // [INTERNAL USE ONLY]
 
 // Handle attributes for the matched elements
@@ -168,13 +165,17 @@ u.prototype.attr = function (name, value, data) {
 
   // This will handle those elements that can accept a pair with these footprints:
   // .attr('a'), .attr('a', 'b'), .attr({ a: 'b' })
-  return this.pairs(name, value, function (node, name) {
-    return node.getAttribute(data + name);
-  }, function (node, name, value) {
-    node.setAttribute(data + name, value);
-  });
+  return this.pairs(
+    name,
+    value,
+    function (node, name) {
+      return node.getAttribute(data + name);
+    },
+    function (node, name, value) {
+      node.setAttribute(data + name, value);
+    }
+  );
 };
-
 
 // Add some html before each of the matched elements.
 // u.prototype.before = function (html, data) {
@@ -183,14 +184,12 @@ u.prototype.attr = function (name, value, data) {
 //   });
 // };
 
-
 // Get the direct children of all of the nodes with an optional filter
 u.prototype.children = function (selector) {
   return this.map(function (node) {
     return this.slice(node.children);
   }).filter(selector);
 };
-
 
 /**
  * Deep clone a DOM node and its descendants.
@@ -264,7 +263,6 @@ u.prototype.mirror = {};
 //   }
 // };
 
-
 // Find the first ancestor that matches the selector for each node
 u.prototype.closest = function (selector) {
   return this.map(function (node) {
@@ -277,12 +275,10 @@ u.prototype.closest = function (selector) {
   });
 };
 
-
 // Handle data-* attributes for the matched elements
 u.prototype.data = function (name, value) {
   return this.attr(name, value, true);
 };
-
 
 // Loops through every node from the current call
 u.prototype.each = function (callback) {
@@ -292,7 +288,6 @@ u.prototype.each = function (callback) {
 
   return this;
 };
-
 
 // [INTERNAL USE ONLY]
 // Loop through the combination of every node and every argument passed
@@ -307,7 +302,6 @@ u.prototype.eacharg = function (args, callback) {
   });
 };
 
-
 // Remove all children of the matched nodes from the DOM.
 // u.prototype.empty = function () {
 //   return this.each(function (node) {
@@ -316,7 +310,6 @@ u.prototype.eacharg = function (args, callback) {
 //     }
 //   });
 // };
-
 
 // .filter(selector)
 // Delete all of the nodes that don't pass the selector
@@ -337,14 +330,13 @@ u.prototype.filter = function (selector) {
   // filter() receives an instance of Umbrella as in .filter(u('a'))
   if (selector instanceof u) {
     callback = function (node) {
-      return (selector.nodes).indexOf(node) !== -1;
+      return selector.nodes.indexOf(node) !== -1;
     };
   }
 
   // Just a native filtering function for ultra-speed
   return u(this.nodes.filter(callback));
 };
-
 
 // Find all the nodes children of the current ones matched by a selector
 u.prototype.find = function (selector) {
@@ -353,12 +345,10 @@ u.prototype.find = function (selector) {
   });
 };
 
-
 // Get the first of the nodes
 u.prototype.first = function () {
   return this.nodes[0] || false;
 };
-
 
 // Perform ajax calls
 /* eslint-disable no-unused-vars*/
@@ -427,7 +417,6 @@ u.prototype.first = function () {
 // }
 /* eslint-enable no-unused-vars*/
 
-
 // [INTERNAL USE ONLY]
 // Parse JSON without throwing an error
 /* eslint-disable no-unused-vars*/
@@ -445,7 +434,6 @@ u.prototype.first = function () {
 //   return false;
 // }
 /* eslint-enable no-unused-vars*/
-
 
 // [INTERNAL USE ONLY]
 // Generate a fragment of HTML. This irons out the inconsistences
@@ -475,13 +463,11 @@ u.prototype.generate = function (html) {
 //   return this.on.apply(this, args);
 // };
 
-
 // // Find out whether the matched elements have a class or not
 // u.prototype.hasClass = function () {
 //   // Check if any of them has all of the classes
 //   return this.is('.' + this.args(arguments).join('.'));
 // };
-
 
 // Set or retrieve the html from the matched node(s)
 u.prototype.html = function (text) {
@@ -498,12 +484,10 @@ u.prototype.html = function (text) {
   });
 };
 
-
 // Check whether any of the nodes matches the selector
 u.prototype.is = function (selector) {
   return this.filter(selector).length > 0;
 };
-
 
 /**
  * Internal use only. This function checks to see if an element is in the page's body. As contains is inclusive and determining if the body contains itself isn't the intention of isInPage this case explicitly returns false.
@@ -511,8 +495,8 @@ https://developer.mozilla.org/en-US/docs/Web/API/Node/contains
  * @param  {[Object]}  node DOM node
  * @return {Boolean}        The Node.contains() method returns a Boolean value indicating whether a node is a descendant of a given node or not.
  */
-u.prototype.isInPage = function isInPage (node) {
-  return (node === document.body) ? false : document.body.contains(node);
+u.prototype.isInPage = function isInPage(node) {
+  return node === document.body ? false : document.body.contains(node);
 };
 
 //   // Get the last of the nodes
@@ -520,12 +504,10 @@ u.prototype.isInPage = function isInPage (node) {
 //   return this.nodes[this.length - 1] || false;
 // };
 
-
 // Merge all of the nodes that the callback returns
 u.prototype.map = function (callback) {
   return callback ? u(this.array(callback)).unique() : this;
 };
-
 
 // Delete all of the nodes that equals the filter
 u.prototype.not = function (filter) {
@@ -533,7 +515,6 @@ u.prototype.not = function (filter) {
     return !u(node).is(filter || true);
   });
 };
-
 
 // Removes the callback to the event listener for each node
 u.prototype.off = function (events) {
@@ -544,25 +525,26 @@ u.prototype.off = function (events) {
   });
 };
 
-
 // Attach a callback to the specified events
 u.prototype.on = function (events, cb, cb2) {
   if (typeof cb === 'string') {
     var sel = cb;
     cb = function (e) {
       var args = arguments;
-      u(e.currentTarget).find(sel).each(function (target) {
-        if (target === e.target || target.contains(e.target)) {
-          try {
-            Object.defineProperty(e, 'currentTarget', {
-              get: function () {
-                return target;
-              }
-            });
-          } catch (err) {}
-          cb2.apply(target, args);
-        }
-      });
+      u(e.currentTarget)
+        .find(sel)
+        .each(function (target) {
+          if (target === e.target || target.contains(e.target)) {
+            try {
+              Object.defineProperty(e, 'currentTarget', {
+                get: function () {
+                  return target;
+                }
+              });
+            } catch (err) {}
+            cb2.apply(target, args);
+          }
+        });
     };
   }
 
@@ -580,7 +562,6 @@ u.prototype.on = function (events, cb, cb2) {
     node._e[event].push(callback);
   });
 };
-
 
 // [INTERNAL USE ONLY]
 
@@ -623,14 +604,12 @@ u.prototype.pairs = function (name, value, get, set) {
 //   }).filter(selector);
 // };
 
-
 // // Add nodes at the beginning of each node
 // u.prototype.prepend = function (html, data) {
 //   return this.adjacent(html, data, function (node, fragment) {
 //     node.insertBefore(fragment, node.firstChild);
 //   });
 // };
-
 
 // // Delete the matched nodes from the DOM
 // u.prototype.remove = function () {
@@ -643,7 +622,6 @@ u.prototype.pairs = function (name, value, get, set) {
 //   });
 // };
 
-
 // // Removes a class from all of the matched nodes
 // u.prototype.removeClass = function () {
 //   // Loop the combination of each node with each argument
@@ -652,7 +630,6 @@ u.prototype.pairs = function (name, value, get, set) {
 //     el.classList.remove(name);
 //   });
 // };
-
 
 // // Replace the matched elements with the passed argument.
 // u.prototype.replace = function (html, data) {
@@ -664,13 +641,11 @@ u.prototype.pairs = function (name, value, get, set) {
 //   return u(nodes);
 // };
 
-
 // // Scroll to the first matched element
 // u.prototype.scroll = function () {
 //   this.first().scrollIntoView({ behavior: 'smooth' });
 //   return this;
 // };
-
 
 // [INTERNAL USE ONLY]
 // Select the adecuate part from the context
@@ -685,7 +660,7 @@ u.prototype.select = function (parameter, context) {
   for (var key in this.selectors) {
     // Reusing it to save space
     context = key.split('/');
-    if ((new RegExp(context[1], context[2])).test(parameter)) {
+    if (new RegExp(context[1], context[2]).test(parameter)) {
       return this.selectors[key](parameter);
     }
   }
@@ -722,7 +697,6 @@ u.prototype.selectors[/^</] = function (param) {
   return u().generate(param);
 };
 
-
 // // Convert forms into a string able to be submitted
 // // Original source: http://stackoverflow.com/q/11661187
 // u.prototype.serialize = function () {
@@ -751,18 +725,15 @@ u.prototype.selectors[/^</] = function (param) {
 //   }, '').slice(1);
 // };
 
-
 // // Travel the matched elements at the same level
 // u.prototype.siblings = function (selector) {
 //   return this.parent().children(selector).not(this);
 // };
 
-
 // // Find the size of the first matched element
 // u.prototype.size = function () {
 //   return this.first().getBoundingClientRect();
 // };
-
 
 // [INTERNAL USE ONLY]
 
@@ -770,15 +741,17 @@ u.prototype.selectors[/^</] = function (param) {
 // http://toddmotto.com/a-comprehensive-dive-into-nodelists-arrays-converting-nodelists-and-understanding-the-dom/
 u.prototype.slice = function (pseudo) {
   // Check that it's not a valid object
-  if (!pseudo ||
-      pseudo.length === 0 ||
-      typeof pseudo === 'string' ||
-      pseudo.toString() === '[object Function]') return [];
+  if (
+    !pseudo ||
+    pseudo.length === 0 ||
+    typeof pseudo === 'string' ||
+    pseudo.toString() === '[object Function]'
+  )
+    return [];
 
   // Accept also a u() object (that has .nodes)
   return pseudo.length ? [].slice.call(pseudo.nodes || pseudo) : [pseudo];
 };
-
 
 // [INTERNAL USE ONLY]
 
@@ -795,7 +768,6 @@ u.prototype.slice = function (pseudo) {
 //   };
 // };
 
-
 // Set or retrieve the text content from the matched node(s)
 u.prototype.text = function (text) {
   // Needs to check undefined as it might be ""
@@ -811,7 +783,6 @@ u.prototype.text = function (text) {
   });
 };
 
-
 // // Activate/deactivate classes in the elements
 // u.prototype.toggleClass = function (classes, addOrRemove) {
 //   /* jshint -W018 */
@@ -826,7 +797,6 @@ u.prototype.text = function (text) {
 //     el.classList.toggle(name);
 //   });
 // };
-
 
 // Call an event manually on all the nodes
 u.prototype.trigger = function (events) {
@@ -854,10 +824,12 @@ u.prototype.trigger = function (events) {
 
 // Removed duplicated nodes, used for some specific methods
 u.prototype.unique = function () {
-  return u(this.nodes.reduce(function (clean, node) {
-    var istruthy = node !== null && node !== undefined && node !== false;
-    return (istruthy && clean.indexOf(node) === -1) ? clean.concat(node) : clean;
-  }, []));
+  return u(
+    this.nodes.reduce(function (clean, node) {
+      var istruthy = node !== null && node !== undefined && node !== false;
+      return istruthy && clean.indexOf(node) === -1 ? clean.concat(node) : clean;
+    }, [])
+  );
 };
 
 // [INTERNAL USE ONLY]
@@ -867,9 +839,8 @@ u.prototype.unique = function () {
 //   return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');
 // };
 
-
 u.prototype.wrap = function (selector) {
-  function findDeepestNode (node) {
+  function findDeepestNode(node) {
     while (node.firstElementChild) {
       node = node.firstElementChild;
     }
@@ -881,12 +852,9 @@ u.prototype.wrap = function (selector) {
   // 3) append cloned dom node to constructed node based on selector
   return this.map(function (node) {
     return u(selector).each(function (n) {
-      findDeepestNode(n)
-        .append(node.cloneNode(true));
+      findDeepestNode(n).append(node.cloneNode(true));
 
-      node
-        .parentNode
-        .replaceChild(n, node);
+      node.parentNode.replaceChild(n, node);
     });
   });
 };
@@ -894,7 +862,7 @@ u.prototype.wrap = function (selector) {
 // Export it for webpack
 if (typeof module === 'object' && module.exports) {
   module.exports = {
-    u: u,
+    u: u
     //ajax: ajax
   };
 }

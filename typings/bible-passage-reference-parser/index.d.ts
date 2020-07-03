@@ -1,7 +1,5 @@
 declare namespace BCV {
-
   export class Parser {
-
     public readonly languages: string[];
 
     public readonly regexps: {
@@ -21,7 +19,7 @@ declare namespace BCV {
         extra: string;
         regexp: RegExp;
       }[];
-    }
+    };
 
     /** This function does the parsing. It returns the `bcv` object and is suitable for chaining.*/
     parse(text: string): this;
@@ -69,7 +67,9 @@ declare namespace BCV {
     osis_compaction_strategy?: ReferenceType /*= 'b'*/;
     passage_existence_strategy?: string /*= 'bcv'*/;
     ps151_strategy?: 'c' | 'b' /*= 'c'*/;
-    punctuation_strategy?: 'us' | 'eu' /* Default usually 'us', but for German parser 'eu' due to https://github.com/openbibleinfo/Bible-Passage-Reference-Parser/issues/10#issuecomment-365587223. */;
+    punctuation_strategy?:
+      | 'us'
+      | 'eu' /* Default usually 'us', but for German parser 'eu' due to https://github.com/openbibleinfo/Bible-Passage-Reference-Parser/issues/10#issuecomment-365587223. */;
     sequence_combination_strategy?: 'combine' | 'separate' /*= 'combine'*/;
     single_chapter_1_strategy?: 'chapter' | 'verse' /*= 'chapter'*/;
     versification_system?: Versification;
@@ -88,28 +88,32 @@ declare namespace BCV {
   }
 
   interface ParsedEntity {
-    "osis": string;
-    "indices": Indices;
-    "translations": string[];
-    "entity_id": number;
-    "entities": [{
-      "osis": string;
-      "type": ReferenceType;
-      "indices": Indices;
-      "translations": string[];
-      "start": ReferencePoint;
-      "end": ReferencePoint;
-      "enclosed_indices": Indices;
-      "entity_id": number;
-      "entities": [{
-        "start": ReferencePoint;
-        "end": ReferencePoint;
-        "valid": { "valid": boolean; "messages": object };
-        "type": ReferenceType;
-        "absolute_indices": Indices;
-        "enclosed_absolute_indices": Indices
-      }]
-    }]
+    osis: string;
+    indices: Indices;
+    translations: string[];
+    entity_id: number;
+    entities: [
+      {
+        osis: string;
+        type: ReferenceType;
+        indices: Indices;
+        translations: string[];
+        start: ReferencePoint;
+        end: ReferencePoint;
+        enclosed_indices: Indices;
+        entity_id: number;
+        entities: [
+          {
+            start: ReferencePoint;
+            end: ReferencePoint;
+            valid: { valid: boolean; messages: object };
+            type: ReferenceType;
+            absolute_indices: Indices;
+            enclosed_absolute_indices: Indices;
+          }
+        ];
+      }
+    ];
   }
 
   interface TranslationInfo {
@@ -121,7 +125,11 @@ declare namespace BCV {
 
   type Indices = [number, number];
 
-  interface ReferencePoint { "b": string, "c": number, "v": number }
+  interface ReferencePoint {
+    b: string;
+    c: number;
+    v: number;
+  }
 }
 
 interface Window {

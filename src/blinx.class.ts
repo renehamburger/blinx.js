@@ -12,13 +12,18 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { getBibleApi } from 'src/bible/bible-api/bible-api-overview';
 import { Bible } from 'src/bible/bible.class';
 import { transformOsis, truncateMultiBookOsis, TransformOsisOptions } from 'src/helpers/osis';
-import { BX_SKIP_SELECTORS, BX_PASSAGE_SELECTORS, BX_CONTEXT_SELECTORS, BX_SELECTORS } from 'src/options/selectors.const';
+import {
+  BX_SKIP_SELECTORS,
+  BX_PASSAGE_SELECTORS,
+  BX_CONTEXT_SELECTORS,
+  BX_SELECTORS
+} from 'src/options/selectors.const';
 import './css/blinx.css'; // relative path is needed here!
 import { I18n } from 'src/i18n/i18n.class';
 
 //#region: Closure for constants & caches
-const isVerbose = window.__karma__ &&
-  window.__karma__.config.args.some((arg: string) => arg === 'verbose');
+const isVerbose =
+  window.__karma__ && window.__karma__.config.args.some((arg: string) => arg === 'verbose');
 
 const DEBUG = {
   performance: isVerbose,
@@ -39,7 +44,6 @@ export interface Testability {
 
 //#region Class definition
 export class Blinx {
-
   public static log(...args: any[]) {
     if (DEBUG.logging) {
       console.log(...args);
@@ -81,7 +85,7 @@ export class Blinx {
   private tippyPolyfills = false;
   private tippyPolyfillInterval = 0;
   /** Last recognised passage during DOM traversal. Later on, a threshhold on nodeDistances might make sense. */
-  private previousPassage: { ref: BCV.OsisAndIndices, nodeDistance: number } | null = null;
+  private previousPassage: { ref: BCV.OsisAndIndices; nodeDistance: number } | null = null;
   private selectorTests: { [selector: string]: boolean } = {};
 
   /** Initialise blinx. */
@@ -112,7 +116,7 @@ export class Blinx {
   }
 
   /** Execute a parse for the given options. */
-  public execute(): void {
+  public async execute() {
     Blinx.time('execute()');
     Blinx.time('execute() - determine textNodes');
     // Search within all whitelisted selectors
@@ -121,10 +125,11 @@ export class Blinx {
     let textNodes = extractOrderedTextNodesFromNodes(nodes);
     // Exclude blacklisted selectors; this could probably be done in a more performant way
     if (this.isSelectorPresent(this.getBlacklistSelector())) {
-      textNodes = textNodes.filter(textNode => {
+      textNodes = textNodes.filter((textNode) => {
         if (textNode.parentNode) {
-          const el = u(textNode.parentNode)
-            .closest(`${this.getWhitelistSelector()}, ${this.getBlacklistSelector()}`);
+          const el = u(textNode.parentNode).closest(
+            `${this.getWhitelistSelector()}, ${this.getBlacklistSelector()}`
+          );
           return !el.is(this.getBlacklistSelector());
         }
       });
@@ -138,23 +143,17 @@ export class Blinx {
     Blinx.timeEnd('execute() - parsing');
     // Once tippy.js is loaded, add tooltips
     Blinx.time('execute() - loading of tippy');
-    this.tippyLoaded.promise
-      .then(() => {
-        Blinx.timeEnd('execute() - loading of tippy');
-        Blinx.time('execute() - adding of tooltips');
-        this.addTooltips();
-        Blinx.timeEnd('execute() - adding of tooltips');
-        this.linksAppliedDeferred.resolve();
-        Blinx.timeEnd('execute()');
-      });
+    await this.tippyLoaded.promise;
+    Blinx.timeEnd('execute() - loading of tippy');
+    Blinx.time('execute() - adding of tooltips');
+    this.addTooltips();
+    Blinx.timeEnd('execute() - adding of tooltips');
+    this.linksAppliedDeferred.resolve();
+    Blinx.timeEnd('execute()');
   }
 
   private getWhitelistSelector(): string {
-    const fixedWhitelist = [
-      ...BX_SELECTORS,
-      ...BX_PASSAGE_SELECTORS,
-      ...BX_CONTEXT_SELECTORS
-    ];
+    const fixedWhitelist = [...BX_SELECTORS, ...BX_PASSAGE_SELECTORS, ...BX_CONTEXT_SELECTORS];
     const customisableWhitelist = this.options.whitelist || ['body'];
     return fixedWhitelist.concat(customisableWhitelist).join(',');
   }
@@ -182,11 +181,11 @@ export class Blinx {
     });
     const versionCode = this.getVersionCode(this.onlineBible);
     // Loop through all nodes in order to create a unique template for each
-    u('[data-osis]')
-      .each((node, index) => {
-        const osis = u(node).data('osis');
-        const template = u('<div />')
-          .html(`
+    u('[data-osis]').each((node, index) => {
+      const osis = u(node).data('osis');
+      const template = u('<div />')
+        .html(
+          `
 <div class="bxTippy">
   <div class="bxTippyBody">
     <span class="bxPassageText">
@@ -194,7 +193,10 @@ export class Blinx {
     </span>
   </div>
   <div class="bxTippyFooter">
-    <a class="bxPassageLink" href="${this.onlineBible.buildPassageLink(osis, versionCode)}" target="_blank">
+    <a class="bxPassageLink" href="${this.onlineBible.buildPassageLink(
+      osis,
+      versionCode
+    )}" target="_blank">
       ${this.convertOsisToRegularReference(osis, true)}</a>
     <span class="bxCredits">
       ${apiCredits}
@@ -204,44 +206,44 @@ export class Blinx {
     </span>
   </div>
 </div>
-          `).attr('id', `bxTippyTemplate${index}`);
-        this.tippyObjects.push(
-          tippy(node as Element, {
-            placement: this.options.placement,
-            arrow: true,
-            arrowType: 'round',
-            theme: this.options.theme,
-            interactive: true,
-            html: template.nodes[0],
-            onShow: (tippyInstance) => {
-              if (this.tippyPolyfills) {
-                this.fixPopperPosition(tippyInstance);
-              }
-              const osis = u(tippyInstance.reference).data('osis');
-              this.getTooltipContent(osis)
-                .then((text: string) => {
-                  u(template).find('.bxPassageText').html(text);
-                  this.passageDisplayedDeferred.resolve();
-                });
-            },
-            onHide: (tippyInstance) => {
-              if (this.tippyPolyfills) {
-                clearInterval(this.tippyPolyfillInterval);
-                this.tippyPolyfillInterval = 0;
-                // Not removed automatically for IE9
-                setTimeout(() => {
-                  const el: any = tippyInstance.popper;
-                  if (el.removeNode) {
-                    el.removeNode(true);
-                  } else if (el.remove) {
-                    el.remove();
-                  }
-                }, 500);
-              }
+          `
+        )
+        .attr('id', `bxTippyTemplate${index}`);
+      this.tippyObjects.push(
+        tippy(node as Element, {
+          placement: this.options.placement,
+          arrow: true,
+          arrowType: 'round',
+          theme: this.options.theme,
+          interactive: true,
+          html: template.nodes[0],
+          onShow: async (tippyInstance) => {
+            if (this.tippyPolyfills) {
+              this.fixPopperPosition(tippyInstance);
             }
-          })
-        );
-      });
+            const osisRef = u(tippyInstance.reference).data('osis');
+            const text = await this.getTooltipContent(osisRef);
+            u(template).find('.bxPassageText').html(text);
+            this.passageDisplayedDeferred.resolve();
+          },
+          onHide: (tippyInstance) => {
+            if (this.tippyPolyfills) {
+              clearInterval(this.tippyPolyfillInterval);
+              this.tippyPolyfillInterval = 0;
+              // Not removed automatically for IE9
+              setTimeout(() => {
+                const el: any = tippyInstance.popper;
+                if (el.removeNode) {
+                  el.removeNode(true);
+                } else if (el.remove) {
+                  el.remove();
+                }
+              }, 500);
+            }
+          }
+        })
+      );
+    });
   }
 
   /** Fix positon of Popper for polyfilled browsers, as Popper won't position them. */
@@ -255,7 +257,7 @@ export class Blinx {
         popper.style.position = 'fixed';
         const arrow = popper.getElementsByClassName('tippy-roundarrow').item(0) as HTMLElement;
         arrow.style.display = 'none';
-      } catch { }
+      } catch {}
     };
     // A very crude way of correcting the position, but Popper seems to set it several times
     setTimeout(adjustPos, 0);
@@ -323,24 +325,36 @@ export class Blinx {
     } else if (this.previousPassage) {
       contextRef = this.previousPassage.ref;
     }
+    //--- Split up nodes from back to front (required because of splitText() functionality)
+    const nodesBetweenReferences: Text[] = [];
+    const nodesWithReference: Text[] = [];
     for (let i = refs.length - 1; i >= 0; i--) {
       const ref = refs[i];
-      const remainder = node.splitText(ref.indices[1]);
-      const passage = node.splitText(ref.indices[0]);
-      if (passage) { // Should always true anyway
+      nodesBetweenReferences.unshift(node.splitText(ref.indices[1]));
+      nodesWithReference.unshift(node.splitText(ref.indices[0]));
+    }
+    //--- Process passages from start to end to ensure correct context for partial references
+    // If an explicit context was provided, check for partial references preceding the first recognised ref
+    if (node.textContent && contextRef) {
+      this.parsePartialReferencesInText(node, this.convertOsisToRegularReference(contextRef.osis));
+    }
+    refs.forEach((ref, index) => {
+      const passage = nodesWithReference[index];
+      const remainder = nodesBetweenReferences[index];
+      if (passage) {
+        // Should always true anyway
         this.addLink(passage, ref);
       }
       const effectiveContextRef = attributeContext && contextRef ? contextRef : ref;
-      this.parsePartialReferencesInText(remainder, this.convertOsisToRegularReference(effectiveContextRef.osis));
-    }
+      this.parsePartialReferencesInText(
+        remainder,
+        this.convertOsisToRegularReference(effectiveContextRef.osis)
+      );
+    });
     if (refs.length) {
       this.previousPassage = { ref: refs[refs.length - 1], nodeDistance: 0 };
     } else if (this.previousPassage) {
       this.previousPassage.nodeDistance++;
-    }
-    // If an explicit context was provided, check for partial references _preceding_ the first recognised ref
-    if (node.textContent && contextRef) {
-      this.parsePartialReferencesInText(node, this.convertOsisToRegularReference(contextRef.osis));
     }
   }
 
@@ -348,7 +362,9 @@ export class Blinx {
     const options: Partial<TransformOsisOptions> = {
       bookChapter: ' ',
       chapterVerse: this.parser.characters.chapterVerseSeparator,
-      ...(prettyBookName ? { bookNameMap: this.i18n.translate<{ [name: string]: string }>('books') } : {})
+      ...(prettyBookName
+        ? { bookNameMap: this.i18n.translate<{ [name: string]: string }>('books') }
+        : {})
     };
     return transformOsis(osis, options);
   }
@@ -429,12 +445,18 @@ export class Blinx {
   }
 
   private getVersionCode(bible: Bible): BibleVersionCode {
-    let versionCode = isString(this.options.bibleVersion) ? this.options.bibleVersion :
-      this.options.bibleVersion.bibleText;
-    const availableVersions = Object.keys(bible.getAvailableVersions(this.options.language)) as BibleVersionCode[];
+    let versionCode = isString(this.options.bibleVersion)
+      ? this.options.bibleVersion
+      : this.options.bibleVersion.bibleText;
+    const availableVersions = Object.keys(
+      bible.getAvailableVersions(this.options.language)
+    ) as BibleVersionCode[];
     // If the versionCode does not match the given language or is not supported by the given Bible,
     // find the first version available for the given online Bible for this language
-    if (versionCode.indexOf(this.options.language) !== 0 || availableVersions.indexOf(versionCode) === -1) {
+    if (
+      versionCode.indexOf(this.options.language) !== 0 ||
+      availableVersions.indexOf(versionCode) === -1
+    ) {
       if (availableVersions.length) {
         versionCode = availableVersions[0];
       }
@@ -442,16 +464,16 @@ export class Blinx {
     return versionCode;
   }
 
-  private getTooltipContent(osis: string): Promise<string> {
+  private async getTooltipContent(osis: string): Promise<string> {
     const versionCode = this.getVersionCode(this.bibleApi);
     const truncatedOsis = truncateMultiBookOsis(osis);
     let info = '';
     if (osis !== truncatedOsis) {
       info = this.i18n.translate('error.multiBookReference');
     }
-    return this.getPassage(truncatedOsis, versionCode)
-      .then(text => `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`)
-      .then(text => info ? `${text} <div class="bxInfo">${info}</i>` : text);
+    let text = await this.getPassage(truncatedOsis, versionCode);
+    text = `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`;
+    return info ? `${text} <div class="bxInfo">${info}</i>` : text;
   }
 
   private async getPassage(osis: string, versionCode: BibleVersionCode): Promise<string> {
@@ -469,17 +491,26 @@ export class Blinx {
       if (
         !('values' in Object) ||
         !('requestAnimationFrame' in window) ||
-        !('DOMTokenList' in this && (function (x) {
-          return 'classList' in x ? !x.classList.toggle('x', false) && !x.className : true;
-        })(document.createElement('x')))
+        !(
+          'DOMTokenList' in this &&
+          ((x) => {
+            return 'classList' in x ? !x.classList.toggle('x', false) && !x.className : true;
+          })(document.createElement('x'))
+        )
       ) {
         this.tippyPolyfills = !('requestAnimationFrame' in window);
-        await loadScript('https://cdn.polyfill.io/v2/polyfill.js?features=' +
-          'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated');
+        await loadScript(
+          'https://cdn.polyfill.io/v2/polyfill.js?features=' +
+            'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated'
+        );
       }
-      await loadScript(`https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@master/assets/tippy.all.min.js`);
+      await loadScript(
+        `https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@master/assets/tippy.all.min.js`
+      );
       if (this.options.theme === 'light') {
-        await loadCSS(`https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@master/assets/tippy.light.css`);
+        await loadCSS(
+          `https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@master/assets/tippy.light.css`
+        );
       }
       this.tippyLoaded.resolve();
     }
@@ -493,7 +524,7 @@ function extractOrderedTextNodesFromNodes(nodes: Node[]): Text[] {
   for (const node of nodes) {
     textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(node));
   }
-  return uniqBy(textNodes, node => node);
+  return uniqBy(textNodes, (node) => node);
 }
 
 function extractOrderedTextNodesFromSingleNode(node: Node): Text[] {

@@ -5,7 +5,6 @@
 ///<reference path="./popper.d.ts" />
 
 declare namespace Tippy {
-
   type Placement = 'top' | 'bottom' | 'left' | 'right';
 
   type Trigger = 'mouseenter' | 'focus' | 'click';
@@ -254,7 +253,7 @@ declare namespace Tippy {
     popperOptions: Popper.Options;
   }
 
-  type Selector = string | Element | NodeList | Popper.ReferenceObject
+  type Selector = string | Element | NodeList | Popper.ReferenceObject;
 
   interface Object {
     /** The target references to be given tooltips. */
@@ -280,7 +279,7 @@ declare namespace Tippy {
     /** The element you gave the tooltip to. */
     reference: Element;
     /** Array of objects containing the event type and handler which were bound to the reference element based on the `trigger` option. */
-    listeners: { event: Trigger | string, handler: () => void }[];
+    listeners: { event: Trigger | string; handler: () => void }[];
     /** Default + instance + individual options merged together. */
     options: Options;
     /**
@@ -288,8 +287,8 @@ declare namespace Tippy {
      *  `destroyed` - has the instance been destroyed?
      *  `enabled` - is the tooltip enabled?
      *  `visible` - is the tooltip currently visible and not transitioning out?
-    */
-    state: { destroyed: boolean, enabled: boolean, visible: boolean };
+     */
+    state: { destroyed: boolean; enabled: boolean; visible: boolean };
   }
 }
 

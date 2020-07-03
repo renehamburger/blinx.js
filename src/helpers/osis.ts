@@ -17,7 +17,7 @@ export interface BibleReference {
  * @return Object containing all parts of the reference
  */
 export function parseOsis(osis: string): BibleReference {
-  let reference: BibleReference = { start: { book: 'Gen', chapter: -1 } };
+  const reference: BibleReference = { start: { book: 'Gen', chapter: -1 } };
   for (let i = 0; i < 2; i++) {
     const segment = osis.split('-')[i];
     if (segment) {
@@ -35,7 +35,7 @@ export function parseOsis(osis: string): BibleReference {
   return reference;
 }
 
-export type BookNameMap = {[P in BibleBook]?: string };
+export type BookNameMap = { [P in BibleBook]?: string };
 
 export class TransformOsisOptions {
   /** Separator between chapter and verse */
@@ -56,11 +56,12 @@ export class TransformOsisOptions {
  */
 export function transformOsis(osis: string, options: Partial<TransformOsisOptions> = {}): string {
   const defaults = new TransformOsisOptions();
-  const chapterVerse = (options.chapterVerse !== void 0) ? options.chapterVerse : defaults.chapterVerse;
-  const bookChapter = (options.bookChapter !== void 0) ? options.bookChapter : defaults.bookChapter;
-  const bookNames = (options.bookNameMap !== void 0) ? options.bookNameMap : defaults.bookNameMap;
-  const removeSuperfluous = (options.removeSuperfluous !== void 0) ? options.removeSuperfluous :
-    defaults.removeSuperfluous;
+  const chapterVerse =
+    options.chapterVerse !== void 0 ? options.chapterVerse : defaults.chapterVerse;
+  const bookChapter = options.bookChapter !== void 0 ? options.bookChapter : defaults.bookChapter;
+  const bookNames = options.bookNameMap !== void 0 ? options.bookNameMap : defaults.bookNameMap;
+  const removeSuperfluous =
+    options.removeSuperfluous !== void 0 ? options.removeSuperfluous : defaults.removeSuperfluous;
   const ref = parseOsis(osis);
   let transformed = bookNames[ref.start.book] || ref.start.book;
   transformed += bookChapter + ref.start.chapter;

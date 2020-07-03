@@ -8,7 +8,8 @@
 declare namespace Popper {
   type Position = 'top' | 'right' | 'bottom' | 'left';
 
-  type Placement = 'auto-start'
+  type Placement =
+    | 'auto-start'
     | 'auto'
     | 'auto-end'
     | 'top-start'
@@ -37,33 +38,33 @@ declare namespace Popper {
   interface Modifiers {
     shift?: BaseModifier;
     offset?: BaseModifier & {
-      offset?: number | string,
+      offset?: number | string;
     };
     preventOverflow?: BaseModifier & {
-      priority?: Position[],
-      padding?: number,
-      boundariesElement?: Boundary | Element,
-      escapeWithReference?: boolean
+      priority?: Position[];
+      padding?: number;
+      boundariesElement?: Boundary | Element;
+      escapeWithReference?: boolean;
     };
     keepTogether?: BaseModifier;
     arrow?: BaseModifier & {
-      element?: string | Element,
+      element?: string | Element;
     };
     flip?: BaseModifier & {
-      behavior?: 'flip' | 'clockwise' | 'counterclockwise' | Position[],
-      padding?: number,
-      boundariesElement?: Boundary | Element,
+      behavior?: 'flip' | 'clockwise' | 'counterclockwise' | Position[];
+      padding?: number;
+      boundariesElement?: Boundary | Element;
     };
     inner?: BaseModifier;
     hide?: BaseModifier;
     applyStyle?: BaseModifier & {
-      onLoad?: Function,
-      gpuAcceleration?: boolean,
+      onLoad?: Function;
+      gpuAcceleration?: boolean;
     };
     computeStyle?: BaseModifier & {
       gpuAcceleration?: boolean;
-      x?: 'bottom' | 'top',
-      y?: 'left' | 'right'
+      x?: 'bottom' | 'top';
+      y?: 'left' | 'right';
     };
 
     [name: string]: (BaseModifier & Record<string, any>) | undefined;
@@ -86,12 +87,12 @@ declare namespace Popper {
     styles: CSSStyleDeclaration;
     boundaries: Object;
     offsets: {
-      popper: Offset,
-      reference: Offset,
+      popper: Offset;
+      reference: Offset;
       arrow: {
-        top: number,
-        left: number,
-      },
+        top: number;
+        left: number;
+      };
     };
   }
 

@@ -1,9 +1,7 @@
 import { parseOsis, transformOsis, truncateMultiBookOsis } from 'src/helpers/osis';
 
 describe('Osis helpers - ', () => {
-
   describe('parseOsis()', () => {
-
     it('works', () => {
       expect(parseOsis('Gen.1')).toEqual({
         start: { book: 'Gen', chapter: 1 }
@@ -28,11 +26,9 @@ describe('Osis helpers - ', () => {
         end: { book: 'Exod', chapter: 1, verse: 3 }
       });
     });
-
   });
 
   describe('transformOsis()', () => {
-
     it('removes superfluous elements and replaces separators', () => {
       expect(transformOsis('Gen.1')).toBe('Gen1');
       expect(transformOsis('Gen.1.2')).toBe('Gen1:2');
@@ -41,11 +37,9 @@ describe('Osis helpers - ', () => {
       expect(transformOsis('Gen.2.1-Gen.3.4')).toBe('Gen2:1-3:4');
       expect(transformOsis('Gen.50.2-Exod.1.3')).toBe('Gen50:2-Exod1:3');
     });
-
   });
 
   describe('truncateMultiBookOsis()', () => {
-
     it('does not change single-book references', () => {
       expect(truncateMultiBookOsis('Gen.1')).toBe('Gen.1');
       expect(truncateMultiBookOsis('Gen.1.2')).toBe('Gen.1.2');
@@ -55,7 +49,5 @@ describe('Osis helpers - ', () => {
     it('truncates multi-book references', () => {
       expect(truncateMultiBookOsis('Gen.1.2-Ex.3.4')).toBe('Gen.1.2-Gen.50.999');
     });
-
   });
-
 });

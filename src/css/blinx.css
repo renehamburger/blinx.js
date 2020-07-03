@@ -2,7 +2,7 @@
   width: auto !important;
 }
 .bxTippy {
-  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
   max-width: 800px;
   text-align: left;
   font-size: 14px;
@@ -39,7 +39,7 @@
   font-size: 75%;
   line-height: 0;
   vertical-align: baseline;
-  top: -.5em;
+  top: -0.5em;
 }
 .bxPassageVersion {
   font-size: 75%;
@@ -69,7 +69,7 @@
 .bxTippyFooter:after {
   display: block;
   clear: both;
-  content: "";
+  content: '';
 }
 
 .tippy-tooltip.dark-theme .bxTippyFooter {
@@ -103,7 +103,6 @@
     font-size: 85%;
   }
 }
-
 
 /* Spinner (taken from https://projects.lukehaas.me/css-loaders/) */
 .bxLoader,

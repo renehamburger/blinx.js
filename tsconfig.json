@@ -9,8 +9,9 @@
     "outDir": "./dist/",
     "sourceMap": true,
     "target": "es5",
-    "typeRoots" : ["./typings", "./node_modules/@types"],
-    "types" : ["global", "bible-passage-reference-parser", "jasmine"],
+    "typeRoots": ["./typings", "./node_modules/@types"],
+    "types": ["global", "bible-passage-reference-parser", "jasmine"],
+    "incremental": true,
     // Linting
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
