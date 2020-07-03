@@ -305,6 +305,14 @@ describe('Blinx', () => {
             ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Luke.11.3', 'Matt.6.11']
           );
         });
+
+        it('takes partial reference with bx-context as context for following partial reference', async () => {
+          await testRecognition(
+            `<p bx-context="Gen 1">Ex 2 ... 1:1.</p><p>1:2</p>`,
+            ['Ex 2', '1:1', '1:2'],
+            ['Exod.2', 'Gen 1:1', 'Gen 1:2']
+          );
+        });
       });
     });
 
