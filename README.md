@@ -160,7 +160,7 @@ blinx.js is based on the amazingly comprehensive [Bible Passage Reference Parser
 
 [blinx-cli](https://github.com/renehamburger/blinx-cli) is a Node.js project that can be used to scan a complete website for all blinx.js-generated Bible links, which are saved as a JSON file per page. This can be very useful for creating a snapshot before upgrading to a signficantly different version of blinx.js.
 
-At a later stage blinx-cli may include the generation of an Bible reference index page with links to the pages where those references are used. 
+At a later stage blinx-cli may include the generation of an Bible reference index page with links to the pages where those references are used.
 
 ## How to contribute
 
