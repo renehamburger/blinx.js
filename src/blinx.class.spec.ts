@@ -319,16 +319,16 @@ describe('Blinx', () => {
         await testRecognition(
           getBodyHtml(require('./fixtures/example-article-1.html')),
           [
-            'Offb\n    5,9-10',
+            'Offb 5,9-10',
             'Offenbarung 5,9-10',
             'Röm 5,19',
             'Hebr 1,3',
             '9,14',
             '10,10',
             '14',
-            'Röm 3,25',
+            'Röm\n        3,25',
             'Röm 5,10',
-            'Mt 20,28',
+            'Mt\n        20,28',
             'Röm 3,24-25',
             '1Kor 1,30',
             'Gal 3,13',
@@ -337,8 +337,8 @@ describe('Blinx', () => {
             '1Petr 1,18-19',
             'Offenbarung 5,9-10',
             'Offb 5,10',
-            'Lk 19,10',
-            'Röm 5,10',
+            'Lk\n      19,10',
+            'Röm\n      5,10',
             '2Kor 5,21',
             'Gal 1,4',
             'Eph 1,7',
@@ -364,7 +364,7 @@ describe('Blinx', () => {
             'Offb 5,9',
             'Joh 3,16-17',
             '1. Johannes 2,1-2',
-            'Johannes\n    3,16-17',
+            'Johannes 3,16-17',
             'Johannes 17,20',
             '1. Timotheus 2,4-6',
             'Vers 1'
@@ -436,7 +436,7 @@ describe('Blinx', () => {
             'Genesis 2',
             'Genesis 1',
             'Genesis 1',
-            '1. Korinther 15,21-22'
+            '1.\n      Korinther 15,21-22'
           ],
           [
             'Gen.1',
@@ -459,7 +459,7 @@ describe('Blinx', () => {
           [
             'Römer 7',
             'Römer 7',
-            'Verse\n    7',
+            'Verse 7',
             '12',
             'Vers 4',
             'Vers 6',
@@ -474,8 +474,8 @@ describe('Blinx', () => {
             'Römer 2',
             'Römer 7',
             'Versen 14-25',
-            'Vers 22',
-            'Versen\n    7',
+            'Vers\n      22',
+            'Versen 7',
             '11',
             '14',
             '16',
@@ -532,7 +532,7 @@ describe('Blinx', () => {
             '7,7-13',
             '7,14-25',
             '12,16',
-            'Römer\n    7',
+            'Römer 7',
             'Römer 8'
           ],
           [
