@@ -170,32 +170,31 @@ export class GetBibleBibleApi extends BibleApi {
     Jas: 'Jam'
   };
 
-  public getPassage(osis: string, bibleVersion: BibleVersionCode): Promise<string> {
-    return executeJsonp<Response>(
+  public async getPassage(osis: string, bibleVersion: BibleVersionCode): Promise<string> {
+    const result = await executeJsonp<Response>(
       `https://getbible.net/json?p=${this.getPassageFromOsis(osis)}&v=${
         this.bibleVersionMap[bibleVersion]
       }`,
       'getbible'
-    ).then((result) => {
-      let output = '';
-      if (result.type === 'verse') {
-        for (const bookObject of result.book) {
-          if (bookObject.chapter) {
-            const chapterOutput = this.getOutputForChapter(bookObject.chapter);
-            output += `
+    );
+    let output = '';
+    if (result.type === 'verse') {
+      for (const bookObject of result.book) {
+        if (bookObject.chapter) {
+          const chapterOutput = this.getOutputForChapter(bookObject.chapter);
+          output += `
 <span class="bxChapter">
-  <span class="bxChapterNumber">
-    ${bookObject.chapter_nr}
-  </span>
-  ${chapterOutput.trim()}
+<span class="bxChapterNumber">
+  ${bookObject.chapter_nr}
+</span>
+${chapterOutput.trim()}
 </span>`;
-          }
         }
-      } else if (result.type === 'chapter' && result.chapter) {
-        output = this.getOutputForChapter(result.chapter);
       }
-      return output;
-    });
+    } else if (result.type === 'chapter' && result.chapter) {
+      output = this.getOutputForChapter(result.chapter);
+    }
+    return output;
   }
 
   private getOutputForChapter(chapterObject: ChapterResponse['chapter']): string {

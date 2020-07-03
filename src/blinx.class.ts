@@ -116,7 +116,7 @@ export class Blinx {
   }
 
   /** Execute a parse for the given options. */
-  public execute(): void {
+  public async execute() {
     Blinx.time('execute()');
     Blinx.time('execute() - determine textNodes');
     // Search within all whitelisted selectors
@@ -143,14 +143,13 @@ export class Blinx {
     Blinx.timeEnd('execute() - parsing');
     // Once tippy.js is loaded, add tooltips
     Blinx.time('execute() - loading of tippy');
-    this.tippyLoaded.promise.then(() => {
-      Blinx.timeEnd('execute() - loading of tippy');
-      Blinx.time('execute() - adding of tooltips');
-      this.addTooltips();
-      Blinx.timeEnd('execute() - adding of tooltips');
-      this.linksAppliedDeferred.resolve();
-      Blinx.timeEnd('execute()');
-    });
+    await this.tippyLoaded.promise;
+    Blinx.timeEnd('execute() - loading of tippy');
+    Blinx.time('execute() - adding of tooltips');
+    this.addTooltips();
+    Blinx.timeEnd('execute() - adding of tooltips');
+    this.linksAppliedDeferred.resolve();
+    Blinx.timeEnd('execute()');
   }
 
   private getWhitelistSelector(): string {
@@ -218,15 +217,14 @@ export class Blinx {
           theme: this.options.theme,
           interactive: true,
           html: template.nodes[0],
-          onShow: (tippyInstance) => {
+          onShow: async (tippyInstance) => {
             if (this.tippyPolyfills) {
               this.fixPopperPosition(tippyInstance);
             }
             const osisRef = u(tippyInstance.reference).data('osis');
-            this.getTooltipContent(osisRef).then((text: string) => {
-              u(template).find('.bxPassageText').html(text);
-              this.passageDisplayedDeferred.resolve();
-            });
+            const text = await this.getTooltipContent(osisRef);
+            u(template).find('.bxPassageText').html(text);
+            this.passageDisplayedDeferred.resolve();
           },
           onHide: (tippyInstance) => {
             if (this.tippyPolyfills) {
@@ -458,19 +456,16 @@ export class Blinx {
     return versionCode;
   }
 
-  private getTooltipContent(osis: string): Promise<string> {
+  private async getTooltipContent(osis: string): Promise<string> {
     const versionCode = this.getVersionCode(this.bibleApi);
     const truncatedOsis = truncateMultiBookOsis(osis);
     let info = '';
     if (osis !== truncatedOsis) {
       info = this.i18n.translate('error.multiBookReference');
     }
-    return this.getPassage(truncatedOsis, versionCode)
-      .then(
-        (text) =>
-          `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`
-      )
-      .then((text) => (info ? `${text} <div class="bxInfo">${info}</i>` : text));
+    let text = await this.getPassage(truncatedOsis, versionCode);
+    text = `${text} <span class="bxPassageVersion">${bibleVersions[versionCode].title}</span>`;
+    return info ? `${text} <div class="bxInfo">${info}</i>` : text;
   }
 
   private async getPassage(osis: string, versionCode: BibleVersionCode): Promise<string> {
