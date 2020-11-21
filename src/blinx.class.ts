@@ -19,6 +19,7 @@ import {
 } from 'src/options/selectors.const';
 import './css/blinx.css'; // relative path is needed here!
 import { I18n } from 'src/i18n/i18n.class';
+import { makePureBookReferencesParseable } from './helpers/blinx.functions';
 import {
   extractOrderedTextNodesFromNodes,
   getAttributeBySelectors
@@ -324,6 +325,7 @@ export class Blinx {
       }
     }
     if (attributeContext) {
+      attributeContext = makePureBookReferencesParseable(attributeContext);
       contextRef = this.parser.parse(attributeContext)[0];
     } else if (this.previousPassage) {
       contextRef = this.previousPassage.ref;

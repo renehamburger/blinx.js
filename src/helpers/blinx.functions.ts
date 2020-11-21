@@ -34,3 +34,7 @@ export function getAttributeBySelectors(element: Umbrella.Instance, selectors: s
   }
   return '';
 }
+
+export function makePureBookReferencesParseable(reference: string): string {
+  return reference;
+}
