@@ -1,6 +1,6 @@
 import { makePureBookReferencesParseable } from './blinx.functions';
 
-describe('blinx.functions', () => {
+fdescribe('blinx.functions', () => {
   describe('makePureBookReferencesParseable()', () => {
     it('does not change reference with chapter', () => {
       const reference = makePureBookReferencesParseable('Matt 1');

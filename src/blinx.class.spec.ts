@@ -230,7 +230,7 @@ describe('Blinx', () => {
         });
       });
 
-      describe('with bx-context', () => {
+      fdescribe('with bx-context', () => {
         it('works for reference with chapter', async () => {
           await testRecognition(
             `<p data-bx-context="Matt 6">
