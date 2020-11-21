@@ -1,5 +1,4 @@
 import isString = require('lodash/isString');
-import uniqBy = require('lodash/uniqBy');
 import { Options, getScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
 import { u } from 'src/lib/u.js';
@@ -20,6 +19,10 @@ import {
 } from 'src/options/selectors.const';
 import './css/blinx.css'; // relative path is needed here!
 import { I18n } from 'src/i18n/i18n.class';
+import {
+  extractOrderedTextNodesFromNodes,
+  getAttributeBySelectors
+} from './helpers/blinx.functions';
 
 //#region: Closure for constants & caches
 const isVerbose =
@@ -517,40 +520,3 @@ export class Blinx {
   }
 }
 //#endregion: Class definition
-
-//#region: Pure/stateless helper functions
-function extractOrderedTextNodesFromNodes(nodes: Node[]): Text[] {
-  let textNodes: Text[] = [];
-  for (const node of nodes) {
-    textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(node));
-  }
-  return uniqBy(textNodes, (node) => node);
-}
-
-function extractOrderedTextNodesFromSingleNode(node: Node): Text[] {
-  const childNodes = [].slice.call(node.childNodes);
-  let textNodes: Text[] = [];
-  for (const childNode of childNodes) {
-    if (isTextNode(childNode)) {
-      textNodes.push(childNode);
-    } else {
-      textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(childNode));
-    }
-  }
-  return textNodes;
-}
-
-function isTextNode(node: Node): node is Text {
-  return node.nodeType === node.TEXT_NODE;
-}
-
-function getAttributeBySelectors(element: Umbrella.Instance, selectors: string[]): string {
-  for (const selector of selectors) {
-    const value = element.attr(selector.replace(/^.*\[(.*)\]$/, '$1'));
-    if (value) {
-      return value;
-    }
-  }
-  return '';
-}
-//#endregion: Pure/stateless helper functions
