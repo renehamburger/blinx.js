@@ -40,7 +40,7 @@ jobs:
         local-identifier: random
 
     - name: BrowserStack - Execute cross-browser unit tests
-      run: npm run test-browserstack.chrome
+      run: npm run test-browserstack
 
     - name: BrowserStack - Stop tunnel
       uses: browserstack/github-actions/setup-local@master
