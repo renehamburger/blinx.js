@@ -1,7 +1,6 @@
 import { Blinx } from 'src/blinx.class';
-import { loadBlinx } from 'src/main';
 import { u } from 'src/lib/u.js';
-import { Options } from 'src/options/options';
+import { testRecognition, isIE9, getBodyHtml } from './test-helpers/test-helpers';
 
 describe('Blinx', () => {
   beforeEach(() => {
@@ -304,6 +303,14 @@ describe('Blinx', () => {
             </p>`,
             ['verse 9', 'verse 10', 'Luke 11:2', 'verse 3', 'verse 11'],
             ['Matt.6.9', 'Matt.6.10', 'Luke.11.2', 'Luke.11.3', 'Matt.6.11']
+          );
+        });
+
+        xit('takes partial reference with bx-context as context for following partial reference', async () => {
+          await testRecognition(
+            `<p bx-context="Gen 1">Ex 2 ... 1:1.</p><p>1:2</p>`,
+            ['Ex 2', '1:1', '1:2'],
+            ['Exod.2', 'Gen 1:1', 'Gen 1:2']
           );
         });
       });
@@ -637,34 +644,3 @@ describe('Blinx', () => {
     });
   });
 });
-
-function getBodyHtml(html: string): string {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  return doc.getElementsByTagName('body')[0].innerHTML;
-}
-
-async function testRecognition(
-  html: string,
-  expectedLinkLabels: (string | RegExp)[],
-  expectedOsisPassages: string[],
-  // Specify default options, as parser is not always destroyed between tests and can lead to wrong language
-  options: Partial<Options> = new Options()
-): Promise<[Umbrella.Instance, Blinx]> {
-  document.body.innerHTML = html;
-  const blinx = loadBlinx(options);
-  // Wait until links & tooltips are applied & check linked passages
-  await blinx.testability.linksApplied;
-  const links: Umbrella.Instance = u('[data-osis]');
-  const passages: string[] = [];
-  links.each((node) => passages.push(u(node).data('osis')));
-  links.array().forEach((link, pos) => {
-    expect(link).toMatch(expectedLinkLabels[pos] || '');
-  });
-  expect(passages).toEqual(expectedOsisPassages);
-  return [links, blinx];
-}
-
-function isIE9(): boolean {
-  return /\bMSIE 9/.test(navigator.userAgent);
-}

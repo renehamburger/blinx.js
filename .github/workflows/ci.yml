@@ -1,0 +1,70 @@
+name: CI
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out commit
+      uses: actions/checkout@v2
+
+    - name: Determine Node.js version
+      run: echo ::set-output name=VERSION::$(cat .node-version)
+      id: nodeVersion
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '${{ steps.nodeVersion.outputs.VERSION }}'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Execute browser-independent unit tests
+      run: npm run test-ci
+
+    - name: BrowserStack - Setup
+      uses: browserstack/github-actions/setup-env@master
+      with:
+        username:  ${{ secrets.BROWSERSTACK_USERNAME }}
+        access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        build-name: BUILD_INFO
+        project-name: REPO_NAME
+
+    - name: BrowserStack - Start tunnel
+      uses: browserstack/github-actions/setup-local@master
+      with:
+        local-testing: start
+        local-identifier: random
+
+    - name: BrowserStack - Execute cross-browser unit tests
+      run: npm run test-browserstack
+
+    - name: BrowserStack - Stop tunnel
+      uses: browserstack/github-actions/setup-local@master
+      with:
+        local-testing: stop
+
+    - name: Upload code-coverage
+      uses: codecov/codecov-action@v1
+
+    - name: Bump version on master
+      if: ${{ github.ref == 'refs/heads/master' }}
+      run: |
+        git config --global user.name "${GITHUB_ACTOR}"
+        git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        npm version patch
+
+    - name: Execute build
+      run: |
+        npm run build
+
+    - name: Commit built files on master
+      if: ${{ github.ref == 'refs/heads/master' }}
+      uses: EndBug/add-and-commit@v5
+      with:
+        message: "Commit dist files"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

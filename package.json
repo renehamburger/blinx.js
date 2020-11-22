@@ -1,28 +1,27 @@
 {
   "name": "blinx.js",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "A multi-language client-side library to automatically convert Bible references to Bible links with passage pop-ups",
   "main": "dist/blinx.js",
   "scripts": {
+    "tmp": "a=1 echo $a",
+    "version": "bump-version-in-code.sh",
     "start": "webpack-dev-server --port 9000 --host 0.0.0.0 --open-page http://localhost:9000 --inline --progress --profile --colors --watch --content-base src/",
     "build": "npm run lint && npm run format:check && webpack --config webpack.config.js -p",
     "lint": "tslint -p tsconfig.json && tslint-config-prettier-check ./tslint.json",
     "format": "prettier \"**/*.*\" --write",
     "format:check": "prettier \"**/*.*\" --check",
-    "test": "karma start karma.config.js",
-    "test-with-coverage": "npm run test -- -coverage",
-    "test.chrome": "npm run test -- --browsers Chrome",
-    "test.ie9": "npm run test -- --browsers win7_ie9",
-    "test.ie10": "npm run test -- --browsers win7_ie10",
-    "test.manual": "karma start karma.config.js --no-browsers",
-    "test-debug": "npm run test -- --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999",
-    "test-debug-node": "node --inspect-brk ./node_modules/karma/bin/karma start karma.config.js --single-run --browsers Chrome",
-    "test-once": "npm run test -- --single-run",
-    "test-once-with-coverage": "npm run test-with-coverage -- --single-run",
-    "test-once.chrome": "npm run test.chrome -- --single-run",
-    "test-once.ie9": "npm run test.ie9 -- --single-run",
-    "test-once.ie10": "npm run test.ie10 -- --single-run",
-    "test-once.manual": "npm run test.manual -- --single-run"
+    "karma": "karma start karma.config.js",
+    "test": "npm run karma -- --browsers Chrome --single-run",
+    "test-ci": "npm run karma -- --browsers ChromeHeadlessNoSandbox --single-run -coverage",
+    "test-debug": "npm run karma -- --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999",
+    "test-debug-node": "node --inspect-brk ./node_modules/karma/bin/karma start karma.config.js --browsers Chrome",
+    "test-browserstack": "npm run karma -- --single-run",
+    "test-browserstack.chrome": "npm run karma -- --single-run --browsers win10_chrome"
+  },
+  "engines": {
+    "node": "12.18.0",
+    "npm": "6.14.4"
   },
   "keywords": [
     "bible",
@@ -62,6 +61,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "glob": "^7.1.6",
     "lodash": "^4.17.15"
   }
 }
