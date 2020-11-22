@@ -306,7 +306,7 @@ describe('Blinx', () => {
           );
         });
 
-        it('takes partial reference with bx-context as context for following partial reference', async () => {
+        xit('takes partial reference with bx-context as context for following partial reference', async () => {
           await testRecognition(
             `<p bx-context="Gen 1">Ex 2 ... 1:1.</p><p>1:2</p>`,
             ['Ex 2', '1:1', '1:2'],
