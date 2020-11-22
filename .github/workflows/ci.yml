@@ -22,11 +22,33 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Execute tests
-      run: |
-        npm run test-ci
-        ./node_modules/.bin/codecov
-        # npm run test-browserstack.chrome
+    - name: Execute browser-independent unit tests
+      run: npm run test-ci
+
+    - name: BrowserStack - Setup
+      uses: browserstack/github-actions/setup-env@master
+      with:
+        username:  ${{ secrets.BROWSERSTACK_USERNAME }}
+        access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        build-name: BUILD_INFO
+        project-name: REPO_NAME
+
+    - name: BrowserStack - Start tunnel
+      uses: browserstack/github-actions/setup-local@master
+      with:
+        local-testing: start
+        local-identifier: random
+
+    - name: BrowserStack - Execute cross-browser unit tests
+      run: npm run test-browserstack.chrome
+
+    - name: BrowserStack - Stop tunnel
+      uses: browserstack/github-actions/setup-local@master
+      with:
+        local-testing: stop
+
+    - name: Determine code-coverage
+      run: ./node_modules/.bin/codecov
 
     - name: Bump version on master
       if: ${{ github.ref == 'refs/heads/master' }}
