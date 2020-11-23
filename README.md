@@ -1,6 +1,6 @@
 # blinx.js
 
-[![Build Status](https://travis-ci.org/renehamburger/blinx.js.svg?branch=master)](https://travis-ci.org/renehamburger/blinx.js)
+![Build Status](https://github.com/renehamburger/blinx.js/workflows/ci/badge.svg)
 [![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=dEVFNUZJODV5TU8zWjh5WVFhbXB4VzYvZlZhclpRK3c3NVNoQTJNVHFHcz0tLTlaNW1jMXVybmE5T2FHd2wrZzJQbnc9PQ==--4a5012bf5ad74c3e9b1a40c3b79ec161c0959933)](https://automate.browserstack.com/public-build/dEVFNUZJODV5TU8zWjh5WVFhbXB4VzYvZlZhclpRK3c3NVNoQTJNVHFHcz0tLTlaNW1jMXVybmE5T2FHd2wrZzJQbnc9PQ==--4a5012bf5ad74c3e9b1a40c3b79ec161c0959933)
 [![codecov](https://codecov.io/gh/renehamburger/blinx.js/branch/master/graph/badge.svg)](https://codecov.io/gh/renehamburger/blinx.js)
 <a href="#browser-compatibility--test"><img src="https://badges.herokuapp.com/browsers?labels=none&googlechrome=latest&firefox=latest&microsoftedge=latest&iexplore=-9,10,11&safari=latest" alt="Browser Support"/></a>
@@ -164,7 +164,7 @@ At a later stage blinx-cli may include the generation of an Bible reference inde
 
 ## How to contribute
 
-This library itself is almost feature-complete for the browser. See the [roadmap](../projects/1) for possible next steps. PRs are welcome, especially for support for new languages, online Bibles or Bible APIs.
+This library itself is almost feature-complete for the browser. See the [roadmap](https://github.com/renehamburger/blinx.js/projects/1) for possible next steps. PRs are welcome, especially for support for new languages, online Bibles or Bible APIs.
 
 The build process should be straight forward:
 
@@ -172,7 +172,7 @@ The build process should be straight forward:
 2. Run `npm install`.
 3. Run `npm start` for a local development server and `npm test.chrome` (or one of the other test scripts) for running the unit tests.
 
-Any PR will also be built and unit-tested by Travis CI.
+Any PR will also be built and unit-tested by the [Github CI workflow](https://github.com/renehamburger/blinx.js/actions?query=workflow%3ACI).
 
 There is also more work to be done on the underlying [Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser).
 
@@ -186,7 +186,7 @@ There is also more work to be done on the underlying [Bible Passage Reference Pa
   <img src="./assets/browserstack-logo.png" alt="Browser Stack Logo" height="105">
 </a>
 
-[BrowserStack](https://www.browserstack.com/start) is used to ensure a wide browser compatibility by running unit tests on multiple devices (cf. latest [test run]()https://www.travis-ci.org/renehamburger/blinx.js):
+[BrowserStack](https://www.browserstack.com/start) is used to ensure a wide browser compatibility by running unit tests on multiple devices:
 
 - **Chrome, Firefox, MS Edge, Safari**: Runs well on latest versions for each of these, but should also run on significantly older versions.
 - **Internet Explorer**: Runs well on IE11 and with occasional problems on IE10. On IE9, only the linking of references works for now, but no tooltip is shown.
