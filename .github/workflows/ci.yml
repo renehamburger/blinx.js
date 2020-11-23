@@ -71,7 +71,7 @@ jobs:
 
     - name: Get version
       id: get_version
-      run: echo ::set-output name=version::$(node -pe "require('./package.json').version");")
+      run: echo ::set-output name=version::$(node -pe "require('./package.json').version"))
 
     - name: Create Release
       if: ${{ github.ref == 'refs/heads/master' }}
