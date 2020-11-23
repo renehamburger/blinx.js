@@ -8,7 +8,10 @@ describe('Cross-browser Blinx', () => {
 
   describe('tooltip', () => {
     it('is shown with text', async () => {
+      const passageContent = 'Passage content';
+      const bibleVersion = 'World English Bible';
       const [links, blinx] = await testRecognition('Gen 1:3', ['Gen 1:3'], ['Gen.1.3']);
+      spyOn(window.blinx.bibleApi, 'getPassage').and.returnValue(Promise.resolve(passageContent));
       // if (!(window as any).tippy.browser.supported) {
       //   console.warn('Browser does not support tippy. Skipping second part of test');
       //   return done();
@@ -16,10 +19,8 @@ describe('Cross-browser Blinx', () => {
       u(links.first() as Node).trigger('mouseenter');
       // Wait until passage is displayed & checked displayed passage
       await blinx.testability.passageDisplayed;
-      const text = u('.bxPassageText').text().trim().replace(/\s+/g, ' ');
-      expect(text).toBe(
-        '1 3 God said, "Let there be light," and there was light. World English Bible'
-      );
+      const text = u('.bxPassageText').text();
+      expect(text).toBe(`${passageContent} ${bibleVersion}`);
     });
   });
 });
