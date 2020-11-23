@@ -11,13 +11,13 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Determine Node.js version
+      id: node_version
       run: echo ::set-output name=VERSION::$(cat .node-version)
-      id: nodeVersion
 
     - name: Set up Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: '${{ steps.nodeVersion.outputs.VERSION }}'
+        node-version: '${{ steps.node_version.outputs.VERSION }}'
 
     - name: Install dependencies
       run: npm ci
@@ -66,5 +66,22 @@ jobs:
       uses: EndBug/add-and-commit@v5
       with:
         message: "Commit dist files"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build changelog
+      if: ${{ github.ref == 'refs/heads/master' }}
+      id: github_release
+      uses: mikepenz/release-changelog-builder-action@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Release
+      if: ${{ github.ref == 'refs/heads/master' }}
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body: ${{steps.github_release.outputs.changelog}}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
