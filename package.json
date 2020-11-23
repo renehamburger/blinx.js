@@ -5,7 +5,7 @@
   "main": "dist/blinx.js",
   "scripts": {
     "tmp": "a=1 echo $a",
-    "version": "VERSION=$(node -p \"require('./package.json').version\"); sed -i'' \"s/blinx\\.js@v[0-9]\\+.[0-9]\\+.[0-9]\\+/blinx.js@v$VERSION/g\" README.md",
+    "version": "VERSION=$(node -p \"require('./package.json').version\"); sed -i'' \"s/blinx\\.js@v[0-9]\\+.[0-9]\\+.[0-9]\\+/blinx.js@v$VERSION/g\" README.md && git add README.md",
     "start": "webpack-dev-server --port 9000 --host 0.0.0.0 --open-page http://localhost:9000 --inline --progress --profile --colors --watch --content-base src/",
     "build": "npm run lint && npm run format:check && webpack --config webpack.config.js -p",
     "lint": "tslint -p tsconfig.json && tslint-config-prettier-check ./tslint.json",
