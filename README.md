@@ -1,7 +1,7 @@
 # blinx.js
 
 [![Build Status](https://github.com/renehamburger/blinx.js/workflows/CI/badge.svg)](https://github.com/renehamburger/blinx.js/actions?query=workflow%3ACI+branch%3Amaster)
-[![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=dEVFNUZJODV5TU8zWjh5WVFhbXB4VzYvZlZhclpRK3c3NVNoQTJNVHFHcz0tLTlaNW1jMXVybmE5T2FHd2wrZzJQbnc9PQ==--4a5012bf5ad74c3e9b1a40c3b79ec161c0959933)](https://automate.browserstack.com/public-build/dEVFNUZJODV5TU8zWjh5WVFhbXB4VzYvZlZhclpRK3c3NVNoQTJNVHFHcz0tLTlaNW1jMXVybmE5T2FHd2wrZzJQbnc9PQ==--4a5012bf5ad74c3e9b1a40c3b79ec161c0959933)
+[![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=UHgvQmxSc0hUaG9PbFlEN2lidHZXbjF0L2pWWGxJOVp2WUNibm5SUjlGcz0tLWxIYzFvZ0J1Wk5pOE9yOFd6VXRCM2c9PQ==--d3d4dab4bbec8a86e708f0950eb9de503ec6c993)](https://automate.browserstack.com/public-build/UHgvQmxSc0hUaG9PbFlEN2lidHZXbjF0L2pWWGxJOVp2WUNibm5SUjlGcz0tLWxIYzFvZ0J1Wk5pOE9yOFd6VXRCM2c9PQ==--d3d4dab4bbec8a86e708f0950eb9de503ec6c993)
 [![codecov](https://codecov.io/gh/renehamburger/blinx.js/branch/master/graph/badge.svg)](https://codecov.io/gh/renehamburger/blinx.js)
 <a href="#browser-compatibility--test"><img src="https://badges.herokuapp.com/browsers?labels=none&googlechrome=latest&firefox=latest&microsoftedge=latest&iexplore=-9,10,11&safari=latest" alt="Browser Support"/></a>
 
