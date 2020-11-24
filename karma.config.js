@@ -1,3 +1,5 @@
+const { execSync } = require('child_process');
+
 module.exports = function (karmaConfig) {
   const withCoverage = process.argv.some((arg) => arg === '-coverage');
   const isVerbose = process.argv.some((arg) => arg === '-verbose');
@@ -10,9 +12,6 @@ module.exports = function (karmaConfig) {
     browserNoActivityTimeout: 20000,
     client: { args: isVerbose ? ['verbose'] : [] },
     //logLevel: isVerbose ? karmaConfig.LOG_DEBUG : karmaConfig.LOG_INFO,
-    browserStack: {
-      project: 'blinx.js'
-    },
     customLaunchers: {
       ChromeHeadlessNoSandbox: {
         base: 'ChromeHeadless',
@@ -168,6 +167,15 @@ module.exports = function (karmaConfig) {
         'text-summary': ''
       }
     });
+  }
+
+  if (browserStack) {
+    const branch = execSync('git branch --show-current');
+    const commitHash = execSync('git rev-parse --short HEAD');
+    config.browserStack = {
+      project: `blinx.js - branch: ${branch}`,
+      build: commitHash
+    };
   }
 
   karmaConfig.set(config);

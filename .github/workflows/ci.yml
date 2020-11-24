@@ -14,7 +14,6 @@ jobs:
       id: vars
       shell: bash
       run: |
-        echo ::set-output name=sha_short::$(git rev-parse --short HEAD)
         echo ::set-output name=node_version::$(cat .node-version)
 
     - name: Set up Node.js
@@ -33,8 +32,6 @@ jobs:
       with:
         username:  ${{ secrets.BROWSERSTACK_USERNAME }}
         access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-        build-name: ${{ steps.vars.outputs.sha_short }}
-        project-name: blinx.js
 
     - name: BrowserStack - Start tunnel
       uses: browserstack/github-actions/setup-local@master
