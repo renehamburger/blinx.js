@@ -36,5 +36,6 @@ export function getAttributeBySelectors(element: Umbrella.Instance, selectors: s
 }
 
 export function makePureBookReferencesParseable(reference: string): string {
-  return reference;
+  const hasChapter = /^[ \d]*[^\d]+\d/.test(reference);
+  return hasChapter ? reference : `${reference} 1`;
 }

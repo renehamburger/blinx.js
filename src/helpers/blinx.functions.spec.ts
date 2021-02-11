@@ -1,10 +1,15 @@
 import { makePureBookReferencesParseable } from './blinx.functions';
 
-fdescribe('blinx.functions', () => {
+describe('blinx.functions', () => {
   describe('makePureBookReferencesParseable()', () => {
     it('does not change reference with chapter', () => {
       const reference = makePureBookReferencesParseable('Matt 1');
       expect(reference).toBe('Matt 1');
+    });
+
+    it('does not change complicated reference with chapter', () => {
+      const reference = makePureBookReferencesParseable('1 Jn. 1');
+      expect(reference).toBe('1 Jn. 1');
     });
 
     it('does not change reference with chapter ending on a letter ', () => {
