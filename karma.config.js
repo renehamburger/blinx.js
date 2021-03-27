@@ -136,11 +136,9 @@ module.exports = function (karmaConfig) {
     ],
     frameworks: ['jasmine', 'karma-typescript'],
     frameworks: ['jasmine', 'karma-typescript'],
-    files: [
-      'src/**/!(*.spec).ts',
-      browserStack ? 'src/**/browserstack.spec.ts' : 'src/**/*.spec.ts'
-    ],
+    files: ['src/**/!(*.spec).ts', 'e2e/*.spec.ts'],
     preprocessors: {
+      'e2e/**/*.ts': ['karma-typescript'],
       'src/**/*.ts': ['karma-typescript'],
       'src/**/*.js': ['karma-typescript']
     },

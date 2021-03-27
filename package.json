@@ -11,13 +11,8 @@
     "lint": "tslint -p tsconfig.json && tslint-config-prettier-check ./tslint.json",
     "format": "prettier \"**/*.*\" --write",
     "format:check": "prettier \"**/*.*\" --check",
-    "karma": "karma start karma.config.js",
-    "test": "npm run karma -- --browsers Chrome --single-run",
-    "test-ci": "npm run karma -- --browsers ChromeHeadlessNoSandbox --single-run -coverage",
-    "test-debug": "npm run karma -- --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999",
-    "test-debug-node": "node --inspect-brk ./node_modules/karma/bin/karma start karma.config.js --browsers Chrome",
-    "test-browserstack": "npm run karma -- --single-run",
-    "test-browserstack.chrome": "npm run karma -- --single-run --browsers win10_chrome"
+    "e2e": "karma start karma.config.js --single-run",
+    "e2e-debug": "karma start karma.config.js --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999"
   },
   "engines": {
     "node": "12.18.0",
