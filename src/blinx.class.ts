@@ -232,7 +232,9 @@ export class Blinx {
           },
           onHide: (tippyInstance) => {
             if (this.tippyPolyfills) {
-              clearInterval(this.tippyPolyfillInterval);
+              if (this.tippyPolyfillInterval) {
+                clearInterval(this.tippyPolyfillInterval);
+              }
               this.tippyPolyfillInterval = 0;
               // Not removed automatically for IE9
               setTimeout(() => {
@@ -265,8 +267,10 @@ export class Blinx {
     };
     // A very crude way of correcting the position, but Popper seems to set it several times
     setTimeout(adjustPos, 0);
-    clearInterval(this.tippyPolyfillInterval);
-    this.tippyPolyfillInterval = setInterval(adjustPos, 10);
+    if (this.tippyPolyfillInterval) {
+      clearInterval(this.tippyPolyfillInterval);
+    }
+    this.tippyPolyfillInterval = (setInterval(adjustPos, 10) as unknown) as number;
   }
 
   /** Second step of initialisation after parser & polyfills are loaded. */
@@ -288,9 +292,10 @@ export class Blinx {
 
   /**
    * Look for and link all references found in the given text node.
+   * TODO: Made public temporarily to allow simple testing
    * @param textNode
    */
-  private parseReferencesInTextNode(textNode: Text): void {
+  parseReferencesInTextNode(textNode: Text): void {
     const bxPassageSelector = BX_PASSAGE_SELECTORS.join(',');
     const parent = textNode.parentNode && u(textNode.parentNode);
     // Check if text node is wrapped by element with [bx-passage] attribute
