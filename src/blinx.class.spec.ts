@@ -238,17 +238,25 @@ describe('Blinx', () => {
           );
         });
 
-        it('works for reference without chapter', async () => {
+        it('works for reference without chapter (initial implementation)', async () => {
           await testRecognition(
             `<p data-bx-context="Matt">
               Check out verse 9 and then 6:10 (cf. Luke 11:2)
               and verse 11.
             </p>`,
             ['verse 9', '6:10', 'Luke 11:2', 'verse 11'],
-            // 'verse 9' should probably be split, but using chapter 1 is the simplest solution,
-            // and the parser does that itself, too.
-            // TODO: 'verse 11' should be parsed as 'Matt.6:11'
             ['Matt.1.9', 'Matt.6.10', 'Luke.11.2', 'Matt.1.11']
+          );
+        });
+
+        xit('works for reference without chapter (final implementation)', async () => {
+          await testRecognition(
+            `<p data-bx-context="Matt">
+              Check out verse 9 and then 6:10 (cf. Luke 11:2)
+              and verse 11.
+            </p>`,
+            ['6:10', 'Luke 11:2', 'verse 11'],
+            ['Matt.6.10', 'Luke.11.2', 'Matt.6.11']
           );
         });
       });
@@ -288,8 +296,11 @@ describe('Blinx', () => {
         });
 
         it('skips pure numbers', async () => {
-          // This one would be nice to have, as 'Gen 1:2; 3' is recognised, but difficult to implasync ement
-          await testRecognition('<i>Gen 1:2</i>; 3.', ['Gen 1:2'], ['Gen.1.2']);
+          await testRecognition('Gen 1:2 and see page 3.', ['Gen 1:2'], ['Gen.1.2']);
+        });
+
+        xit('handles verse lists across nodes', async () => {
+          await testRecognition('<i>Gen 1:2</i>; 3.', ['Gen 1:2;3'], ['Gen.1.2-3']);
         });
       });
 
