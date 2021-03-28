@@ -21,7 +21,11 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [ROOT, 'node_modules'],
-    plugins: [new TsconfigPathsPlugin()]
+    plugins: [
+      new TsconfigPathsPlugin({
+        configFile: 'tsconfig.app.json'
+      })
+    ]
   },
 
   module: {
@@ -41,7 +45,10 @@ module.exports = {
       {
         test: /\.ts$/,
         exclude: [/node_modules/],
-        use: 'awesome-typescript-loader'
+        loader: 'awesome-typescript-loader',
+        options: {
+          configFileName: 'tsconfig.app.json'
+        }
       },
       {
         test: /\.css$/,

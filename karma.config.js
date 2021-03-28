@@ -144,7 +144,7 @@ module.exports = function (karmaConfig) {
     },
     reporters: ['spec', 'BrowserStack', 'karma-typescript'],
     karmaTypescriptConfig: {
-      tsconfig: './tsconfig.json',
+      tsconfig: './tsconfig.e2e.json',
       coverageOptions: {
         instrumentation: false
       }
