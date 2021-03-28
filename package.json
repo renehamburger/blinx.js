@@ -36,6 +36,7 @@
     "@types/lodash": "^4.14.104",
     "@types/node": "^9.4.6",
     "awesome-typescript-loader": "^3.4.1",
+    "bible-passage-reference-parser": "git+https://github.com/renehamburger/Bible-Passage-Reference-Parser.git#99f0338587acb6eb8365c4ea6b48b9c52040ae90",
     "circular-dependency-plugin": "^4.4.0",
     "css-loader": "^3.5.3",
     "jasmine-core": "2.99.1",

@@ -11,6 +11,10 @@ export async function testRecognition(
   options: Partial<Options> = new Options()
 ): Promise<[Umbrella.Instance, Blinx]> {
   document.body.innerHTML = html;
+  if (!('__karma__' in window)) {
+    loadDependencies(options.language);
+  }
+  // TODO: Check why blinx sometimes already exists in tests.
   const blinx = loadBlinx(options);
   // Wait until links & tooltips are applied & check linked passages
   await blinx.testability.linksApplied;
@@ -22,6 +26,11 @@ export async function testRecognition(
   });
   expect(passages).toEqual(expectedOsisPassages);
   return [links, blinx];
+}
+
+function loadDependencies(language = 'en') {
+  window.bcv_parser = require(`../../node_modules/bible-passage-reference-parser/js/${language}_bcv_parser.js`).bcv_parser;
+  window.tippy = require('../../assets/tippy.all.min.js').tippy;
 }
 
 export function isIE9(): boolean {
