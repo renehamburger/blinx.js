@@ -1,13 +1,13 @@
 import { u } from 'src/lib/u.js';
-import { testRecognition } from './test-helpers/test-helpers';
+import { testRecognition } from 'src/test-helpers/test-helpers';
 
-describe('Cross-browser Blinx', () => {
+describe('User interaction', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
 
-  describe('tooltip', () => {
-    it('is shown with text', async () => {
+  describe('passage hover', () => {
+    it('shows tooltip with text', async () => {
       const passageContent = 'Passage content';
       const bibleVersion = 'World English Bible';
       const [links, blinx] = await testRecognition('Gen 1:3', ['Gen 1:3'], ['Gen.1.3']);

@@ -59,6 +59,7 @@ export class Parser {
         callback(true);
       }
     } else {
+      // NB: Commit ID needs to match installed NPM package for unit tests
       loadScript(
         'https://cdn.jsdelivr.net/gh/renehamburger/' +
           'Bible-Passage-Reference-Parser@99f0338587acb6eb8365c4ea6b48b9c52040ae90/js/' +

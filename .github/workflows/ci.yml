@@ -25,7 +25,7 @@ jobs:
       run: npm ci
 
     - name: Execute browser-independent unit tests
-      run: npm run test-ci
+      run: npm test
 
     - name: BrowserStack - Setup
       uses: browserstack/github-actions/setup-env@master
@@ -40,7 +40,7 @@ jobs:
         local-identifier: random
 
     - name: BrowserStack - Execute cross-browser unit tests
-      run: npm run test-browserstack
+      run: npm run e2e
 
     - name: BrowserStack - Stop tunnel
       uses: browserstack/github-actions/setup-local@master

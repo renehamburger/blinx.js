@@ -1,21 +1,14 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "baseUrl": ".",
-    "paths": {
-      "*": ["./*"]
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
     },
-    "allowJs": true,
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "target": "es5",
-    "typeRoots": ["./typings", "./node_modules/@types"],
-    "types": ["global", "bible-passage-reference-parser", "jasmine"],
-    "incremental": true,
-    // Linting
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strict": true
-  }
+    {
+      "path": "./tsconfig.test.json"
+    },
+    {
+      "path": "./tsconfig.e2e.json"
+    }
+  ]
 }

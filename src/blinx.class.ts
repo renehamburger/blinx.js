@@ -1,5 +1,4 @@
 import isString = require('lodash/isString');
-import uniqBy = require('lodash/uniqBy');
 import { Options, getScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
 import { u } from 'src/lib/u.js';
@@ -20,6 +19,11 @@ import {
 } from 'src/options/selectors.const';
 import './css/blinx.css'; // relative path is needed here!
 import { I18n } from 'src/i18n/i18n.class';
+import { makePureBookReferencesParseable } from './helpers/blinx.functions';
+import {
+  extractOrderedTextNodesFromNodes,
+  getAttributeBySelectors
+} from './helpers/blinx.functions';
 
 //#region: Closure for constants & caches
 const isVerbose =
@@ -228,7 +232,9 @@ export class Blinx {
           },
           onHide: (tippyInstance) => {
             if (this.tippyPolyfills) {
-              clearInterval(this.tippyPolyfillInterval);
+              if (this.tippyPolyfillInterval) {
+                clearInterval(this.tippyPolyfillInterval);
+              }
               this.tippyPolyfillInterval = 0;
               // Not removed automatically for IE9
               setTimeout(() => {
@@ -261,8 +267,10 @@ export class Blinx {
     };
     // A very crude way of correcting the position, but Popper seems to set it several times
     setTimeout(adjustPos, 0);
-    clearInterval(this.tippyPolyfillInterval);
-    this.tippyPolyfillInterval = setInterval(adjustPos, 10);
+    if (this.tippyPolyfillInterval) {
+      clearInterval(this.tippyPolyfillInterval);
+    }
+    this.tippyPolyfillInterval = (setInterval(adjustPos, 10) as unknown) as number;
   }
 
   /** Second step of initialisation after parser & polyfills are loaded. */
@@ -284,9 +292,10 @@ export class Blinx {
 
   /**
    * Look for and link all references found in the given text node.
+   * TODO: Made public temporarily to allow simple testing
    * @param textNode
    */
-  private parseReferencesInTextNode(textNode: Text): void {
+  parseReferencesInTextNode(textNode: Text): void {
     const bxPassageSelector = BX_PASSAGE_SELECTORS.join(',');
     const parent = textNode.parentNode && u(textNode.parentNode);
     // Check if text node is wrapped by element with [bx-passage] attribute
@@ -321,6 +330,7 @@ export class Blinx {
       }
     }
     if (attributeContext) {
+      attributeContext = makePureBookReferencesParseable(attributeContext);
       contextRef = this.parser.parse(attributeContext)[0];
     } else if (this.previousPassage) {
       contextRef = this.previousPassage.ref;
@@ -517,40 +527,3 @@ export class Blinx {
   }
 }
 //#endregion: Class definition
-
-//#region: Pure/stateless helper functions
-function extractOrderedTextNodesFromNodes(nodes: Node[]): Text[] {
-  let textNodes: Text[] = [];
-  for (const node of nodes) {
-    textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(node));
-  }
-  return uniqBy(textNodes, (node) => node);
-}
-
-function extractOrderedTextNodesFromSingleNode(node: Node): Text[] {
-  const childNodes = [].slice.call(node.childNodes);
-  let textNodes: Text[] = [];
-  for (const childNode of childNodes) {
-    if (isTextNode(childNode)) {
-      textNodes.push(childNode);
-    } else {
-      textNodes = textNodes.concat(extractOrderedTextNodesFromSingleNode(childNode));
-    }
-  }
-  return textNodes;
-}
-
-function isTextNode(node: Node): node is Text {
-  return node.nodeType === node.TEXT_NODE;
-}
-
-function getAttributeBySelectors(element: Umbrella.Instance, selectors: string[]): string {
-  for (const selector of selectors) {
-    const value = element.attr(selector.replace(/^.*\[(.*)\]$/, '$1'));
-    if (value) {
-      return value;
-    }
-  }
-  return '';
-}
-//#endregion: Pure/stateless helper functions
