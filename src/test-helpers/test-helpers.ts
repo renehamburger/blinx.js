@@ -3,12 +3,6 @@ import { loadBlinx } from 'src/main';
 import { u } from 'src/lib/u.js';
 import { Blinx } from 'src/blinx.class';
 
-export function getBodyHtml(html: string): string {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  return doc.getElementsByTagName('body')[0].innerHTML;
-}
-
 export async function testRecognition(
   html: string,
   expectedLinkLabels: (string | RegExp)[],
