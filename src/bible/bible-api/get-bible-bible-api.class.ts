@@ -43,7 +43,7 @@ type Response = VerseResponse | ChapterResponse;
 
 export class GetBibleBibleApi extends BibleApi {
   public readonly title = 'getBible.net';
-  public readonly url = 'https://getbible.net/api';
+  public readonly url = 'https://getbible.net/v2';
 
   protected readonly bibleVersionMap: BibleVersionMap = {
     'af.AOV': 'aov',
