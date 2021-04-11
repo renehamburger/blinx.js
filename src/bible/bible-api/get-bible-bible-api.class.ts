@@ -1,8 +1,8 @@
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { BibleVersionCode } from 'src/bible/models/bible-versions.const';
-import { executeJsonp } from 'src/helpers/jsonp';
 import { BibleVersionMap } from 'src/bible/bible.class';
-import { transformOsis, BookNameMap, parseOsis } from 'src/helpers/osis';
+import { request } from 'src/helpers/request';
+import { BibleBooks } from '../models/bible-books.const';
 
 interface VerseResponse {
   type: 'verse';
@@ -124,28 +124,15 @@ export class GetBibleBibleApi extends BibleApi {
     'za.CUT': 'cut'
   };
 
-  private bookNameMap: BookNameMap = {
-    Exod: 'Exo',
-    Deut: 'Deu',
-    Josh: 'Jos',
-    Judg: 'Ju',
-    '1Kgs': '1Kg',
-    '2Kgs': '2Kg',
-    Ezra: 'Ezr',
-    Esth: 'Est',
-    Prov: 'Pro',
-    Eccl: 'Ecc',
-    Ezek: 'Eze',
-    Matt: 'Mat',
-    Jas: 'Jam'
-  };
-
-  public async getPassage(osis: string, bibleVersion: BibleVersionCode): Promise<string> {
-    const result = await executeJsonp<Response>(
-      `https://getbible.net/json?p=${this.getPassageFromOsis(osis)}&v=${
-        this.bibleVersionMap[bibleVersion]
-      }`,
-      'getbible'
+  public async getPassage(osis: string, bibleVersionCode: BibleVersionCode): Promise<string> {
+    const bibleVersion = this.bibleVersionMap[bibleVersionCode];
+    if (!bibleVersion) {
+      throw new Error(`Bible version ${bibleVersionCode} not supported by getBible.net`);
+    }
+    const [book, chapter] = osis.split('.');
+    const bookIndex = Object.keys(new BibleBooks()).indexOf(book) + 1;
+    const result = await request<Response>(
+      `${this.url}/${bibleVersion}/${bookIndex}/${chapter}.json?_=${Date.now()}`
     );
     let output = '';
     if (result.type === 'verse') {
@@ -179,32 +166,5 @@ ${chapterOutput.trim()}
       }
     }
     return output;
-  }
-
-  private getPassageFromOsis(osis: string): string {
-    const ref = parseOsis(osis);
-    let passageString: string;
-    if (ref.end && ref.start.chapter !== ref.end.chapter) {
-      const book = ref.start.book;
-      passageString = this.getSinglePassageFromOsis(
-        `${book}.${ref.start.chapter}.${ref.start.verse || 1}-${book}.${ref.start.chapter}.999`
-      );
-      for (let chapter = ref.start.chapter + 1; chapter < ref.end.chapter; chapter++) {
-        passageString +=
-          ';' + this.getSinglePassageFromOsis(`${book}.${chapter}.1-${book}.${chapter}.999`);
-      }
-      passageString +=
-        ';' +
-        this.getSinglePassageFromOsis(
-          `${book}.${ref.end.chapter}.1-${book}.${ref.end.chapter}.${ref.end.verse || 999}`
-        );
-    } else {
-      passageString = this.getSinglePassageFromOsis(osis);
-    }
-    return passageString;
-  }
-
-  private getSinglePassageFromOsis(osis: string): string {
-    return transformOsis(osis, { bookNameMap: this.bookNameMap });
   }
 }

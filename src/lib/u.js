@@ -351,89 +351,88 @@ u.prototype.first = function () {
 };
 
 // Perform ajax calls
-/* eslint-disable no-unused-vars*/
-// function ajax (action, opt, done, before) {
-//   done = done || function () {};
+function ajax(action, opt, done, before) {
+  done = done || function () {};
 
-//   // A bunch of options and defaults
-//   opt = opt || {};
-//   opt.body = opt.body || {};
-//   opt.method = (opt.method || 'GET').toUpperCase();
-//   opt.headers = opt.headers || {};
+  // A bunch of options and defaults
+  opt = opt || {};
+  opt.body = opt.body || {};
+  opt.method = (opt.method || 'GET').toUpperCase();
+  opt.headers = opt.headers || {};
 
-//   // Tell the back-end it's an AJAX request
-//   opt.headers['X-Requested-With'] = opt.headers['X-Requested-With'] || 'XMLHttpRequest';
+  // Tell the back-end it's an AJAX request
+  // opt.headers['X-Requested-With'] = opt.headers['X-Requested-With'] || 'XMLHttpRequest';
 
-//   if (typeof window.FormData === 'undefined' || !(opt.body instanceof window.FormData)) {
-//     opt.headers['Content-Type'] = opt.headers['Content-Type'] || 'application/x-www-form-urlencoded';
-//   }
+  if (typeof window.FormData === 'undefined' || !(opt.body instanceof window.FormData)) {
+    opt.headers['Content-Type'] =
+      opt.headers['Content-Type'] || 'application/x-www-form-urlencoded';
+  }
 
-//   // If it's of type JSON, encode it as such
-//   if (/json/.test(opt.headers['Content-Type'])) {
-//     opt.body = JSON.stringify(opt.body);
-//   }
+  // If it's of type JSON, encode it as such
+  if (/json/.test(opt.headers['Content-Type'])) {
+    opt.body = JSON.stringify(opt.body);
+  }
 
-//   if ((typeof opt.body === 'object') && !(opt.body instanceof window.FormData)) {
-//     opt.body = u().param(opt.body);
-//   }
+  if (typeof opt.body === 'object' && !(opt.body instanceof window.FormData)) {
+    opt.body = u().param(opt.body);
+  }
 
-//   // Create and send the actual request
-//   var request = new window.XMLHttpRequest();
+  // Create and send the actual request
+  var request = new window.XMLHttpRequest();
 
-//   // An error is just an error
-//   // This uses a little hack of passing an array to u() so it handles it as
-//   // an array of nodes, hence we can use 'on'. However a single element wouldn't
-//   // work since it a) doesn't have nodeName and b) it will be sliced, failing
-//   u(request).on('error timeout abort', function () {
-//     done(new Error(), null, request);
-//   }).on('load', function () {
-//     // Also an error if it doesn't start by 2 or 3...
-//     // This is valid as there's no code 2x nor 2, nor 3x nor 3, only 2xx and 3xx
-//     // We don't want to return yet though as there might be some content
-//     var err = /^(4|5)/.test(request.status) ? new Error(request.status) : null;
+  // An error is just an error
+  // This uses a little hack of passing an array to u() so it handles it as
+  // an array of nodes, hence we can use 'on'. However a single element wouldn't
+  // work since it a) doesn't have nodeName and b) it will be sliced, failing
+  u(request)
+    .on('error timeout abort', function () {
+      done(new Error(), null, request);
+    })
+    .on('load', function () {
+      // Also an error if it doesn't start by 2 or 3...
+      // This is valid as there's no code 2x nor 2, nor 3x nor 3, only 2xx and 3xx
+      // We don't want to return yet though as there might be some content
+      var err = /^(4|5)/.test(request.status) ? new Error(request.status) : null;
 
-//     // Attempt to parse the body into JSON
-//     var body = parseJson(request.response) || request.response;
+      // Attempt to parse the body into JSON
+      var body = parseJson(request.response) || request.response;
 
-//     return done(err, body, request);
-//   });
+      return done(err, body, request);
+    });
 
-//   // Create a request of the specified type to the URL and ASYNC
-//   request.open(opt.method, action);
+  // Create a request of the specified type to the URL and ASYNC
+  request.open(opt.method, action);
 
-//   request.withCredentials = true;
+  // request.withCredentials = true;
 
-//   // Set the corresponding headers
-//   for (var name in opt.headers) {
-//     request.setRequestHeader(name, opt.headers[name]);
-//   }
+  // Set the corresponding headers
+  for (var name in opt.headers) {
+    request.setRequestHeader(name, opt.headers[name]);
+  }
 
-//   // Load the before callback before sending the data
-//   if (before) before(request);
+  // Load the before callback before sending the data
+  if (before) before(request);
 
-//   request.send(opt.body);
+  request.send(opt.body);
 
-//   return request;
-// }
-/* eslint-enable no-unused-vars*/
+  return request;
+}
 
 // [INTERNAL USE ONLY]
 // Parse JSON without throwing an error
-/* eslint-disable no-unused-vars*/
-// function parseJson (jsonString) {
-//   try {
-//     var o = JSON.parse(jsonString);
-//     // Handle non-exception-throwing cases:
-//     // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking
-//     // so we must check for that, too.
-//     if (o && typeof o === 'object') {
-//       return o;
-//     }
-//   } catch (e) {}
+function parseJson(jsonString) {
+  try {
+    var o = JSON.parse(jsonString);
+    // Handle non-exception-throwing cases:
+    // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking
+    // so we must check for that, too.
+    if (o && typeof o === 'object') {
+      return o;
+    }
+  } catch (e) {}
 
-//   return false;
-// }
-/* eslint-enable no-unused-vars*/
+  return false;
+}
 
 // [INTERNAL USE ONLY]
 // Generate a fragment of HTML. This irons out the inconsistences
@@ -590,12 +589,16 @@ u.prototype.pairs = function (name, value, get, set) {
 
 // [INTERNAL USE ONLY]
 
-// // Parametize an object: { a: 'b', c: 'd' } => 'a=b&c=d'
-// u.prototype.param = function (obj) {
-//   return Object.keys(obj).map(function (key) {
-//     return this.uri(key) + '=' + this.uri(obj[key]);
-//   }.bind(this)).join('&');
-// };
+// Parametize an object: { a: 'b', c: 'd' } => 'a=b&c=d'
+u.prototype.param = function (obj) {
+  return Object.keys(obj)
+    .map(
+      function (key) {
+        return this.uri(key) + '=' + this.uri(obj[key]);
+      }.bind(this)
+    )
+    .join('&');
+};
 
 // // Travel the matched elements one node up
 // u.prototype.parent = function (selector) {
@@ -862,7 +865,7 @@ u.prototype.wrap = function (selector) {
 // Export it for webpack
 if (typeof module === 'object' && module.exports) {
   module.exports = {
-    u: u
-    //ajax: ajax
+    u: u,
+    ajax: ajax
   };
 }
