@@ -13,10 +13,13 @@ jobs:
     - name: Set variables
       id: vars
       shell: bash
+      env:
+        TEST1: ${{ secrets.TEST1 }}
+        BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
       run: |
         echo ::set-output name=node_version::$(cat .node-version)
-        echo $TEST1
-        echo $BROWSERSTACK_USERNAME
+        echo "$TEST1"
+        echo "$BROWSERSTACK_USERNAME"
 
     - name: Set up Node.js
       uses: actions/setup-node@v1
