@@ -147,4 +147,5 @@ declare namespace Umbrella {
 
 declare module 'src/lib/u.js' {
   export const u: (selector?: Umbrella.Selector, scope?: Umbrella.Selector) => Umbrella.Instance;
+  export const ajax: Umbrella.Ajax;
 }
