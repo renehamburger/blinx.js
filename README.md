@@ -27,7 +27,7 @@ For now, the script can be included directly from GitHub via the jsdelivr CDN, e
 
 ```html
 <script
-  src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.4.5/dist/blinx.js"
+  src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.4.6/dist/blinx.js"
   defer
   data-blinx="{
   language: 'de'
@@ -45,7 +45,7 @@ blinx.js loads several resources it requires dynamically and asynchronously. To 
   defer
 ></script>
 <script
-  src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.4.5/dist/blinx.js"
+  src="https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.4.6/dist/blinx.js"
   defer
 ></script>
 ```
@@ -57,7 +57,7 @@ The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determin
 ```js
 var blinxScript = document.createElement('script');
 blinxScript.type = 'text/javascript';
-blinxScript.src = 'https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.4.5/dist/blinx.js';
+blinxScript.src = 'https://cdn.jsdelivr.net/gh/renehamburger/blinx.js@v0.4.6/dist/blinx.js';
 document.documentElement.appendChild(blinxScript);
 blinxScript.setAttribute('data-blinx', '{ language: "de" }');
 ```
