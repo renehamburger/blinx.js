@@ -13,13 +13,8 @@ jobs:
     - name: Set variables
       id: vars
       shell: bash
-      env:
-        TEST1: ${{ secrets.TEST1 }}
-        BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
       run: |
         echo ::set-output name=node_version::$(cat .node-version)
-        echo "$TEST1"
-        echo "$BROWSERSTACK_USERNAME"
 
     - name: Set up Node.js
       uses: actions/setup-node@v1
@@ -55,26 +50,19 @@ jobs:
     - name: Upload code-coverage
       uses: codecov/codecov-action@v1
 
-    - name: Bump version on master
-      if: ${{ github.ref == 'refs/heads/master' }}
-      run: |
-        git config --global user.name "${GITHUB_ACTOR}"
-        git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-        npm version patch
-
     - name: Execute build
       run: |
         npm run build
 
+    - name: Bump version on master
+      if: ${{ github.ref == 'refs/heads/master' }}
+      run: |
+        npm version patch
+
     - name: Commit built files on master
       if: ${{ github.ref == 'refs/heads/master' }}
-      uses: EndBug/add-and-commit@v5
+      uses: EndBug/add-and-commit@v8
       with:
         message: "Commit dist files"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Get version
-      id: get_version
-      run: echo ::set-output name=version::$(node -pe "require('./package.json').version")
-
