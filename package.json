@@ -16,8 +16,8 @@
     "e2e-debug": "karma start karma.config.js --browsers ChromeDebugging --reporters dots --browser-no-activity-timeout=999999"
   },
   "engines": {
-    "node": "12.18.0",
-    "npm": "6.14.4"
+    "node": "16.13.0",
+    "npm": "8.1.0"
   },
   "keywords": [
     "bible",
