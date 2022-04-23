@@ -205,12 +205,8 @@ export class Blinx {
     <label for="bxCopyrightTrigger" class="bxCopyrightTriggerLabel">©</label>
     <input type="checkbox" id="bxCopyrightTrigger">
     <div class="bxCopyrightDetails">
-      <div class="bxCredits">
-        ${blinxCredits}
-      </div>
-      <div class="bxCredits">
-        ${apiCredits}
-      </div>
+      <div>${blinxCredits}</div>
+      <div>${apiCredits}</div>
     </div>
   </div>
 </div>
