@@ -6,7 +6,7 @@ concurrency: ci
 jobs:
   main:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
 
     steps:
     - name: Check out commit
