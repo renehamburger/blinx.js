@@ -31,13 +31,6 @@ export class BibleVersions implements BibleVersionsInterface {
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
-  // Aramaic
-  'arc.peshitta' = {
-    title: 'Peshitta NT',
-    languageCode: 'arc',
-    availableSections: ['NT'] as BibleSection[]
-  };
-
   // Bulgarian
   'bg.bgv' = {
     title: 'Veren',
@@ -210,6 +203,16 @@ export class BibleVersions implements BibleVersionsInterface {
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
+  'en.kjva' = {
+    title: 'King James Version incl. Apocrypha',
+    languageCode: 'en',
+    availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[]
+  };
+  'en.tyndale' = {
+    title: 'William Tyndale Bible',
+    languageCode: 'en',
+    availableSections: ['Pentateuch', 'NT'] as BibleSection[]
+  };
   'en.nirv' = {
     title: 'New Int. Readers Version',
     languageCode: 'en',
@@ -248,6 +251,13 @@ export class BibleVersions implements BibleVersionsInterface {
   'en.weymouth' = {
     title: 'Weymouth NT',
     languageCode: 'en',
+    availableSections: ['NT'] as BibleSection[]
+  };
+
+  // English, Middle
+  'enm.wycliffe' = {
+    title: 'John Wycliffe Bible',
+    languageCode: 'enb',
     availableSections: ['NT'] as BibleSection[]
   };
 
@@ -411,14 +421,14 @@ export class BibleVersions implements BibleVersionsInterface {
   };
 
   // Ancient Hebrew
-  'hbo.aleppo' = {
+  'he.aleppo' = {
     title: 'Aleppo Codex',
-    languageCode: 'hbo',
+    languageCode: 'he',
     availableSections: ['OT'] as BibleSection[]
   };
-  'hbo.wlc' = {
+  'he.wlc' = {
     title: 'OT Westminster Leningrad Codex',
-    languageCode: 'hbo',
+    languageCode: 'he',
     availableSections: ['OT'] as BibleSection[]
   };
 
@@ -495,7 +505,7 @@ export class BibleVersions implements BibleVersionsInterface {
   };
 
   // Latin
-  'la.vul' = {
+  'la.vulgate' = {
     title: 'Vulgata Clementina',
     languageCode: 'la',
     availableSections: ['OT', 'NT'] as BibleSection[]
@@ -513,6 +523,13 @@ export class BibleVersions implements BibleVersionsInterface {
     title: 'Latvian NT',
     languageCode: 'lv',
     availableSections: ['NT'] as BibleSection[]
+  };
+
+  // Malayalam
+  'mal.mal1910' = {
+    title: 'Sathyavedapusthakam',
+    languageCode: 'mal',
+    availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Maori (New Zealand)
@@ -635,6 +652,13 @@ export class BibleVersions implements BibleVersionsInterface {
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
+  // Syrian
+  'syr.peshitta' = {
+    title: 'Peshitta NT',
+    languageCode: 'syr',
+    availableSections: ['NT'] as BibleSection[]
+  };
+
   // Thai
   'th.thai' = {
     title: 'Thai from KJV',
@@ -676,34 +700,34 @@ export class BibleVersions implements BibleVersionsInterface {
   };
 
   // Chinese
-  'za.ccbt' = {
+  'zh-hant.ccbt' = {
     title: '聖經當代譯本修訂版',
-    languageCode: 'za',
+    languageCode: 'zh-hant',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.cuvs' = {
+  'zh-hans.cuvs' = {
     title: '中文和合本（简体）',
-    languageCode: 'za',
+    languageCode: 'zh-hans',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.cnt' = {
+  'zh-hant.cnt' = {
     title: 'NCV Traditional',
-    languageCode: 'za',
+    languageCode: 'zh-hant',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.cus' = {
+  'zh-hans.cus' = {
     title: 'Union Simplified',
-    languageCode: 'za',
+    languageCode: 'zh-hans',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.cns' = {
+  'zh-hans.cns' = {
     title: 'NCV Simplified',
-    languageCode: 'za',
+    languageCode: 'zh-hans',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.cut' = {
+  'zh-hant.cut' = {
     title: 'Union Traditional',
-    languageCode: 'za',
+    languageCode: 'zh-hant',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 }
