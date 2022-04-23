@@ -60,7 +60,6 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "glob": "^7.1.6",
     "lodash": "^4.17.21"
   }
 }
