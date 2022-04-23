@@ -462,6 +462,7 @@ export class Blinx {
     let versionCode = isString(this.options.bibleVersion)
       ? this.options.bibleVersion
       : this.options.bibleVersion.bibleText;
+    versionCode = versionCode.toLowerCase() as typeof versionCode; // Support for legacy codes which had capitalised characters
     const availableVersions = Object.keys(
       bible.getAvailableVersions(this.options.language)
     ) as BibleVersionCode[];
