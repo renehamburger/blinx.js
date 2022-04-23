@@ -168,8 +168,8 @@ module.exports = function (karmaConfig) {
   }
 
   if (browserStack) {
-    const branch = execSync('git branch --show-current');
-    const commitHash = execSync('git rev-parse --short HEAD');
+    const branch = execSync('git branch --show-current').toString();
+    const commitHash = execSync('git rev-parse --short HEAD').toString();
     config.browserStack = {
       project: `blinx.js - branch: ${branch}`,
       build: commitHash
