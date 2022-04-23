@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
