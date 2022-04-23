@@ -79,29 +79,30 @@
   font-weight: 600;
   margin-right: 16px;
   margin-right: 1rem;
-  /* Avoid credits to move underneath */
-  padding-bottom: 3px;
-  margin-bottom: -3px;
 }
-.bxCredits {
-  font-style: italic;
+.bxCopyrightTriggerLabel {
+  cursor: pointer;
   float: right;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #007bff;
+}
+.bxCopyrightTriggerLabel:hover {
+  color: #0056b3;
+}
+.bxCopyrightDetails {
+  display: none;
   text-align: right;
-  line-height: 19.6px;
-  line-height: 1.225rem;
-  margin-left: 8px;
-  margin-left: 0.5rem;
+  margin: 5px 0;
+  line-height: 25px;
 }
-.bxCredits:not(:last-child):before {
-  content: '|';
-  font-style: normal;
-  margin-right: 5px;
-  margin-right: 0.3125rem;
+#bxCopyrightTrigger {
+  position: absolute;
+  left: -9999px;
+  left: -100vw;
 }
-@media only screen and (max-width: 600px) {
-  .bxCredits {
-    font-size: 85%;
-  }
+#bxCopyrightTrigger:checked + .bxCopyrightDetails {
+  display: block;
 }
 
 /* Spinner (taken from https://projects.lukehaas.me/css-loaders/) */
