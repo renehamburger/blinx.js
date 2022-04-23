@@ -3,7 +3,6 @@
 }
 .bxTippy {
   font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-  min-width: 350px;
   max-width: 800px;
   text-align: left;
   font-size: 14px;
@@ -85,6 +84,7 @@
 .bxCopyrightTriggerLabel {
   cursor: pointer;
   float: right;
+  margin-left: 30px;
   font-size: 1rem;
   line-height: 1.4;
   color: #007bff;
