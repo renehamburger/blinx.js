@@ -7,7 +7,7 @@
     "tmp": "a=1 echo $a",
     "version": "bash scripts/version.sh",
     "start": "webpack-dev-server --port 9000 --host 0.0.0.0 --open-page http://localhost:9000 --inline --progress --profile --colors --watch --content-base src/",
-    "build": "npm run lint && npm run format:check && webpack --config webpack.config.js -p",
+    "build": "webpack --config webpack.config.js -p",
     "lint": "tslint -p tsconfig.app.json && tslint-config-prettier-check ./tslint.json",
     "format": "prettier \"**/*.*\" --write",
     "format:check": "prettier \"**/*.*\" --check",
