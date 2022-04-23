@@ -14,8 +14,12 @@ jobs:
 
     - name: Determine Node.js version
       id: nodeJs
+      run: echo ::set-output name=version::$(cat .node-version)
+
+    - name: Remove blinx.js version from package-lock.json temporarily to allow better npm cache-matching
       run: |
-        echo ::set-output name=version::$(cat .node-version)
+        sed -i'' '/"name": "blinx\.js",/{n;s/.*/  "version": "",/}' package-lock.json
+        head package-lock.json
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
