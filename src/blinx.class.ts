@@ -202,12 +202,12 @@ export class Blinx {
       versionCode
     )}" target="_blank">
       ${this.convertOsisToRegularReference(osis, true)}</a>
-    <span class="bxCredits">
-      ${apiCredits}
-    </span>
-    <span class="bxCredits">
-      ${blinxCredits}
-    </span>
+    <label for="bxCopyrightTrigger" class="bxCopyrightTriggerLabel">©</label>
+    <input type="checkbox" id="bxCopyrightTrigger">
+    <div class="bxCopyrightDetails">
+      <div>${blinxCredits}</div>
+      <div>${apiCredits}</div>
+    </div>
   </div>
 </div>
           `
@@ -231,6 +231,10 @@ export class Blinx {
             this.passageDisplayedDeferred.resolve();
           },
           onHide: (tippyInstance) => {
+            const copyrightTrigger = tippyInstance.popper.querySelector(
+              '#bxCopyrightTrigger'
+            ) as HTMLInputElement;
+            copyrightTrigger.checked = false;
             if (this.tippyPolyfills) {
               if (this.tippyPolyfillInterval) {
                 clearInterval(this.tippyPolyfillInterval);
@@ -270,7 +274,7 @@ export class Blinx {
     if (this.tippyPolyfillInterval) {
       clearInterval(this.tippyPolyfillInterval);
     }
-    this.tippyPolyfillInterval = (setInterval(adjustPos, 10) as unknown) as number;
+    this.tippyPolyfillInterval = setInterval(adjustPos, 10) as unknown as number;
   }
 
   /** Second step of initialisation after parser & polyfills are loaded. */

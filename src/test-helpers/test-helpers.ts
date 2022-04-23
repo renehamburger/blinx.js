@@ -29,7 +29,8 @@ export async function testRecognition(
 }
 
 function loadDependencies(language = 'en') {
-  window.bcv_parser = require(`../../node_modules/bible-passage-reference-parser/js/${language}_bcv_parser.js`).bcv_parser;
+  window.bcv_parser =
+    require(`../../node_modules/bible-passage-reference-parser/js/${language}_bcv_parser.js`).bcv_parser;
   window.tippy = require('../../assets/tippy.all.min.js').tippy;
 }
 
