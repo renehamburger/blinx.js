@@ -12,11 +12,11 @@ export class Options {
   language: keyof Languages = 'en';
   /** Code of the bible version to be used, for the displayed Bible text and the online Bible being linked to. */
   bibleVersion: BibleVersionCode | { bibleText: BibleVersionCode; onlineBible: BibleVersionCode } =
-    'en.ESV';
+    'en.esv';
   /** Online Bible to be linked to. */
   onlineBible: OnlineBibleName = 'BibleServer';
   /** Online Bible to be linked to. */
-  bibleApi: BibleApiName = 'getBible';
+  bibleApi: BibleApiName = 'getbible';
   /**
    * Futher options for the parser.
    * @see https://github.com/openbibleinfo/Bible-Passage-Reference-Parser#options

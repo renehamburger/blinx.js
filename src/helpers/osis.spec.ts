@@ -3,27 +3,29 @@ import { parseOsis, transformOsis, truncateMultiBookOsis } from 'src/helpers/osi
 describe('Osis helpers - ', () => {
   describe('parseOsis()', () => {
     it('works', () => {
-      expect(parseOsis('Gen.1')).toEqual({
-        start: { book: 'Gen', chapter: 1 }
+      expect(parseOsis('Gen.1')).toStrictEqual({
+        start: { book: 'Gen', bookNumber: 1, chapter: 1 },
+        end: { book: 'Gen', bookNumber: 1, chapter: 1 }
       });
-      expect(parseOsis('Gen.1.2')).toEqual({
-        start: { book: 'Gen', chapter: 1, verse: 2 }
+      expect(parseOsis('Gen.1.2')).toStrictEqual({
+        start: { book: 'Gen', bookNumber: 1, chapter: 1, verse: 2 },
+        end: { book: 'Gen', bookNumber: 1, chapter: 1, verse: 2 }
       });
-      expect(parseOsis('Gen.1.2-Gen.1.3')).toEqual({
-        start: { book: 'Gen', chapter: 1, verse: 2 },
-        end: { book: 'Gen', chapter: 1, verse: 3 }
+      expect(parseOsis('Gen.1.2-Gen.1.3')).toStrictEqual({
+        start: { book: 'Gen', bookNumber: 1, chapter: 1, verse: 2 },
+        end: { book: 'Gen', bookNumber: 1, chapter: 1, verse: 3 }
       });
-      expect(parseOsis('Gen.2-Gen.3')).toEqual({
-        start: { book: 'Gen', chapter: 2 },
-        end: { book: 'Gen', chapter: 3 }
+      expect(parseOsis('Gen.2-Gen.3')).toStrictEqual({
+        start: { book: 'Gen', bookNumber: 1, chapter: 2 },
+        end: { book: 'Gen', bookNumber: 1, chapter: 3 }
       });
-      expect(parseOsis('Gen.2.1-Gen.3.4')).toEqual({
-        start: { book: 'Gen', chapter: 2, verse: 1 },
-        end: { book: 'Gen', chapter: 3, verse: 4 }
+      expect(parseOsis('Gen.2.1-Gen.3.4')).toStrictEqual({
+        start: { book: 'Gen', bookNumber: 1, chapter: 2, verse: 1 },
+        end: { book: 'Gen', bookNumber: 1, chapter: 3, verse: 4 }
       });
-      expect(parseOsis('Gen.50.2-Exod.1.3')).toEqual({
-        start: { book: 'Gen', chapter: 50, verse: 2 },
-        end: { book: 'Exod', chapter: 1, verse: 3 }
+      expect(parseOsis('Gen.50.2-Exod.1.3')).toStrictEqual({
+        start: { book: 'Gen', bookNumber: 1, chapter: 50, verse: 2 },
+        end: { book: 'Exod', bookNumber: 2, chapter: 1, verse: 3 }
       });
     });
   });

@@ -13,876 +13,721 @@ export type BibleVersionsInterface = {
  */
 export class BibleVersions implements BibleVersionsInterface {
   // Afrikaans
-  'af.AOV' = {
+  'af.aov' = {
     title: 'Ou Vertaling',
     languageCode: 'af',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
-  // Amharic (Ehtopia)
-  'am.HSAB' = {
-    title: 'Haile Selassie Amharic Bible',
-    languageCode: 'am',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'am.Amharic' = {
-    title: 'Amharic NT',
-    languageCode: 'am',
-    availableSections: ['NT'] as BibleSection[]
-  };
-
   // Arabic
-  'ar.ALAB' = {
+  'ar.alab' = {
     title: 'التفسير التطبيقي للكتاب المقدس',
     languageCode: 'ar',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'ar.ArabicSV' = {
+  'ar.arabicsv' = {
     title: 'Smith and Van Dyke',
     languageCode: 'ar',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
-  // Aramaic
-  'arc.Peshitta' = {
-    title: 'Peshitta NT',
-    languageCode: 'arc',
-    availableSections: ['NT'] as BibleSection[]
-  };
-
   // Bulgarian
-  'bg.BGV' = {
+  'bg.bgv' = {
     title: 'Veren',
     languageCode: 'bg',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'bg.CBT' = {
+  'bg.cbt' = {
     title: 'Библия, нов превод от оригиналните езици',
     languageCode: 'bg',
     availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[]
   };
-  'bg.Bulgarian1940' = {
-    title: 'Bulgarian Bible (1940)',
-    languageCode: 'bg',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
 
   // Breton
-  'br.Breton' = {
+  'br.breton' = {
     title: 'Breton',
     languageCode: 'br',
     availableSections: ['Gospels'] as BibleSection[]
   };
 
   // Chamorro (GUam, Northern Mariana Islands)
-  'ch.Chamorro' = {
+  'ch.chamorro' = {
     title: 'Chamorro',
     languageCode: 'ch',
     availableSections: ['Ps', 'Gospels', 'Acts'] as BibleSection[]
   };
 
   // Coptic
-  'cop.Bohairic' = {
-    title: 'Bohairic NT',
-    languageCode: 'cop',
-    availableSections: ['NT'] as BibleSection[]
-  };
-  'cop.Coptic' = {
+  'cop.coptic' = {
     title: 'Coptic NT',
     languageCode: 'cop',
     availableSections: ['NT'] as BibleSection[]
   };
-  'cop.Sahidic' = {
+  'cop.sahidic' = {
     title: 'Sahidic NT',
     languageCode: 'cop',
     availableSections: ['NT'] as BibleSection[]
   };
 
   // Czech
-  'cs.B21' = {
+  'cs.b21' = {
     title: 'Bible, překlad 21. století',
     languageCode: 'cs',
     availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[]
   };
-  'cs.BKR' = {
+  'cs.bkr' = {
     title: 'Bible Kralická',
     languageCode: 'cs',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'cs.CEP' = {
+  'cs.cep' = {
     title: 'Český ekumenický překlad',
     languageCode: 'cs',
     availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[]
   };
-  'cs.SNC' = {
-    title: 'Slovo na cestu',
-    languageCode: 'cs',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'cs.KMS' = {
-    title: 'Křesťanská misijní společnost',
-    languageCode: 'cs',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'cs.NKB' = {
-    title: 'Nova Bible Kralicka',
-    languageCode: 'cs',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
 
   // Danish
-  'da.DK' = {
+  'da.dk' = {
     title: 'Bibelen på hverdagsdansk',
     languageCode: 'da',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'da.Danish' = {
+  'da.danish' = {
     title: 'Danish',
     languageCode: 'da',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // German
-  'de.ELB' = {
+  'de.elb' = {
     title: 'Elberfelder Bibel',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'de.ZB' = {
+  'de.zb' = {
     title: 'Zürcher Bibel',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'de.LUT' = {
-    title: 'Lutherbibel 2017',
+  'de.lut' = {
+    title: 'Lutherbibel (2017)',
     languageCode: 'de',
     availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[]
   };
-  'de.NeÜ' = {
+  'de.neü' = {
     title: 'Neue evangelistische Übersetzung',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'de.SLT' = {
+  'de.slt' = {
     title: 'Schlachter 2000',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'de.EU' = {
-    title: 'Einheitsübersetzung 2016',
+  'de.eu' = {
+    title: 'Einheitsübersetzung (2016)',
     languageCode: 'de',
     availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[]
   };
-  'de.MENG' = {
+  'de.meng' = {
     title: 'Menge Bibel',
     languageCode: 'de',
     availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[]
   };
-  'de.NLB' = {
+  'de.nlb' = {
     title: 'Neues Leben. Die Bibel',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'de.GNB' = {
+  'de.gnb' = {
     title: 'Gute Nachricht Bibel',
     languageCode: 'de',
     availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[]
   };
-  'de.HFA' = {
+  'de.hfa' = {
     title: 'Hoffnung für Alle',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'de.NGÜ' = {
+  'de.ngü' = {
     title: 'Neue Genfer Übersetzung',
     languageCode: 'de',
     availableSections: ['Psalms', 'NT'] as BibleSection[]
-  }; // Very good but unfortunatly not complete
-  'de.SLT1951' = {
-    title: 'Schlachter 1951',
+  };
+  'de.slt1951' = {
+    title: 'Schlachter (1951)',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'de.ELB1905' = {
-    title: 'Elberfelder 1905',
+  'de.elb1905' = {
+    title: 'Elberfelder (1905)',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'de.ELB1871' = {
-    title: 'Elberfelder 1871',
+  'de.elb1871' = {
+    title: 'Elberfelder (1871)',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'de.LUT1912' = {
-    title: 'Luther 1912',
-    languageCode: 'de',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'de.LUT1545' = {
-    title: 'Luther 1545',
+  'de.lut1545' = {
+    title: 'Luther (1545)',
     languageCode: 'de',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Modern Greek
-  'el.ModernGreek' = {
+  'el.moderngreek' = {
     title: 'Modern Greek',
     languageCode: 'el',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // English
-  'en.ESV' = {
+  'en.esv' = {
     title: 'English Standard Version',
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.NIV' = {
+  'en.niv' = {
     title: 'New International Version',
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.WEB' = {
+  'en.web' = {
     title: 'World English Bible',
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.KJV' = {
+  'en.kjv' = {
     title: 'King James Version',
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.NIRV' = {
+  'en.kjva' = {
+    title: 'King James Version incl. Apocrypha',
+    languageCode: 'en',
+    availableSections: ['OT', 'NT', 'Apocrypha'] as BibleSection[]
+  };
+  'en.tyndale' = {
+    title: 'William Tyndale Bible',
+    languageCode: 'en',
+    availableSections: ['Pentateuch', 'NT'] as BibleSection[]
+  };
+  'en.nirv' = {
     title: 'New Int. Readers Version',
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.AKJV' = {
+  'en.akjv' = {
     title: 'KJV Easy Read',
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.ASV' = {
+  'en.asv' = {
     title: 'American Standard Version',
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.BasicEnglish' = {
+  'en.basicenglish' = {
     title: 'Basic English Bible',
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.Darby' = {
-    title: 'Darby',
-    languageCode: 'en',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'en.YLT' = {
+  'en.ylt' = {
     title: `Young's Literal Translation`,
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.WB' = {
+  'en.wb' = {
     title: `Webster's Bible`,
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.DouayRheims' = {
+  'en.douayrheims' = {
     title: 'Douay Rheims',
     languageCode: 'en',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'en.Weymouth' = {
+  'en.weymouth' = {
     title: 'Weymouth NT',
     languageCode: 'en',
     availableSections: ['NT'] as BibleSection[]
   };
 
+  // English, Middle
+  'enm.wycliffe' = {
+    title: 'John Wycliffe Bible',
+    languageCode: 'enb',
+    availableSections: ['NT'] as BibleSection[]
+  };
+
   // Esperanto
-  'eo.Esperanto' = {
+  'eo.esperanto' = {
     title: 'Esperanto',
     languageCode: 'eo',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Spanish
-  'es.BTX' = {
+  'es.btx' = {
     title: 'La Biblia Textual',
     languageCode: 'es',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'es.CST' = {
+  'es.cst' = {
     title: 'Nueva Versión Internacional (Castilian)',
     languageCode: 'es',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'es.NVI' = {
+  'es.nvi' = {
     title: 'Nueva Versión Internacional',
     languageCode: 'es',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'es.Valera' = {
+  'es.valera' = {
     title: 'Reina Valera (1909)',
     languageCode: 'es',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'es.RV1858' = {
+  'es.rv1858' = {
     title: 'Reina Valera NT (1858)',
     languageCode: 'es',
     availableSections: ['NT'] as BibleSection[]
   };
-  'es.SSE' = {
+  'es.sse' = {
     title: 'Sagradas Escrituras (1569)',
     languageCode: 'es',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Estonian
-  'et.Estonian' = {
+  'et.estonian' = {
     title: 'Estonian',
     languageCode: 'et',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Basque
-  'eu.Basque' = {
+  'eu.basque' = {
     title: 'Navarro Labourdin NT',
     languageCode: 'eu',
     availableSections: ['NT'] as BibleSection[]
   };
 
   // Persian/Farsi
-  'fa.FCB' = {
+  'fa.fcb' = {
     title: 'کتاب مقدس، ترجمه تفسیری',
     languageCode: 'fa',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Finnish
-  'fi.Finnish1776' = {
+  'fi.finnish1776' = {
     title: 'Finnish Bible (1776)',
     languageCode: 'fi',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'fi.PyhaRaamattu1933' = {
-    title: 'Pyha Raamattu (1933 1938)',
+  'fi.pyharaamattu1933' = {
+    title: 'Pyha Raamattu (1933, 1938)',
     languageCode: 'fi',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'fi.PyhaRaamattu1992' = {
+  'fi.pyharaamattu1992' = {
     title: 'Pyha Raamattu (1992)',
     languageCode: 'fi',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // French
-  'fr.BDS' = {
+  'fr.bds' = {
     title: 'Bible du Semeur',
     languageCode: 'fr',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'fr.LSG' = {
-    title: 'Louis Segond 1910',
-    languageCode: 'fr',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'fr.S21' = {
-    title: 'Segond 21',
-    languageCode: 'fr',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'fr.Martin' = {
-    title: 'Martin (1744)',
-    languageCode: 'fr',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'fr.LS1910' = {
+  'fr.lsg' = {
     title: 'Louis Segond (1910)',
     languageCode: 'fr',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'fr.Ostervald1996' = {
-    title: 'Ostervald (1996 revision)',
+  'fr.s21' = {
+    title: 'Segond 21',
+    languageCode: 'fr',
+    availableSections: ['OT', 'NT'] as BibleSection[]
+  };
+  'fr.martin' = {
+    title: 'Martin (1744)',
+    languageCode: 'fr',
+    availableSections: ['OT', 'NT'] as BibleSection[]
+  };
+  'fr.ls1910' = {
+    title: 'Louis Segond (1910)',
+    languageCode: 'fr',
+    availableSections: ['OT', 'NT'] as BibleSection[]
+  };
+  'fr.darby' = {
+    title: 'Bible J.N.Darby en français (1975)',
     languageCode: 'fr',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Scottish Gaelic
-  'gd.Gaelic' = {
+  'gd.gaelic' = {
     title: 'Scots Gaelic Gospel of Mark',
     languageCode: 'gd',
     availableSections: ['Mark'] as BibleSection[]
   };
 
   // Gothic
-  'got.Gothic' = {
-    title: 'Gothic (Nehemiah NT Portions)',
+  'got.gothic' = {
+    title: 'Gothic',
     languageCode: 'got',
     availableSections: ['Neh', 'NT'] as BibleSection[]
   };
 
   // Koine Greek
-  'grc.TextusReceptus' = {
-    title: 'Textus Receptus',
-    languageCode: 'grc',
-    availableSections: ['NT'] as BibleSection[]
-  };
-  'grc.MajorityTextParsed' = {
-    title: 'NT Byzantine Majority Text (2000) Parsed',
-    languageCode: 'grc',
-    availableSections: ['NT'] as BibleSection[]
-  };
-  'grc.MajorityText' = {
-    title: 'NT Byzantine Majority Text (2000)',
-    languageCode: 'grc',
-    availableSections: ['NT'] as BibleSection[]
-  };
-  'grc.TextusReceptusParsed' = {
+  'grc.textusreceptus' = {
     title: 'NT Textus Receptus (1550 1894) Parsed',
     languageCode: 'grc',
     availableSections: ['NT'] as BibleSection[]
   };
-  'grc.Tischendorf' = {
+  'grc.tischendorf' = {
     title: 'NT Tischendorf 8th Ed',
     languageCode: 'grc',
     availableSections: ['NT'] as BibleSection[]
   };
-  'grc.WestcottHortParsed' = {
+  'grc.westcotthort' = {
     title: 'NT Westcott Hort UBS4 variants Parsed',
     languageCode: 'grc',
     availableSections: ['NT'] as BibleSection[]
   };
-  'grc.WestcottHort' = {
-    title: 'NT Westcott Hort UBS4 variants',
-    languageCode: 'grc',
-    availableSections: ['NT'] as BibleSection[]
-  };
-  'grc.LXX' = {
-    title: 'OT Septuaginta',
-    languageCode: 'grc',
-    availableSections: ['OT'] as BibleSection[]
-  };
-  'grc.LXXParsed' = {
-    title: 'OT Septuaginta with Roots Parsing',
-    languageCode: 'grc',
-    availableSections: ['OT'] as BibleSection[]
-  };
-  'grc.LXXUnaccented' = {
-    title: 'OT Septuaginta Unaccented',
-    languageCode: 'grc',
-    availableSections: ['OT'] as BibleSection[]
-  };
-  'grc.LXXUnaccentedParsed' = {
-    title: 'OT Septuaginta Unaccented with Roots Parsing',
-    languageCode: 'grc',
-    availableSections: ['OT'] as BibleSection[]
-  };
 
   // Manx Gaelic (Isle of Man)
-  'gv.ManxGaelic' = {
+  'gv.manxgaelic' = {
     title: 'Manx Gaelic',
     languageCode: 'gv',
     availableSections: ['Esth', 'Jonah', 'Gospels'] as BibleSection[]
   };
 
   // Modern Hebrew
-  'he.ModernHebrew' = {
+  'he.modernhebrew' = {
     title: 'Hebrew Modern',
     languageCode: 'he',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'he.OT' = { title: 'Hebrew OT', languageCode: 'he', availableSections: ['OT'] as BibleSection[] };
+  'he.ot' = {
+    title: 'Hebrew OT',
+    languageCode: 'he',
+    availableSections: ['OT'] as BibleSection[]
+  };
 
   // Ancient Hebrew
-  'hbo.Aleppo' = {
+  'he.aleppo' = {
     title: 'Aleppo Codex',
-    languageCode: 'hbo',
+    languageCode: 'he',
     availableSections: ['OT'] as BibleSection[]
   };
-  'hbo.BHSUnpointed' = {
-    title: 'OT BHS (Consonants Only)',
-    languageCode: 'hbo',
-    availableSections: ['OT'] as BibleSection[]
-  };
-  'hbo.BHS' = {
-    title: 'OT BHS (Consonants and Vowels)',
-    languageCode: 'hbo',
-    availableSections: ['OT'] as BibleSection[]
-  };
-  'hbo.WLCUnpointed' = {
-    title: 'OT WLC (Consonants Only)',
-    languageCode: 'hbo',
-    availableSections: ['OT'] as BibleSection[]
-  };
-  'hbo.WLC' = {
-    title: 'OT WLC (Consonants and Vowels)',
-    languageCode: 'hbo',
-    availableSections: ['OT'] as BibleSection[]
-  };
-  'hbo.WLC2' = {
+  'he.wlc' = {
     title: 'OT Westminster Leningrad Codex',
-    languageCode: 'hbo',
+    languageCode: 'he',
     availableSections: ['OT'] as BibleSection[]
   };
 
   // Hungarian
-  'hu.Karoli' = {
+  'hu.karoli' = {
     title: 'Hungarian Karoli',
     languageCode: 'hu',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Croatian
-  'hr.CKK' = {
+  'hr.ckk' = {
     title: 'Knjiga O Kristu',
     languageCode: 'hr',
     availableSections: ['NT'] as BibleSection[]
   };
-  'hr.Croatian' = {
+  'hr.croatian' = {
     title: 'Croatian',
     languageCode: 'hr',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Hungarian
-  'hu.HUN' = {
+  'hu.hun' = {
     title: 'Hungarian',
     languageCode: 'hu',
     availableSections: ['NT'] as BibleSection[]
   };
-  'hu.KAR' = {
+  'hu.kar' = {
     title: 'IBS-fordítás (Új Károli)',
     languageCode: 'hu',
     availableSections: ['OT'] as BibleSection[]
   };
 
   // Armenian
-  'hy.EasternArmenian' = {
+  'hy.easternarmenian' = {
     title: 'Eastern',
     languageCode: 'hy',
     availableSections: ['Gen', 'Exod', 'Gospels'] as BibleSection[]
   };
-  'hy.WesternArmenian' = {
+  'hy.westernarmenian' = {
     title: 'Western NT',
     languageCode: 'hy',
     availableSections: ['NT'] as BibleSection[]
   };
 
   // Italian
-  'it.ITA' = {
+  'it.ita' = {
     title: 'La Parola è Vita',
     languageCode: 'it',
     availableSections: ['NT'] as BibleSection[]
   };
-  'it.NRS' = {
-    title: 'Nuova Riveduta 2006',
+  'it.nrs' = {
+    title: 'Nuova Riveduta (2006)',
     languageCode: 'it',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'it.Giovanni' = {
+  'it.giovanni' = {
     title: 'Giovanni Diodati Bible (1649)',
     languageCode: 'it',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'it.Riveduta' = {
+  'it.riveduta' = {
     title: 'Riveduta Bible (1927)',
     languageCode: 'it',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
-  // Georgian
-  'ka.Georgian' = {
-    title: 'Georgian',
-    languageCode: 'ka',
-    availableSections: ['Gospels', 'Acts', 'Jas'] as BibleSection[]
-  };
-
-  // Kabyle (Algeria)
-  'kab.Kabyle' = {
-    title: 'Kabyle NT',
-    languageCode: 'kab',
-    availableSections: ['NT'] as BibleSection[]
-  };
-
   // Korean
-  'ko.Korean' = {
+  'ko.korean' = {
     title: 'Korean',
     languageCode: 'ko',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Latin
-  'la.VUL' = {
-    title: 'Vulgata',
-    languageCode: 'la',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'la.NewVulgate' = {
-    title: 'Nova Vulgata',
-    languageCode: 'la',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-  'la.Vulgate' = {
+  'la.vulgate' = {
     title: 'Vulgata Clementina',
     languageCode: 'la',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Lithuanian
-  'lt.Lithuanian' = {
+  'lt.lithuanian' = {
     title: 'Lithuanian',
     languageCode: 'lt',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Latvian
-  'lv.Latvian' = {
+  'lv.latvian' = {
     title: 'Latvian NT',
     languageCode: 'lv',
     availableSections: ['NT'] as BibleSection[]
   };
 
+  // Malayalam
+  'mal.mal1910' = {
+    title: 'Sathyavedapusthakam',
+    languageCode: 'mal',
+    availableSections: ['OT', 'NT'] as BibleSection[]
+  };
+
   // Maori (New Zealand)
-  'mi.Maori' = {
+  'mi.maori' = {
     title: 'Maori',
     languageCode: 'mi',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Burmese (Myanmar)
-  'my.Judson' = {
+  'my.judson' = {
     title: 'Judson (1835)',
     languageCode: 'my',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Dutch
-  'nl.HTB' = {
+  'nl.htb' = {
     title: 'Het Boek',
     languageCode: 'nl',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'nl.StatenVertaling' = {
+  'nl.statenvertaling' = {
     title: 'Dutch Staten Vertaling',
     languageCode: 'nl',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Norwegian
-  'no.NOR' = {
+  'no.nor' = {
     title: 'En Levende Bok',
     languageCode: 'no',
     availableSections: ['NT'] as BibleSection[]
   };
-  'no.Bibelselskap' = {
+  'no.bibelselskap' = {
     title: 'Bibelselskap (1930)',
     languageCode: 'no',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Potawatomi (Indigenous North American)
-  'pot.Potawatomi' = {
+  'pot.potawatomi' = {
     title: 'Potawatomi (Lykins 1844)',
     languageCode: 'pot',
     availableSections: ['Matt', 'Acts'] as BibleSection[]
   };
 
-  // Polish
-  'pl.PSZ' = {
-    title: 'Słowo Życia',
-    languageCode: 'pl',
-    availableSections: ['NT'] as BibleSection[]
-  };
-
   // Uma (Indonesia)
-  'ppk.Uma' = { title: 'Uma NT', languageCode: 'ppk', availableSections: ['NT'] as BibleSection[] };
+  'ppk.uma' = { title: 'Uma NT', languageCode: 'ppk', availableSections: ['NT'] as BibleSection[] };
 
   // Portuguese
-  'pt.PRT' = {
+  'pt.prt' = {
     title: 'O Livro',
     languageCode: 'pt',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'pt.Almeida' = {
+  'pt.almeida' = {
     title: 'Almeida Atualizada',
     languageCode: 'pt',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Romanian
-  'ro.NTR' = {
+  'ro.ntr' = {
     title: 'Noua traducere în limba românã',
     languageCode: 'ro',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'ro.Cornilescu' = {
+  'ro.cornilescu' = {
     title: 'Cornilescu',
     languageCode: 'ro',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
-  // Romani
-  'rom.ROM' = {
-    title: 'Romani NT E Lashi Viasta',
-    languageCode: 'rom',
-    availableSections: ['NT'] as BibleSection[]
-  };
-
   // Russian
-  'ru.CARS' = {
+  'ru.cars' = {
     title: 'Священное Писание, Восточный перевод',
     languageCode: 'ru',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'ru.RSZ' = {
+  'ru.rsz' = {
     title: 'Новый перевод на русский язык',
     languageCode: 'ru',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'ru.Synodal' = {
+  'ru.synodal' = {
     title: 'Synodal Translation (1876)',
     languageCode: 'ru',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'ru.Makarij' = {
-    title: 'Makarij Translation Pentateuch (1825)',
-    languageCode: 'ru',
-    availableSections: ['Gen', 'Exod', 'Lev', 'Num', 'Deut'] as BibleSection[]
-  };
-  'ru.Zhuromsky' = {
+  'ru.zhuromsky' = {
     title: 'Victor Zhuromsky NT',
     languageCode: 'ru',
     availableSections: ['NT'] as BibleSection[]
   };
 
   // Slovak
-  'sk.NPK' = {
+  'sk.npk' = {
     title: 'Nádej pre kazdého',
     languageCode: 'sk',
     availableSections: ['NT'] as BibleSection[]
   };
 
-  // Albanian
-  'sq.Albanian' = {
-    title: 'Albanian',
-    languageCode: 'sq',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-
   // Swedish
-  'sv.BSV' = {
+  'sv.bsv' = {
     title: 'Nya Levande Bibeln',
     languageCode: 'sv',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'sv.Swedish' = {
+  'sv.swedish' = {
     title: 'Swedish (1917)',
     languageCode: 'sv',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Swahili (East Africa)
-  'sw.Swahili' = {
+  'sw.swahili' = {
     title: 'Swahili',
     languageCode: 'sw',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
+  // Syrian
+  'syr.peshitta' = {
+    title: 'Peshitta NT',
+    languageCode: 'syr',
+    availableSections: ['NT'] as BibleSection[]
+  };
+
   // Thai
-  'th.Thai' = {
+  'th.thai' = {
     title: 'Thai from KJV',
     languageCode: 'th',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Tagalog (Philippines)
-  'tl.Tagalog' = {
+  'tl.tagalog' = {
     title: 'Ang Dating Biblia (1905)',
     languageCode: 'tl',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
   // Turkish
-  'tr.TR' = {
+  'tr.tr' = {
     title: 'Türkçe',
     languageCode: 'tr',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'tr.Turkish' = {
+  'tr.turkish' = {
     title: 'Turkish',
     languageCode: 'tr',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'tr.TNT' = {
-    title: 'Turkish NT (1987 1994)',
-    languageCode: 'tr',
-    availableSections: ['NT'] as BibleSection[]
-  };
-
-  // Tamajaq (Mali)
-  'ttq.Tamajaq' = {
-    title: 'Portions of the Bible in Tamajaq',
-    languageCode: 'ttq',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
 
   // Ukrainian
-  'uk.Ukranian' = {
+  'uk.ukranian' = {
     title: 'Ukranian NT (P Kulish 1871)',
     languageCode: 'uk',
     availableSections: ['NT'] as BibleSection[]
   };
 
   // Vietnamese
-  'vi.Vietnamese' = {
+  'vi.vietnamese' = {
     title: 'Vietnamese (1934)',
     languageCode: 'vi',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 
-  // Wolof (West Africa)
-  'wo.Wolof' = {
-    title: 'Wolof NT',
-    languageCode: 'wo',
-    availableSections: ['NT'] as BibleSection[]
-  };
-
-  // Xhosa (Southern Africa)
-  'xh.Xhosa' = {
-    title: 'Xhosa',
-    languageCode: 'xh',
-    availableSections: ['OT', 'NT'] as BibleSection[]
-  };
-
   // Chinese
-  'za.CCBT' = {
+  'zh-hant.ccbt' = {
     title: '聖經當代譯本修訂版',
-    languageCode: 'za',
+    languageCode: 'zh-hant',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.CUVS' = {
+  'zh-hans.cuvs' = {
     title: '中文和合本（简体）',
-    languageCode: 'za',
+    languageCode: 'zh-hans',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.CNT' = {
+  'zh-hant.cnt' = {
     title: 'NCV Traditional',
-    languageCode: 'za',
+    languageCode: 'zh-hant',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.CUS' = {
+  'zh-hans.cus' = {
     title: 'Union Simplified',
-    languageCode: 'za',
+    languageCode: 'zh-hans',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.CNS' = {
+  'zh-hans.cns' = {
     title: 'NCV Simplified',
-    languageCode: 'za',
+    languageCode: 'zh-hans',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
-  'za.CUT' = {
+  'zh-hant.cut' = {
     title: 'Union Traditional',
-    languageCode: 'za',
+    languageCode: 'zh-hant',
     availableSections: ['OT', 'NT'] as BibleSection[]
   };
 }
