@@ -58,9 +58,11 @@ describe('GetBibleBibleApi', () => {
     });
 
     it('works for a verse range across books', async () => {
-      pending('Not yet implemented');
-      const verses = await api['getRawPassage']('1John.3.1-2John.1.1', 'en.web');
-      expect(verses).toBe('...');
+      const verses = await api['getRawPassage']('1John.5.21-2John.1.1', 'en.web');
+
+      expect(verses).toHaveLength(2);
+      expect(verses[0]).toMatchObject({ chapter: 5, verse: 21, name: '1 John 5:21' });
+      expect(verses[verses.length - 1]).toMatchObject({ chapter: 1, verse: 1, name: '2 John 1:1' });
     });
   });
 });

@@ -140,15 +140,25 @@ export class GetBibleBibleApi extends BibleApi {
   ): Promise<GetbibleVerse[]> {
     // Parse input
     const bibleVersionAbbreviation = this.bibleVersionMap[bibleVersionCode];
-    const [bookname, chapterNumberAsString] = osis.split('.');
-    const bookNumber = Object.keys(new BibleBooks()).indexOf(bookname) + 1;
-    const chapterNumber = parseFloat(chapterNumberAsString);
+    const [
+      [startBookname, startChapter, startVerse],
+      [endBookname, endChapter, endVerse]
+    ] = osis.split('-').map((part) => part.split('.'));
+    const startBookNumber = Object.keys(new BibleBooks()).indexOf(startBookname) + 1;
+    const endBookNumber = Object.keys(new BibleBooks()).indexOf(endBookname) + 1;
+    const startChapterNumber = parseFloat(startChapter);
+    const endChapterNumber = parseFloat(endChapter);
+    const startVerseNumber = parseFloat(startVerse);
+    const endVerseNumber = parseFloat(endVerse);
+
     // Load checksum for selected version
     const bibleVersion = (await this.translations)[bibleVersionAbbreviation];
+
     // Ensure bibleVersionCode is supported
     if (!bibleVersionAbbreviation || !bibleVersion) {
       throw new Error(`${this.title}: Bible version ${bibleVersionCode} not supported!`);
     }
+
     // Load book checksums
     if (!bibleVersion.books) {
       bibleVersion.books = await this.loadBookChecksums(
@@ -156,38 +166,67 @@ export class GetBibleBibleApi extends BibleApi {
         bibleVersion.checksum
       );
     }
-    // Ensure book is supported
-    const book = bibleVersion.books[bookNumber];
-    if (!book) {
-      throw new Error(
-        `${this.title}: Book ${bookname} (#${bookNumber}) not supported for Bible version ${bibleVersionCode}!`
-      );
+
+    // Retrieve verses for each book (& chapter) within the range
+    const verses: GetbibleVerse[] = [];
+    for (let bookNumber = startBookNumber; bookNumber <= endBookNumber; bookNumber++) {
+      // Ensure book is supported
+      const book = bibleVersion.books[bookNumber];
+      if (!book) {
+        throw new Error(
+          `${this.title}: Bible book # ${bookNumber} not supported for Bible version ${bibleVersionCode}!`
+        );
+      }
+
+      // Load chapter checksums
+      if (!book.chapters) {
+        book.chapters = await this.loadChapterChecksums(
+          bibleVersionAbbreviation,
+          bookNumber,
+          book.checksum
+        );
+      }
+
+      // Ensure initial and final chapter are supported
+      if (bookNumber === startBookNumber && !book.chapters![startChapterNumber]) {
+        throw new Error(
+          `${this.title}: Chapter ${startChapterNumber} not supported for Bible book # ${bookNumber} and Bible version ${bibleVersionCode}!`
+        );
+      } else if (bookNumber === endBookNumber && !book.chapters![endChapterNumber]) {
+        throw new Error(
+          `${this.title}: Chapter ${endChapterNumber} not supported for Bible book # ${bookNumber} and Bible version ${bibleVersionCode}!`
+        );
+      }
+
+      // Retrieve verses for each chapter within the range
+      let chapterNumber = bookNumber === startBookNumber ? startChapterNumber : 1;
+      while (
+        (bookNumber !== endBookNumber || chapterNumber <= endChapterNumber) &&
+        book.chapters[chapterNumber]
+      ) {
+        const chapter = book.chapters![chapterNumber];
+        // Load chapter content
+        if (!chapter.verses) {
+          chapter.verses = await this.loadVerses(
+            bibleVersionAbbreviation,
+            bookNumber,
+            chapterNumber,
+            chapter.checksum
+          );
+        }
+        // Add verses for range
+        if (bookNumber === startBookNumber && chapterNumber === startChapterNumber) {
+          verses.push(...chapter.verses.slice(startVerseNumber - 1));
+        } else if (bookNumber === endBookNumber && chapterNumber === endChapterNumber) {
+          verses.push(...chapter.verses.slice(0, endVerseNumber));
+        } else {
+          verses.push(...chapter.verses);
+        }
+        chapterNumber++;
+      }
     }
-    // Load chapter checksums
-    if (!book.chapters) {
-      book.chapters = await this.loadChapterChecksums(
-        bibleVersionAbbreviation,
-        bookNumber,
-        book.checksum
-      );
-    }
-    // Ensure chapter is supported
-    const chapter = book.chapters![chapterNumber];
-    if (!chapter) {
-      throw new Error(
-        `${this.title}: Chapter ${chapterNumber} not supported for book ${bookname} (#${bookNumber}) and Bible version ${bibleVersionCode}!`
-      );
-    }
-    // Load chapter content
-    if (!chapter.verses) {
-      chapter.verses = await this.loadVerses(
-        bibleVersionAbbreviation,
-        bookNumber,
-        chapterNumber,
-        chapter.checksum
-      );
-    }
-    return chapter.verses;
+
+    return verses;
   }
 
   private async loadBibleVersionChecksums(): Promise<GetbibleBibleTranslations> {
