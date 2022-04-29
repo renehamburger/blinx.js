@@ -112,7 +112,7 @@ type GetbibleChapters = {
   };
 };
 
-interface GetbibleVerse {
+export interface GetbibleVerse {
   chapter: number;
   verse: number;
   text: string;

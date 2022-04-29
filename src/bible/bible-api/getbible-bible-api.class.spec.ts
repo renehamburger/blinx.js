@@ -1,13 +1,20 @@
 // tslint:disable: no-string-literal
 import {
   GetbibleBibleApi,
-  convertVersesToHtml
+  convertVersesToHtml,
+  GetbibleVerse
 } from 'src/bible/bible-api/getbible-bible-api.class';
+import * as requestModule from 'src/helpers/request';
+import { when, verifyAllWhenMocksCalled, resetAllWhenMocks } from 'jest-when';
+
+afterEach(() => {
+  verifyAllWhenMocksCalled();
+  resetAllWhenMocks();
+});
 
 describe('GetbibleBibleApi', () => {
-  const api = new GetbibleBibleApi();
-
-  describe('getRawPassage() using the actual API', () => {
+  xdescribe('getRawPassage() using the actual API', () => {
+    const api = new GetbibleBibleApi();
     it('works for a single chapter', async () => {
       const verses = await api['getRawPassage']('1John.1', 'en.web');
 
@@ -63,6 +70,50 @@ describe('GetbibleBibleApi', () => {
       expect(verses).toHaveLength(2);
       expect(verses[0]).toMatchObject({ chapter: 5, verse: 21, name: '1 John 5:21' });
       expect(verses[verses.length - 1]).toMatchObject({ chapter: 1, verse: 1, name: '2 John 1:1' });
+    });
+  });
+
+  describe('getRawPassage() with mocked requests', () => {
+    it('works for a single verse', async () => {
+      const verses = ['verse1'];
+      jest.spyOn(requestModule, 'request');
+      when(requestModule.request)
+        .calledWith(expect.stringContaining('https://getbible.net/v2/checksum.json?_='))
+        .mockResolvedValueOnce({
+          web: 'bibleChecksum'
+        })
+        .calledWith('https://getbible.net/v2/web/checksum.json?bibleChecksum')
+        .mockResolvedValueOnce({
+          3: 'bookChecksum'
+        })
+        .calledWith('https://getbible.net/v2/web/3/checksum.json?bookChecksum')
+        .mockResolvedValueOnce({
+          2: 'chapterChecksum'
+        })
+        .calledWith('https://getbible.net/v2/web/3/2.json?chapterChecksum')
+        .mockResolvedValueOnce({
+          verses
+        });
+      const api = new GetbibleBibleApi();
+
+      const passage = await api['getRawPassage']('Lev.2.1', 'en.web');
+
+      expect(passage).toStrictEqual(verses);
+    });
+  });
+
+  describe('getPassage()', () => {
+    it('works', async () => {
+      jest.spyOn(requestModule, 'request').mockResolvedValue({});
+      const api = new GetbibleBibleApi();
+      const verses: GetbibleVerse[] = [{ chapter: 1, verse: 1, text: 'content' }];
+      jest.spyOn(api as any, 'getRawPassage');
+      when(api['getRawPassage']).calledWith('passage', 'en.web').mockResolvedValue(verses);
+
+      const passage = await api.getPassage('passage', 'en.web');
+
+      expect(passage).toBe(convertVersesToHtml(verses));
+      expect(api['getRawPassage']).toHaveBeenCalledWith('passage', 'en.web');
     });
   });
 });
