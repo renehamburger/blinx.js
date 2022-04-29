@@ -248,7 +248,7 @@ export class GetBibleBibleApi extends BibleApi {
   }
 }
 
-function convertVersesToHtml(verses: GetbibleVerse[]): string {
+export function convertVersesToHtml(verses: GetbibleVerse[]): string {
   // TODO:
   return JSON.stringify(verses);
 }
