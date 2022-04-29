@@ -131,6 +131,13 @@ export class GetBibleBibleApi extends BibleApi {
     osis: string,
     bibleVersionCode: keyof typeof getbibleBibleVersionMap
   ): Promise<string> {
+    return convertVersesToHtml(await this.getRawPassage(osis, bibleVersionCode));
+  }
+
+  private async getRawPassage(
+    osis: string,
+    bibleVersionCode: keyof typeof getbibleBibleVersionMap
+  ): Promise<GetbibleVerse[]> {
     // Parse input
     const bibleVersionAbbreviation = this.bibleVersionMap[bibleVersionCode];
     const [bookname, chapterNumberAsString] = osis.split('.');
@@ -180,7 +187,7 @@ export class GetBibleBibleApi extends BibleApi {
         chapter.checksum
       );
     }
-    return JSON.stringify(chapter.verses);
+    return chapter.verses;
   }
 
   private async loadBibleVersionChecksums(): Promise<GetbibleBibleTranslations> {
@@ -239,4 +246,9 @@ export class GetBibleBibleApi extends BibleApi {
       `${this.url}/${bibleVersionAbbreviation}/${bookNumber}/${chapterNumber}.json?${chapterChecksum}`
     ).then((response) => response.verses);
   }
+}
+
+function convertVersesToHtml(verses: GetbibleVerse[]): string {
+  // TODO:
+  return JSON.stringify(verses);
 }
