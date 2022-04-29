@@ -41,7 +41,7 @@ describe('GetBibleBibleApi', () => {
             'That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we saw, and our hands touched, concerning the Word of life'
         }
       ]);
-    });
+    }, 1e9);
 
     it('works for a verse range within a chapter', async () => {
       const verses = await api['getRawPassage']('1John.1.1-1John.1.2', 'en.web');

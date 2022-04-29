@@ -1,6 +1,7 @@
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { request } from 'src/helpers/request';
 import { BibleBooks } from '../models/bible-books.const';
+import { parseOsis } from '../../helpers/osis';
 
 const getbibleBibleVersionMap = {
   'af.aov': 'aov',
@@ -140,16 +141,13 @@ export class GetBibleBibleApi extends BibleApi {
   ): Promise<GetbibleVerse[]> {
     // Parse input
     const bibleVersionAbbreviation = this.bibleVersionMap[bibleVersionCode];
-    const [
-      [startBookname, startChapter, startVerse],
-      [endBookname, endChapter, endVerse]
-    ] = osis.split('-').map((part) => part.split('.'));
-    const startBookNumber = Object.keys(new BibleBooks()).indexOf(startBookname) + 1;
-    const endBookNumber = Object.keys(new BibleBooks()).indexOf(endBookname) + 1;
-    const startChapterNumber = parseFloat(startChapter);
-    const endChapterNumber = parseFloat(endChapter);
-    const startVerseNumber = parseFloat(startVerse);
-    const endVerseNumber = parseFloat(endVerse);
+    const parsedOsis = parseOsis(osis);
+    const start = parsedOsis.start;
+    const end = parsedOsis.end ?? start;
+    const startBookNumber = Object.keys(new BibleBooks()).indexOf(start.book) + 1;
+    const endBookNumber = end
+      ? Object.keys(new BibleBooks()).indexOf(end.book) + 1
+      : startBookNumber;
 
     // Load checksum for selected version
     const bibleVersion = (await this.translations)[bibleVersionAbbreviation];
@@ -188,23 +186,24 @@ export class GetBibleBibleApi extends BibleApi {
       }
 
       // Ensure initial and final chapter are supported
-      if (bookNumber === startBookNumber && !book.chapters![startChapterNumber]) {
+      if (bookNumber === startBookNumber && !book.chapters![start.chapter]) {
         throw new Error(
-          `${this.title}: Chapter ${startChapterNumber} not supported for Bible book # ${bookNumber} and Bible version ${bibleVersionCode}!`
+          `${this.title}: Chapter ${start.chapter} not supported for Bible book # ${bookNumber} and Bible version ${bibleVersionCode}!`
         );
-      } else if (bookNumber === endBookNumber && !book.chapters![endChapterNumber]) {
+      } else if (bookNumber === endBookNumber && !book.chapters![end.chapter]) {
         throw new Error(
-          `${this.title}: Chapter ${endChapterNumber} not supported for Bible book # ${bookNumber} and Bible version ${bibleVersionCode}!`
+          `${this.title}: Chapter ${end.chapter} not supported for Bible book # ${bookNumber} and Bible version ${bibleVersionCode}!`
         );
       }
 
       // Retrieve verses for each chapter within the range
-      let chapterNumber = bookNumber === startBookNumber ? startChapterNumber : 1;
+      let chapterNumber = bookNumber === startBookNumber ? start.chapter : 1;
       while (
-        (bookNumber !== endBookNumber || chapterNumber <= endChapterNumber) &&
+        (bookNumber !== endBookNumber || chapterNumber <= end.chapter) &&
         book.chapters[chapterNumber]
       ) {
         const chapter = book.chapters![chapterNumber];
+
         // Load chapter content
         if (!chapter.verses) {
           chapter.verses = await this.loadVerses(
@@ -214,14 +213,16 @@ export class GetBibleBibleApi extends BibleApi {
             chapter.checksum
           );
         }
+
         // Add verses for range
-        if (bookNumber === startBookNumber && chapterNumber === startChapterNumber) {
-          verses.push(...chapter.verses.slice(startVerseNumber - 1));
-        } else if (bookNumber === endBookNumber && chapterNumber === endChapterNumber) {
-          verses.push(...chapter.verses.slice(0, endVerseNumber));
-        } else {
-          verses.push(...chapter.verses);
+        let relevantVerses = chapter.verses;
+        if (bookNumber === startBookNumber && chapterNumber === start.chapter && start.verse) {
+          relevantVerses = relevantVerses.slice(start.verse - 1);
         }
+        if (bookNumber === endBookNumber && chapterNumber === end.chapter && end.verse) {
+          relevantVerses = relevantVerses.slice(0, end.verse);
+        }
+        verses.push(...relevantVerses);
         chapterNumber++;
       }
     }
