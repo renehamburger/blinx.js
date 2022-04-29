@@ -2,14 +2,6 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { request } from 'src/helpers/request';
 import { BibleBooks } from '../models/bible-books.const';
 
-interface GetbibleChapter {
-  verses: {
-    verse: number;
-    text: string;
-  }[];
-  // ...
-}
-
 const getbibleBibleVersionMap = {
   'af.aov': 'aov',
   'ar.arabicsv': 'arabicsv',
@@ -116,13 +108,16 @@ interface GetbibleBooks {
 type GetbibleChapters = {
   [chapterNumber: number /** 1-<maxChapterOfBook> */]: {
     checksum: string;
-    verses?: GetbibleVerses;
+    verses?: GetbibleVerse[];
   };
 };
 
-type GetbibleVerses = {
-  [verseNumber: number /** 1-<maxVerseOfChapter> */]: string /** Verse content */;
-};
+interface GetbibleVerse {
+  chapter: number;
+  verse: number;
+  text: string;
+  // ...
+}
 
 export class GetBibleBibleApi extends BibleApi {
   public readonly title = 'getBible.net';
@@ -185,7 +180,6 @@ export class GetBibleBibleApi extends BibleApi {
         chapter.checksum
       );
     }
-    // TODO:
     return JSON.stringify(chapter.verses);
   }
 
@@ -240,14 +234,9 @@ export class GetBibleBibleApi extends BibleApi {
     bookNumber: number,
     chapterNumber: number,
     chapterChecksum: string
-  ): Promise<GetbibleVerses> {
-    return request<GetbibleChapter>(
+  ): Promise<GetbibleVerse[]> {
+    return request<{ verses: GetbibleVerse[] }>(
       `${this.url}/${bibleVersionAbbreviation}/${bookNumber}/${chapterNumber}.json?${chapterChecksum}`
-    ).then((response) =>
-      response.verses.reduce((obj, verseObj) => {
-        obj[verseObj.verse] = verseObj.text.trim();
-        return obj;
-      }, {} as GetbibleVerses)
-    );
+    ).then((response) => response.verses);
   }
 }
