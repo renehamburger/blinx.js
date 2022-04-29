@@ -1,6 +1,5 @@
 import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 import { request } from 'src/helpers/request';
-import { BibleBooks } from '../models/bible-books.const';
 import { parseOsis } from '../../helpers/osis';
 
 const getbibleBibleVersionMap = {
@@ -141,13 +140,7 @@ export class GetBibleBibleApi extends BibleApi {
   ): Promise<GetbibleVerse[]> {
     // Parse input
     const bibleVersionAbbreviation = this.bibleVersionMap[bibleVersionCode];
-    const parsedOsis = parseOsis(osis);
-    const start = parsedOsis.start;
-    const end = parsedOsis.end ?? start;
-    const startBookNumber = Object.keys(new BibleBooks()).indexOf(start.book) + 1;
-    const endBookNumber = end
-      ? Object.keys(new BibleBooks()).indexOf(end.book) + 1
-      : startBookNumber;
+    const { start, end } = parseOsis(osis);
 
     // Load checksum for selected version
     const bibleVersion = (await this.translations)[bibleVersionAbbreviation];
@@ -167,7 +160,7 @@ export class GetBibleBibleApi extends BibleApi {
 
     // Retrieve verses for each book (& chapter) within the range
     const verses: GetbibleVerse[] = [];
-    for (let bookNumber = startBookNumber; bookNumber <= endBookNumber; bookNumber++) {
+    for (let bookNumber = start.bookNumber; bookNumber <= end.bookNumber; bookNumber++) {
       // Ensure book is supported
       const book = bibleVersion.books[bookNumber];
       if (!book) {
@@ -186,20 +179,20 @@ export class GetBibleBibleApi extends BibleApi {
       }
 
       // Ensure initial and final chapter are supported
-      if (bookNumber === startBookNumber && !book.chapters![start.chapter]) {
+      if (bookNumber === start.bookNumber && !book.chapters![start.chapter]) {
         throw new Error(
           `${this.title}: Chapter ${start.chapter} not supported for Bible book # ${bookNumber} and Bible version ${bibleVersionCode}!`
         );
-      } else if (bookNumber === endBookNumber && !book.chapters![end.chapter]) {
+      } else if (bookNumber === end.bookNumber && !book.chapters![end.chapter]) {
         throw new Error(
           `${this.title}: Chapter ${end.chapter} not supported for Bible book # ${bookNumber} and Bible version ${bibleVersionCode}!`
         );
       }
 
       // Retrieve verses for each chapter within the range
-      let chapterNumber = bookNumber === startBookNumber ? start.chapter : 1;
+      let chapterNumber = bookNumber === start.bookNumber ? start.chapter : 1;
       while (
-        (bookNumber !== endBookNumber || chapterNumber <= end.chapter) &&
+        (bookNumber !== end.bookNumber || chapterNumber <= end.chapter) &&
         book.chapters[chapterNumber]
       ) {
         const chapter = book.chapters![chapterNumber];
@@ -216,10 +209,10 @@ export class GetBibleBibleApi extends BibleApi {
 
         // Add verses for range
         let relevantVerses = chapter.verses;
-        if (bookNumber === startBookNumber && chapterNumber === start.chapter && start.verse) {
+        if (bookNumber === start.bookNumber && chapterNumber === start.chapter && start.verse) {
           relevantVerses = relevantVerses.slice(start.verse - 1);
         }
-        if (bookNumber === endBookNumber && chapterNumber === end.chapter && end.verse) {
+        if (bookNumber === end.bookNumber && chapterNumber === end.chapter && end.verse) {
           relevantVerses = relevantVerses.slice(0, end.verse);
         }
         verses.push(...relevantVerses);
