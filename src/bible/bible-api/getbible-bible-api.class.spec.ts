@@ -1,11 +1,11 @@
 // tslint:disable: no-string-literal
 import {
   GetbibleBibleApi,
-  convertVersesToHtml,
-  GetbibleVerse
+  convertVersesToHtml
 } from 'src/bible/bible-api/getbible-bible-api.class';
 import * as requestModule from 'src/helpers/request';
 import { when, verifyAllWhenMocksCalled, resetAllWhenMocks } from 'jest-when';
+import { GetbibleVerse } from './getbible-bible-api.types';
 
 afterEach(() => {
   verifyAllWhenMocksCalled();
