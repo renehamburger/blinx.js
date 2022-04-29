@@ -2,6 +2,7 @@ import { BibleBook, bibleBooks } from 'src/bible/models/bible-books.const';
 
 export interface BibleReferencePoint {
   book: BibleBook;
+  bookNumber: number; // 1-66 for canonical books
   chapter: number;
   verse?: number;
 }
@@ -17,13 +18,14 @@ export interface BibleReference {
  * @return Object containing all parts of the reference
  */
 export function parseOsis(osis: string): BibleReference {
-  const reference: BibleReference = { start: { book: 'Gen', chapter: -1 } };
+  const reference: BibleReference = { start: { book: 'Gen', bookNumber: 1, chapter: -1 } };
   for (let i = 0; i < 2; i++) {
     const segment = osis.split('-')[i];
     if (segment) {
       const parts = segment.split('.');
       const referencePoint: BibleReferencePoint = {
         book: parts[0] as BibleBook,
+        bookNumber: Object.keys(bibleBooks).indexOf(parts[0]) + 1,
         chapter: +parts[1]
       };
       if (parts.length > 2) {
