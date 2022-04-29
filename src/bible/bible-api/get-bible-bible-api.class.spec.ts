@@ -66,8 +66,8 @@ describe('GetBibleBibleApi', () => {
 });
 
 describe('convertVersesToHtml()', () => {
-  it('works for a single verse', () => {
-    const html = convertVersesToHtml([{ chapter: 1, verse: 1, text: 'CONTENT_1:1' }]);
+  it('works for a single verse & trims content', () => {
+    const html = convertVersesToHtml([{ chapter: 1, verse: 1, text: '   CONTENT_1:1\n' }]);
 
     expect(html).toBe(
       `<span class="bxChapter"><span class="bxChapterNumber">1</span><span class="bxVerse"><span class="bxVerseNumber">1</span>&nbsp;CONTENT_1:1</span></span>`

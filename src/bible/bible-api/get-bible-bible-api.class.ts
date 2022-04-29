@@ -249,6 +249,16 @@ export class GetBibleBibleApi extends BibleApi {
 }
 
 export function convertVersesToHtml(verses: GetbibleVerse[]): string {
-  // TODO:
-  return JSON.stringify(verses);
+  return verses.reduce((html, verse, index) => {
+    if (index === 0 || verses[index - 1].chapter !== verse.chapter) {
+      html += `<span class="bxChapter"><span class="bxChapterNumber">${verse.chapter}</span>`;
+    }
+    html += `<span class="bxVerse"><span class="bxVerseNumber">${
+      verse.verse
+    }</span>&nbsp;${verse.text.trim()}</span>`;
+    if (index === verses.length - 1 || verse.chapter !== verses[index + 1].chapter) {
+      html += `</span>`;
+    }
+    return html;
+  }, '');
 }
