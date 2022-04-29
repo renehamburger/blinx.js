@@ -85,7 +85,8 @@ export type GetbibleBibleVersionMap = typeof getbibleBibleVersionMap;
 
 export type GetbibleSupportedBibleVersionCode = keyof GetbibleBibleVersionMap;
 
-export type GetbibleBibleVersionAbbreviation = GetbibleBibleVersionMap[GetbibleSupportedBibleVersionCode];
+export type GetbibleBibleVersionAbbreviation =
+  GetbibleBibleVersionMap[GetbibleSupportedBibleVersionCode];
 
 export type GetbibleBibleTranslations = {
   [BibleVersionAbbreviation in GetbibleBibleVersionAbbreviation]?: {

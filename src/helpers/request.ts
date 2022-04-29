@@ -6,7 +6,7 @@ export async function request<T>(url: string): Promise<T> {
       if (err) {
         reject(err);
       } else {
-        resolve((body as unknown) as T);
+        resolve(body as unknown as T);
       }
     });
   });

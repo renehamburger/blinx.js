@@ -23,8 +23,7 @@ describe('GetbibleBibleApi', () => {
         chapter: 1,
         verse: 1,
         name: '1 John 1:1',
-        text:
-          'That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we saw, and our hands touched, concerning the Word of life'
+        text: 'That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we saw, and our hands touched, concerning the Word of life'
       });
     });
 
@@ -44,8 +43,7 @@ describe('GetbibleBibleApi', () => {
           chapter: 1,
           verse: 1,
           name: '1 John 1:1',
-          text:
-            'That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we saw, and our hands touched, concerning the Word of life'
+          text: 'That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we saw, and our hands touched, concerning the Word of life'
         }
       ]);
     }, 1e9);
