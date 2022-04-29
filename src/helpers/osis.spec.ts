@@ -5,11 +5,11 @@ describe('Osis helpers - ', () => {
     it('works', () => {
       expect(parseOsis('Gen.1')).toStrictEqual({
         start: { book: 'Gen', bookNumber: 1, chapter: 1 },
-        end: undefined
+        end: { book: 'Gen', bookNumber: 1, chapter: 1 }
       });
       expect(parseOsis('Gen.1.2')).toStrictEqual({
         start: { book: 'Gen', bookNumber: 1, chapter: 1, verse: 2 },
-        end: undefined
+        end: { book: 'Gen', bookNumber: 1, chapter: 1, verse: 2 }
       });
       expect(parseOsis('Gen.1.2-Gen.1.3')).toStrictEqual({
         start: { book: 'Gen', bookNumber: 1, chapter: 1, verse: 2 },

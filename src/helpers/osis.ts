@@ -1,4 +1,5 @@
 import { BibleBook, bibleBooks } from 'src/bible/models/bible-books.const';
+import { isEqual } from 'lodash';
 
 export interface BibleReferencePoint {
   book: BibleBook;
@@ -36,7 +37,7 @@ export function parseOsis(osis: string): BibleReference {
   }
   return {
     start: referencePoints[0],
-    end: referencePoints[1]
+    end: referencePoints[1] ?? referencePoints[0]
   };
 }
 
@@ -73,7 +74,7 @@ export function transformOsis(osis: string, options: Partial<TransformOsisOption
   if (ref.start.verse) {
     transformed += chapterVerse + ref.start.verse;
   }
-  if (ref.end) {
+  if (!isEqual(ref.start, ref.end)) {
     transformed += '-';
     let chapterAdded = false;
     if (ref.end.book !== ref.start.book || removeSuperfluous === 'none') {
@@ -96,7 +97,7 @@ export function truncateMultiBookOsis(osis: string): string {
   const ref = parseOsis(osis);
   // Truncate references across several books
   // until infinite scroll is implemented
-  if (ref.end && ref.start.book !== ref.end.book) {
+  if (ref.start.book !== ref.end.book) {
     const numberOfChapters = bibleBooks[ref.start.book].chapters;
     return `${ref.start.book}.${ref.start.chapter}.${ref.start.verse}-${ref.start.book}.${numberOfChapters}.999`;
   }
