@@ -9,7 +9,7 @@ export interface BibleReferencePoint {
 
 export interface BibleReference {
   start: BibleReferencePoint;
-  end?: BibleReferencePoint;
+  end: BibleReferencePoint;
 }
 
 /**
@@ -18,7 +18,7 @@ export interface BibleReference {
  * @return Object containing all parts of the reference
  */
 export function parseOsis(osis: string): BibleReference {
-  const reference: BibleReference = { start: { book: 'Gen', bookNumber: 1, chapter: -1 } };
+  const referencePoints: BibleReferencePoint[] = [];
   for (let i = 0; i < 2; i++) {
     const segment = osis.split('-')[i];
     if (segment) {
@@ -31,10 +31,13 @@ export function parseOsis(osis: string): BibleReference {
       if (parts.length > 2) {
         referencePoint.verse = +parts[2];
       }
-      reference[i === 0 ? 'start' : 'end'] = referencePoint;
+      referencePoints.push(referencePoint);
     }
   }
-  return reference;
+  return {
+    start: referencePoints[0],
+    end: referencePoints[1]
+  };
 }
 
 export type BookNameMap = { [P in BibleBook]?: string };
