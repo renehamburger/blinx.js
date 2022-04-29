@@ -16,7 +16,7 @@ export class Options {
   /** Online Bible to be linked to. */
   onlineBible: OnlineBibleName = 'BibleServer';
   /** Online Bible to be linked to. */
-  bibleApi: BibleApiName = 'getBible';
+  bibleApi: BibleApiName = 'getbible';
   /**
    * Futher options for the parser.
    * @see https://github.com/openbibleinfo/Bible-Passage-Reference-Parser#options

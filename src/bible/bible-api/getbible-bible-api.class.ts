@@ -119,7 +119,7 @@ interface GetbibleVerse {
   // ...
 }
 
-export class GetBibleBibleApi extends BibleApi {
+export class GetbibleBibleApi extends BibleApi {
   public readonly title = 'getBible.net';
   public readonly url = 'https://getbible.net/v2';
 

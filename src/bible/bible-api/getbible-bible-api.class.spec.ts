@@ -1,11 +1,11 @@
 // tslint:disable: no-string-literal
 import {
-  GetBibleBibleApi,
+  GetbibleBibleApi,
   convertVersesToHtml
-} from 'src/bible/bible-api/get-bible-bible-api.class';
+} from 'src/bible/bible-api/getbible-bible-api.class';
 
-describe('GetBibleBibleApi', () => {
-  const api = new GetBibleBibleApi();
+describe('GetbibleBibleApi', () => {
+  const api = new GetbibleBibleApi();
 
   describe('getRawPassage() using the actual API', () => {
     it('works for a single chapter', async () => {
