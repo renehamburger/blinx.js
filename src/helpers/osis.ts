@@ -1,5 +1,5 @@
 import { BibleBook, bibleBooks } from 'src/bible/models/bible-books.const';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 export interface BibleReferencePoint {
   book: BibleBook;
