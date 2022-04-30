@@ -1,5 +1,5 @@
 import { Blinx } from 'src/blinx.class';
-import * as PromisePolyfill from 'src/lib/promise.js';
+import PromisePolyfill from 'src/lib/promise.js';
 import { Options } from 'src/options/options';
 
 if (!('Promise' in window)) {
