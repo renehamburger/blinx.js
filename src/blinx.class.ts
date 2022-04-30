@@ -1,4 +1,4 @@
-import { isObject } from 'lodash/fp';
+import isObject from 'lodash/isObject';
 import { Options, getScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
 import { u } from 'src/lib/u.js';

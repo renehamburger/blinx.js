@@ -1,4 +1,4 @@
-import uniqBy = require('lodash/uniqBy');
+import uniqBy from 'lodash/uniqBy';
 
 export function extractOrderedTextNodesFromNodes(nodes: Node[]): Text[] {
   let textNodes: Text[] = [];

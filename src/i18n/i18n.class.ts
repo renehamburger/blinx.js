@@ -1,4 +1,4 @@
-import get = require('lodash/get');
+import get from 'lodash/get';
 import { Languages } from 'src/options/languages';
 
 export interface Translations {
