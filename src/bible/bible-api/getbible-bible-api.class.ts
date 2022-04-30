@@ -115,7 +115,7 @@ export class GetbibleBibleApi extends BibleApi {
 
   private async loadBibleVersionChecksums(): Promise<GetbibleBibleTranslations> {
     return request<Record<GetbibleBibleVersionAbbreviation, string>>(
-      `${this.url}/checksum.json?_=${Date.now()}`
+      `${this.url}/checksum.json?v=${Date.now()}`
     ).then((response) => {
       const abbreviations = Object.keys(response) as GetbibleBibleVersionAbbreviation[];
       return abbreviations.reduce((obj, abbreviation) => {
@@ -131,7 +131,7 @@ export class GetbibleBibleApi extends BibleApi {
     translationChecksum: string
   ): Promise<GetbibleBooks> {
     return request<Record<string, string>>(
-      `${this.url}/${bibleVersionAbbreviation}/checksum.json?${translationChecksum}`
+      `${this.url}/${bibleVersionAbbreviation}/checksum.json?v=${translationChecksum}`
     ).then((response) =>
       Object.keys(response).reduce((obj, bookNumberAsString) => {
         const bookNumber = parseFloat(bookNumberAsString);
@@ -148,7 +148,7 @@ export class GetbibleBibleApi extends BibleApi {
     bookChecksum: string
   ): Promise<GetbibleBooks> {
     return request<Record<string, string>>(
-      `${this.url}/${bibleVersionAbbreviation}/${bookNumber}/checksum.json?${bookChecksum}`
+      `${this.url}/${bibleVersionAbbreviation}/${bookNumber}/checksum.json?v=${bookChecksum}`
     ).then((response) =>
       Object.keys(response).reduce((obj, chapterNumberAsString) => {
         const chapterNumber = parseFloat(chapterNumberAsString);
@@ -166,7 +166,7 @@ export class GetbibleBibleApi extends BibleApi {
     chapterChecksum: string
   ): Promise<GetbibleVerse[]> {
     return request<{ verses: GetbibleVerse[] }>(
-      `${this.url}/${bibleVersionAbbreviation}/${bookNumber}/${chapterNumber}.json?${chapterChecksum}`
+      `${this.url}/${bibleVersionAbbreviation}/${bookNumber}/${chapterNumber}.json?v=${chapterChecksum}`
     ).then((response) => response.verses);
   }
 }

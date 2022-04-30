@@ -23,7 +23,8 @@ describe('GetbibleBibleApi', () => {
         chapter: 1,
         verse: 1,
         name: '1 John 1:1',
-        text: 'That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we saw, and our hands touched, concerning the Word of life'
+        text:
+          'That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we saw, and our hands touched, concerning the Word of life'
       });
     });
 
@@ -43,7 +44,8 @@ describe('GetbibleBibleApi', () => {
           chapter: 1,
           verse: 1,
           name: '1 John 1:1',
-          text: 'That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we saw, and our hands touched, concerning the Word of life'
+          text:
+            'That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we saw, and our hands touched, concerning the Word of life'
         }
       ]);
     }, 1e9);
@@ -76,19 +78,19 @@ describe('GetbibleBibleApi', () => {
       const verses = ['verse1'];
       jest.spyOn(requestModule, 'request');
       when(requestModule.request)
-        .calledWith(expect.stringContaining('https://getbible.net/v2/checksum.json?_='))
+        .calledWith(expect.stringContaining('https://getbible.net/v2/checksum.json?v='))
         .mockResolvedValueOnce({
           web: 'bibleChecksum'
         })
-        .calledWith('https://getbible.net/v2/web/checksum.json?bibleChecksum')
+        .calledWith('https://getbible.net/v2/web/checksum.json?v=bibleChecksum')
         .mockResolvedValueOnce({
           3: 'bookChecksum'
         })
-        .calledWith('https://getbible.net/v2/web/3/checksum.json?bookChecksum')
+        .calledWith('https://getbible.net/v2/web/3/checksum.json?v=bookChecksum')
         .mockResolvedValueOnce({
           2: 'chapterChecksum'
         })
-        .calledWith('https://getbible.net/v2/web/3/2.json?chapterChecksum')
+        .calledWith('https://getbible.net/v2/web/3/2.json?v=chapterChecksum')
         .mockResolvedValueOnce({
           verses
         });
