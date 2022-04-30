@@ -1,4 +1,4 @@
-import isString = require('lodash/isString');
+import { isObject } from 'lodash/fp';
 import { Options, getScriptTagOptions } from 'src/options/options';
 import { Parser } from 'src/parser/parser.class';
 import { u } from 'src/lib/u.js';
@@ -459,9 +459,9 @@ export class Blinx {
   }
 
   private getVersionCode(bible: Bible): BibleVersionCode {
-    let versionCode = isString(this.options.bibleVersion)
-      ? this.options.bibleVersion
-      : this.options.bibleVersion.bibleText;
+    let versionCode = isObject(this.options.bibleVersion)
+      ? this.options.bibleVersion.bibleText
+      : this.options.bibleVersion;
     versionCode = versionCode as typeof versionCode;
     const availableVersions = Object.keys(
       bible.getAvailableVersions(this.options.language)
