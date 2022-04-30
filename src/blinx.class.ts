@@ -274,7 +274,7 @@ export class Blinx {
     if (this.tippyPolyfillInterval) {
       clearInterval(this.tippyPolyfillInterval);
     }
-    this.tippyPolyfillInterval = setInterval(adjustPos, 10) as unknown as number;
+    this.tippyPolyfillInterval = (setInterval(adjustPos, 10) as unknown) as number;
   }
 
   /** Second step of initialisation after parser & polyfills are loaded. */
@@ -462,7 +462,7 @@ export class Blinx {
     let versionCode = isString(this.options.bibleVersion)
       ? this.options.bibleVersion
       : this.options.bibleVersion.bibleText;
-    versionCode = versionCode.toLowerCase() as typeof versionCode; // Support for legacy codes which had capitalised characters
+    versionCode = versionCode as typeof versionCode;
     const availableVersions = Object.keys(
       bible.getAvailableVersions(this.options.language)
     ) as BibleVersionCode[];

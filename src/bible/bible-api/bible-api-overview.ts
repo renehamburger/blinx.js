@@ -4,5 +4,5 @@ import { BibleApi } from 'src/bible/bible-api/bible-api.class';
 export type BibleApiName = 'getbible';
 
 export function getBibleApi(name: BibleApiName): BibleApi {
-  return name.toLowerCase() === 'getbible' ? new GetbibleBibleApi() : new GetbibleBibleApi();
+  return name === 'getbible' ? new GetbibleBibleApi() : new GetbibleBibleApi();
 }
