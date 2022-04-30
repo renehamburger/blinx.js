@@ -274,7 +274,7 @@ export class Blinx {
     if (this.tippyPolyfillInterval) {
       clearInterval(this.tippyPolyfillInterval);
     }
-    this.tippyPolyfillInterval = (setInterval(adjustPos, 10) as unknown) as number;
+    this.tippyPolyfillInterval = setInterval(adjustPos, 10) as unknown as number;
   }
 
   /** Second step of initialisation after parser & polyfills are loaded. */
