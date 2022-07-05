@@ -35,7 +35,7 @@ For now, the script can be included directly from GitHub via the jsdelivr CDN, e
 ></script>
 ```
 
-The `data-blinx` attribute contains the options for blinx.js. For now, look at the definitions of the [blinx.js-options](src/options/options.ts#L7) and the related classes & types such as the [available Languages](src/options/languages.ts) or [the Bible Passage Reference Parser's Options](typings/bible-passage-reference-parser/index.d.ts#L35).
+The `data-blinx` attribute contains the options for blinx.js. For now, look at the definitions of the [blinx.js-options](src/options/options.ts#L7) and the related classes & types such as the [available Languages](src/options/languages.ts) or [the Bible Passage Reference Parser's Options](typings/shared/bible-passage-reference-parser.d.ts#L55).
 
 blinx.js loads several resources it requires dynamically and asynchronously. To speed up the identification and linking of Bible references on the page, the following script can already be loaded in parallel to blinx.js:
 
@@ -50,7 +50,7 @@ blinx.js loads several resources it requires dynamically and asynchronously. To 
 ></script>
 ```
 
-The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determine the language for blinx.js. ('537560a7' is the current [latest commit of the Bible Passage Reference Parser](https://github.com/openbibleinfo/Bible-Passage-Reference-Parser/commits/master) and may need to be updated at a later stage.
+The string entered for the `<LANGUAGE_CODE>`, e.g. 'de', will then also determine the language for blinx.js. (`99f0338` is the current [latest commit of the Bible Passage Reference Parser](https://github.com/renehamburger/Bible-Passage-Reference-Parser/commits/master) and may need to be updated at a later stage.
 
 ### Dynamically
 
