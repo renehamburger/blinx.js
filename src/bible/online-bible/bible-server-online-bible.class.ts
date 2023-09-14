@@ -62,6 +62,6 @@ export class BibleServerOnlineBible extends OnlineBible {
 
   public buildPassageLink(osis: string, bibleVersion: BibleVersionCode): string {
     osis = transformOsis(osis);
-    return `https://www.bibleserver.com/text/${bibleVersion.split('.')[1]}/${osis}`;
+    return `https://www.bibleserver.com/${bibleVersion.split('.')[1]}/${osis}`;
   }
 }
