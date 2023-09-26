@@ -4,7 +4,7 @@ import * as https from 'https';
 
 const response = new Promise((resolve, reject) => {
   let body = '';
-  https.request('https://getbible.net/v2/translations.json', (res) => {
+  https.request('https://api.getbible.net/v2/translations.json', (res) => {
     res.on('data', (data) => { body += data; })
        .on('end', () => { resolve(body); });
   }).on('error', reject).end();
