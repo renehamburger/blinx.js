@@ -10,8 +10,8 @@ import {
 } from './getbible-bible-api.types';
 
 export class GetbibleBibleApi extends BibleApi {
-  public readonly title = 'getBible.net';
-  public readonly url = 'https://getbible.net/v2';
+  public readonly title = 'api.getbible.net';
+  public readonly url = 'https://api.getbible.net/v2';
   public readonly docsUrl = 'https://github.com/getbible/v2#v2-getbible-api-2020';
 
   protected readonly bibleVersionMap = getbibleBibleVersionMap;
