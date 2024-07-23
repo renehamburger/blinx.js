@@ -507,7 +507,7 @@ export class Blinx {
         !('values' in Object) ||
         !('requestAnimationFrame' in window) ||
         !(
-          'DOMTokenList' in this &&
+          'DOMTokenList' in window &&
           ((x) => {
             return 'classList' in x ? !x.classList.toggle('x', false) && !x.className : true;
           })(document.createElement('x'))
@@ -515,8 +515,7 @@ export class Blinx {
       ) {
         this.tippyPolyfills = !('requestAnimationFrame' in window);
         await loadScript(
-          'https://cdn.polyfill.io/v2/polyfill.js?features=' +
-            'requestAnimationFrame|gated,Element.prototype.classList|gated,Object.values|gated'
+          'https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0&features=requestAnimationFrame%2CElement.prototype.classList%2CObject.values'
         );
       }
       await loadScript(
