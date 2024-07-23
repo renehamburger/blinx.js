@@ -507,7 +507,7 @@ export class Blinx {
         !('values' in Object) ||
         !('requestAnimationFrame' in window) ||
         !(
-          'DOMTokenList' in this &&
+          'DOMTokenList' in window &&
           ((x) => {
             return 'classList' in x ? !x.classList.toggle('x', false) && !x.className : true;
           })(document.createElement('x'))
