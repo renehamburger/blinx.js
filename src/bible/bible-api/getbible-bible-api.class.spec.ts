@@ -76,19 +76,19 @@ describe('GetbibleBibleApi', () => {
       const verses = ['verse1'];
       jest.spyOn(requestModule, 'request');
       when(requestModule.request)
-        .calledWith(expect.stringContaining('https://api.getbible.net/v2/checksum.json?v='))
+        .calledWith(expect.stringContaining('https://api.getbible.net/v2/checksum.json?_='))
         .mockResolvedValueOnce({
           web: 'bibleChecksum'
         })
-        .calledWith('https://api.getbible.net/v2/web/checksum.json?v=bibleChecksum')
+        .calledWith('https://api.getbible.net/v2/web/checksum.json?_=bibleChecksum')
         .mockResolvedValueOnce({
           3: 'bookChecksum'
         })
-        .calledWith('https://api.getbible.net/v2/web/3/checksum.json?v=bookChecksum')
+        .calledWith('https://api.getbible.net/v2/web/3/checksum.json?_=bookChecksum')
         .mockResolvedValueOnce({
           2: 'chapterChecksum'
         })
-        .calledWith('https://api.getbible.net/v2/web/3/2.json?v=chapterChecksum')
+        .calledWith('https://api.getbible.net/v2/web/3/2.json?_=chapterChecksum')
         .mockResolvedValueOnce({
           verses
         });
